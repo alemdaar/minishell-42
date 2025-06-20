@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/17 16:17:54 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/20 22:13:16 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ typedef struct s_cmd
 {
 	char	**commands;
 	t_red	*red;
+	char	*infile;
+	char	*outfile;
+	char	*limiter;
 	t_cmd	*prev;
 	t_cmd	*next;
 }	t_cmd;

@@ -6,12 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/18 21:24:56 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/20 18:09:29 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include "exec.h"
+#include "header.h"
 
 // void test(t_cmd *cmd)
 // {
@@ -35,36 +35,32 @@
 // 	}
 // }
 
-int is_pipe(t_cmd *cmd, t_info *dainfo)
+int is_pipe(t_cmd *cmd, t_other	*other)
 {
 	int	i;
 
-	i = 0;
+	other->count_proc = 0;
 	while (cmd)
 	{
-		i++;
+		other->count_proc++;
 		cmd = cmd->next;
 	}
-	if (i > 1)
-		dainfo->a_pipe = 1;
+	if (other->count_proc > 1)
+		other->a_pipe = 1;
 	else
-		dainfo->a_pipe = 0;
+		other->a_pipe = 0;
+	other->is_limiter = 0;
 	return 0;
 }
 
 int exec (t_cmd *cmd, t_env *env)
 {
-	t_info *dainfo;
+	t_other	other;
 	// t_env *tmp;
 	// tmp = env;
 
 	// test(cmd);
-	is_pipe(cmd, dainfo);
-	while (cmd)
-	{
-		dupping();
-		
-		cmd = cmd->commands;
-	}
+	is_pipe(cmd, &other);
+	work(cmd, env, &other);
 	return (0);
 }

@@ -2,6 +2,10 @@
     "files.associations": {
         "unistd.h": "c",
         "get_next_line.h": "c",
-        "token.h": "c"
+        "token.h": "c",
+        "syntax.h": "c",
+        "libft.h": "c",
+        "stdbool.h": "c",
+        "history.h": "c"
     }
 }
