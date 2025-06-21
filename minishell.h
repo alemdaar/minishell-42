@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/20 22:13:16 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/21 16:54:55 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,17 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	char	**commands;
-	t_red	*red;
+	pid_t	pid;
 	char	*infile;
 	char	*outfile;
 	char	*limiter;
+	int		pipefd[2];
+	int		pipedoc[2];
+	int		process;
+	int		is_limiter;
+	int		open1;
+	int		open2;
+	t_red	*red;
 	t_cmd	*prev;
 	t_cmd	*next;
 }	t_cmd;

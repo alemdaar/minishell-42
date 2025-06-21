@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   token.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:49 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/02 17:35:30 by mbarhoun         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:18:39 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKEN_H
 # define TOKEN_H
 
-# define ERR_MEM "Allocation Faield\n"
+# define ERR_MEM "Allocation Failed\n"
 
 typedef struct s_token	t_token;
 typedef struct s_env	t_env;

@@ -6,6 +6,8 @@
         "syntax.h": "c",
         "libft.h": "c",
         "stdbool.h": "c",
-        "history.h": "c"
+        "history.h": "c",
+        "signal.h": "c",
+        "stdlib.h": "c"
     }
 }
