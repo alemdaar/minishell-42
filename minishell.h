@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/21 16:54:55 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:37:57 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ typedef struct s_env
 typedef struct s_red
 {
 	char	*file;
+	int		open;
+	char	*limiter;
+	int		pipedoc[2];
+	int		is_limiter;
 	bool	expand;
 	t_type	red_type;
 	t_red	*next;
@@ -46,13 +50,7 @@ typedef struct s_cmd
 {
 	char	**commands;
 	pid_t	pid;
-	char	*infile;
-	char	*outfile;
-	char	*limiter;
 	int		pipefd[2];
-	int		pipedoc[2];
-	int		process;
-	int		is_limiter;
 	int		open1;
 	int		open2;
 	t_red	*red;

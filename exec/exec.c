@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/21 21:38:00 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/24 09:51:13 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,42 +104,46 @@ int	dupping(t_cmd *tmp, t_other *other, int position)
 	return (SUCCESSFUL);
 }
 
-int	check_file2(t_cmd *cmd, t_other *other, int flag)
-{
-	char	*s;
-
-	if (flag == other->count_proc - 1)
-	{
-		s = other->outfile;
-		if (other->is_limiter == TRUE)
-			other->open2 = open(s, O_WRONLY | O_APPEND | O_CREAT, 0644);
-		else
-			other->open2 = open(s, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-		if (other->open2 == -1)
-		{
-			close(other->prev_read);
-			return (free_all(&cmd, other), perror("open: "), exit(1), 1);
-		}
-	}
-	return (SUCCESSFUL);
-}
-
 int	check_file(t_cmd *tmp, t_cmd *cmd, t_other *other, int flag)
 {
-	if (flag == 0)
+	if (tmp->red)
 	{
-		if (other->is_limiter == FALSE)
-			other->open1 = open(other->infile, O_RDONLY);
-		else
-			other->open1 = open(other->infile, O_RDONLY);
-		if (other->open1 == -1)
+		while (tmp->red)
 		{
-			close_fds(tmp->pipefd, -1);
-			return (free_all(&cmd, other), perror("open: "), exit(1), 1);
+			if (tmp->red->red_type == HERDOOC)
+			{
+				tmp->is_limiter = 1;
+				tmp->limiter = cmd->red->file;
+				pipping(tmp, cmd, other, 2);
+				tmp->open1 = tmp->pipedoc[READ];
+				if (tmp->next)
+					tmp->open2 = tmp->pipefd[WRITE];
+			}
+			else if (tmp->red->red_type == (APPEND || REDIR_OUT))
+			{
+				if (flag != 0)
+					tmp->open1 = tmp->pipefd[READ];
+				if (tmp->red->red_type == REDIR_OUT)
+					tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_TRUNC);
+				else if (tmp->red->red_type == APPEND)
+					tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_APPEND);
+			}
+			else if (tmp->red->red_type == REDIR_IN)
+			{
+				tmp->open1 = open (tmp->red->file, O_RDONLY | O_TRUNC);
+				if (tmp->next)
+					tmp->open2 = tmp->pipefd[WRITE];
+			}
+			tmp->red = tmp->red->next;
 		}
-		return (SUCCESSFUL);
 	}
-	check_file2(cmd, other, flag);
+	else
+	{
+		if (flag != 0)
+			tmp->open1 = tmp->pipefd[READ];
+		if (tmp->next)
+			tmp->open2 = tmp->pipefd[WRITE];
+	}
 	return (SUCCESSFUL);
 }
 
@@ -235,7 +239,10 @@ int is_heredoc(t_cmd *cmd)
 	if (cmd->red)
 	{
 		if (cmd->red->red_type == HERDOOC)
+		{
+			cmd->red->is_limiter = 1;
 			return (1);
+		}
 	}
 	return (0);
 }
@@ -247,7 +254,7 @@ int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
 	if (type == 1)
 		ind.r = pipe(tmp->pipefd);
 	else
-		ind.r = pipe(tmp->pipedoc);
+		ind.r = pipe(tmp->red->pipedoc);
 	if (ind.r == -1)
 	{
 		free_all(&cmd, other);
@@ -256,51 +263,23 @@ int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
 	return (SUCCESSFUL);
 }
 
-int	set_up(t_cmd *tmp, t_cmd *cmd, t_other *other, int pos)
+int	set_reds(t_cmd *tmp)
 {
-	tmp->limiter = NULL;
-	tmp->process = pos;
-	tmp->is_limiter = 0;
+	while (tmp->red)
+	{
+		tmp->red->is_limiter = 0;
+		tmp->red->limiter = NULL;
+		tmp->red->pipedoc[WRITE] = -3;
+		tmp->red->pipedoc[READ] = -3;
+	}
+}
+
+int	set_fds(t_cmd *tmp)
+{
 	tmp->open1 = -3;
 	tmp->open2 = -3;
 	tmp->pipefd[WRITE] = -3;
 	tmp->pipefd[READ] = -3;
-	tmp->pipedoc[WRITE] = -3;
-	tmp->pipedoc[READ] = -3;
-	if (tmp->red)
-	{
-		if (tmp->red->red_type == HERDOOC)
-		{
-			tmp->is_limiter = 1;
-			tmp->limiter = cmd->red->file;
-			pipping(tmp, cmd, other, 2);
-			tmp->open1 = tmp->pipedoc[READ];
-			if (tmp->next)
-				tmp->open2 = tmp->pipefd[WRITE];
-		}
-		else if (tmp->red->red_type == (APPEND || REDIR_OUT))
-		{
-			if (tmp->process != 1)
-				tmp->open1 = tmp->pipefd[READ];
-			if (tmp->red->red_type == REDIR_OUT)
-				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_TRUNC);
-			else if (tmp->red->red_type == APPEND)
-				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_APPEND);
-		}
-		else if (tmp->red->red_type == REDIR_IN)
-		{
-			tmp->open1 = open (tmp->red->file, O_RDONLY | O_TRUNC);
-			if (tmp->next)
-				tmp->open2 = tmp->pipefd[WRITE];
-		}
-	}
-	else
-	{
-		if (tmp->process != 1)
-			tmp->open1 = tmp->pipefd[READ];
-		if (tmp->next)
-			tmp->open2 = tmp->pipefd[WRITE];
-	}
 }
 
 int	execution2(t_cmd *tmp, t_cmd *cmd, t_other *other, int i)
@@ -331,11 +310,15 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 	tmp = cmd;
 	while (tmp && other->a_pipe)
 	{
+		set_fds(tmp);
 		if (tmp->next)
 			pipping(tmp, cmd, other, 1);
-		set_up(tmp, cmd, other, ind.i);
-		if (tmp->is_limiter)
-			make_heredoc(tmp, other);
+		while (tmp->red)
+		{
+			set_reds(tmp);
+			if (is_heredoc(tmp))
+				make_heredoc(tmp, other);
+		}
 		ind.i++;
 		tmp = tmp->next;
 	}
