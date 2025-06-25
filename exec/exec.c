@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/24 09:51:13 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/25 22:06:48 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,16 +106,34 @@ int	dupping(t_cmd *tmp, t_other *other, int position)
 
 int	check_file(t_cmd *tmp, t_cmd *cmd, t_other *other, int flag)
 {
+	if (other->a_pipe)
+	{
+		if (flag == 0)
+		{
+			tmp->prev_pipefd[WRITE] = tmp->pipefd[WRITE];
+			tmp->prev_pipefd[READ] = tmp->pipefd[READ];
+			tmp->open2 = tmp->pipefd[WRITE];
+		}
+		else if (tmp->next == NULL)
+		{
+			tmp->prev_pipefd[WRITE] = tmp->pipefd[WRITE];
+			tmp->prev_pipefd[READ] = tmp->pipefd[READ];
+			tmp->open1 = tmp->prev_pipefd[WRITE];
+		}
+		else
+		{
+			tmp->open1 = tmp->prev_pipefd[WRITE];
+			tmp->open2 = tmp->pipefd[WRITE];
+		}
+	}
 	if (tmp->red)
 	{
 		while (tmp->red)
 		{
 			if (tmp->red->red_type == HERDOOC)
 			{
-				tmp->is_limiter = 1;
-				tmp->limiter = cmd->red->file;
-				pipping(tmp, cmd, other, 2);
-				tmp->open1 = tmp->pipedoc[READ];
+				tmp->red->limiter = cmd->red->file;
+				tmp->open1 = tmp->red->pipedoc[READ];
 				if (tmp->next)
 					tmp->open2 = tmp->pipefd[WRITE];
 			}
@@ -197,24 +215,32 @@ int	is_limiter(char *line, char *limiter)
 	return (FALSE);
 }
 
-void heredoc_outp(int a_pipe)
+int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
 {
-	if (a_pipe)
-		myputstr("pipe heredoc> ", 1);
+	t_ind	ind;
+
+	if (type == 1)
+		ind.r = pipe(tmp->pipefd);
 	else
-		myputstr("heredoc> ", 1);
-	return ;
+		ind.r = pipe(tmp->red->pipedoc);
+	if (ind.r == -1)
+	{
+		free_all(&cmd, other);
+		why_exit("Error: pipe failed\n", FAILED);
+	}
+	return (SUCCESSFUL);
 }
 
-int	make_heredoc(t_cmd *cmd, t_other *other)
+int	make_heredoc(t_cmd *tmp, t_cmd *cmd, t_other *other)
 {
 	char	*line;
 	t_ind	ind;
 
 	ind.c = 0;
+	pipping(tmp, cmd, other, 2);
 	while (1)
 	{
-		heredoc_outp(other->a_pipe);
+		myputstr("> ", 1);
 		line = get_next_line(0);
 		if (line == NULL && ind.c == 0)
 		{
@@ -224,9 +250,9 @@ int	make_heredoc(t_cmd *cmd, t_other *other)
 		if (line == NULL && ind.c == 1)
 			break ;
 		ind.c = 1;
-		if (is_limiter(line, cmd->limiter) == TRUE)
+		if (is_limiter(line, tmp->red->limiter) == TRUE)
 			return (free(line), SUCCESSFUL);
-		write (cmd->open1, line, mystrlen(line));
+		write (tmp->red->pipedoc[WRITE], line, mystrlen(line));
 		free(line);
 	}
 	if (line)
@@ -245,22 +271,6 @@ int is_heredoc(t_cmd *cmd)
 		}
 	}
 	return (0);
-}
-
-int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
-{
-	t_ind	ind;
-
-	if (type == 1)
-		ind.r = pipe(tmp->pipefd);
-	else
-		ind.r = pipe(tmp->red->pipedoc);
-	if (ind.r == -1)
-	{
-		free_all(&cmd, other);
-		why_exit("Error: pipe failed\n", FAILED);
-	}
-	return (SUCCESSFUL);
 }
 
 int	set_reds(t_cmd *tmp)
@@ -317,7 +327,7 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 		{
 			set_reds(tmp);
 			if (is_heredoc(tmp))
-				make_heredoc(tmp, other);
+				make_heredoc(tmp, cmd, other);
 		}
 		ind.i++;
 		tmp = tmp->next;

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/22 18:37:57 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/25 21:46:35 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_cmd
 	char	**commands;
 	pid_t	pid;
 	int		pipefd[2];
+	int		prev_pipefd[2];
 	int		open1;
 	int		open2;
 	t_red	*red;
