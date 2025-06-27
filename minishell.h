@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/26 19:35:32 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/27 21:28:19 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,10 @@ typedef struct s_cmd
 	int		is_limiter;
 	int		open1;
 	int		open2;
+	char	*path_cmd;
+	char	*opt;
+	char	**argument;
+	int		ar;
 	t_red	*red;
 	t_cmd	*prev;
 	t_cmd	*next;

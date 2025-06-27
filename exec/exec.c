@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/27 20:15:05 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/27 22:02:33 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,14 +147,98 @@ int is_builtin()
 	
 }
 
-int check_cmd(t_cmd *tmp, t_other *other)
+char	*mixem(t_cmd *cmd, t_other *other, int path_ind)
 {
-	if (is_builtin(tmp, other))
-		handle_builtin();
+	char	*str;
+	int		i;
+	int		j;
+	int		len;
+
+	if (other->all_path == NULL || path_ind == -1)
+		str = malloc (mystrlen(cmd->commands[0]) + 1);
 	else
 	{
-		
+		len = mystrlen(other->paths[path_ind]) + mystrlen(cmd->cmd);
+		str = malloc (len + 2);
 	}
+	i = 0;
+	j = 0;
+	if (path_ind != -1)
+	{
+		while (other->paths[path_ind][j])
+			str[i++] = other->paths[path_ind][j++];
+		j = 0;
+		str[i++] = '/';
+	}
+	while (cmd->commands[0][j])
+		str[i++] = cmd->commands[0][j++];
+	str[i] = 0;
+	return (str);
+}
+
+int	check_access(t_cmd *cmd, t_other *other, int path_ind)
+{
+	cmd->path_cmd = mixem(cmd, other, path_ind);
+	if (!cmd->path_cmd)
+		return (myputstr("full path failed allocation\n", STD_ERR), ERROR);
+	if (access(cmd->path_cmd, F_OK) == SUCCESSFUL)
+	{
+		if (access(cmd->path_cmd, X_OK) == SUCCESSFUL)
+			return (TRUE);
+	}
+	return (free(cmd->path_cmd), cmd->path_cmd = NULL, FALSE);
+}
+
+int is_builtin(t_cmd *tmp, t_other *other)
+{
+	// ◦ echo with option -n
+	// ◦ cd with only a relative or absolute path
+	// ◦ pwd with no options
+	// ◦ export with no options
+	// ◦ unset with no options
+	// ◦ env with no options or arguments
+	// ◦ exit with no options
+	if (is_equal(tmp->commands[0]), "echo")
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0]), "cd")
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0]), "pwd")
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0]), "export")
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0]), "unset")
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0]), "env")
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0]), "exit")
+		return (SUCCESSFUL);
+	return (FAILED);
+}
+
+int	check_cmd(t_cmd *cmd, t_other *other)
+{
+	t_ind	ind;
+
+	ind.i = 0;
+	ind.c = FALSE;
+	if (is_builtin(cmd, other))
+		return (SUCCESSFUL);
+	while (ind.i < other->count_path)
+	{
+		ind.c = check_access(cmd, other, ind.i);
+		if (ind.c == TRUE)
+			break ;
+		else if (ind.c == ERROR)
+			return (ERROR);
+		ind.i ++;
+	}
+	if (ind.c == FALSE)
+	{
+		ind.c = check_access(cmd, other, -1);
+		if (ind.c == FALSE)
+			return (cmd->path_cmd = NULL, FAILED);
+	}
+	return (SUCCESSFUL);
 }
 
 int	child_process(t_cmd *tmp, t_cmd *cmd, t_other *other, int position)
