@@ -6,15 +6,15 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/26 20:24:03 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/27 20:15:05 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "header.h"
-#include "get_next_line.h"
+// #include "gnl/get_next_line.h"
 
-// void test(t_cmd *cmd)
+// void test(t_cmd *cmd, t_env **env)
 // {
 // 	int i;
 
@@ -34,18 +34,16 @@
 // 		cmd = cmd->next;
 // 		printf ("2---\n");
 // 	}
+// 	while (env)
+// 	{
+// 		printf ("key : %s\n", env->key);
+// 		printf ("value %s\n", env->value);
+// 		env = env->next;
+// 	}
 // }
 
 int	exec(t_cmd *tmp, t_cmd *cmd, t_other *other)
 {
-	if (tmp->path_cmd == NULL)
-	{
-		if (access("/tmp/here_doc", F_OK) == 0)
-			unlink("/tmp/here_doc");
-		free_all(&cmd, other);
-		myputstr ("Error: command not found\n", 2);
-		exit(1);
-	}
 	if (execve(tmp->path_cmd, tmp->argument, NULL) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)
@@ -57,50 +55,23 @@ int	exec(t_cmd *tmp, t_cmd *cmd, t_other *other)
 	return (SUCCESSFUL);
 }
 
-int	dupping2(t_cmd *tmp, t_other *other, int position)
+int	dupping(t_cmd *tmp, t_other *other)
 {
 	t_ind	ind;
 
-	if (position != 0 && tmp->next != NULL)
+	ind.r = dup2(tmp->open1, 0);
+	if (ind.r == -1)
 	{
-		ind.r = dup2(other->prev_read, 0);
-		if (ind.r == -1)
-			return (close_fds(tmp->pipefd, other->prev_read), ERROR);
-		ind.r = dup2(tmp->pipefd[WRITE], 1);
-		if (ind.r == -1)
-			return (close_fds(tmp->pipefd, other->prev_read), ERROR);
-		close_fds(tmp->pipefd, other->prev_read);
+		// close_fds();
+		return (ERROR);
 	}
-	else
+	ind.r = dup2(tmp->open2, 1);
+	if (ind.r == -1)
 	{
-		ind.r = dup2(other->prev_read, 0);
-		if (ind.r == -1)
-			return (close(other->prev_read), close(other->open2), ERROR);
-		ind.r = dup2(other->open2, 1);
-		if (ind.r == -1)
-			return (close(other->prev_read), close(other->open2), ERROR);
-		close(other->prev_read);
-		close(other->open2);
+		// close_fds();
+		return (ERROR);
 	}
-	return (SUCCESSFUL);
-}
-
-int	dupping(t_cmd *tmp, t_other *other, int position)
-{
-	t_ind	ind;
-
-	if (position == 0 && tmp->next != NULL)
-	{
-		ind.r = dup2(other->open1, 0);
-		if (ind.r == -1)
-			return (close_fds(tmp->pipefd, other->open1), ERROR);
-		ind.r = dup2(tmp->pipefd[WRITE], 1);
-		if (ind.r == -1)
-			return (close_fds(tmp->pipefd, other->open1), ERROR);
-		close_fds(tmp->pipefd, other->open1);
-		return (SUCCESSFUL);
-	}
-	ind.r = dupping2(tmp, other, position);
+	// close_fds();
 	return (SUCCESSFUL);
 }
 
@@ -133,33 +104,57 @@ int	check_file(t_cmd *tmp, t_cmd *cmd, t_other *other, int flag)
 			}
 			else if (tmp->red->red_type == REDIR_OUT)
 			{
-				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_TRUNC, );
+				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 				if (tmp->open2 == -1)
 					return (file_failed(tmp->red->file), 1);
 			}
 			else if (tmp->red->red_type == APPEND)
 			{
-				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_APPEND);
+				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
 				if (tmp->open2 == -1)
 					return (file_failed(tmp->red->file), 1);
 			}
 			else if (tmp->red->red_type == REDIR_IN)
 			{
-				tmp->open1 = open (tmp->red->file, O_RDONLY | O_TRUNC);
+				tmp->open1 = open (tmp->red->file, O_RDONLY);
 				if (tmp->open1 == -1)
 					return (file_failed(tmp->red->file), 1);
 			}
 			tmp->red = tmp->red->next;
 		}
 	}
-	else
+	int i = 1;
+	int r;
+	while (tmp->commands[i])
 	{
-		if (flag != 0)
-			tmp->open1 = tmp->pipefd[READ];
-		if (tmp->next)
-			tmp->open2 = tmp->pipefd[WRITE];
+		r = open (tmp->commands[i], O_RDONLY);
+		if (r == -1)
+			return (file_failed(tmp->commands[i]), 1);
+		i++;
 	}
 	return (SUCCESSFUL);
+}
+
+int is_builtin()
+{
+	// echo with option -n
+	// cd with only a relative or absolute path
+	// pwd with no options
+	// export with no options
+	// unset with no options
+	// env with no options or arguments
+	// exit with no options
+	
+}
+
+int check_cmd(t_cmd *tmp, t_other *other)
+{
+	if (is_builtin(tmp, other))
+		handle_builtin();
+	else
+	{
+		
+	}
 }
 
 int	child_process(t_cmd *tmp, t_cmd *cmd, t_other *other, int position)
@@ -168,14 +163,9 @@ int	child_process(t_cmd *tmp, t_cmd *cmd, t_other *other, int position)
 
 	ind.r = 0;
 	check_file(tmp, cmd, other, position);
-	ind.r = dupping(tmp, other, position);
+	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
-		if (position == 0)
-		{
-			if (access("/tmp/here_doc", F_OK) == 0)
-				unlink("/tmp/here_doc");
-		}
 		free_all(&cmd, other);
 		return (perror("Error dup2: "), exit(1), 1);
 	}
@@ -311,9 +301,15 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 
 	ind.i = 1;
 	tmp = cmd;
-	while (tmp && other->a_pipe)
+	while (tmp)
 	{
 		set_fds(tmp);
+		ind.c = check_cmd(tmp, other);
+		if (ind.c == ERROR)
+			return (free_all(cmd, other), exit(1), 1);
+		ind.r = fill_argument(&tmp);
+		if (ind.r == ERROR)
+			return (free_all(cmd, other), exit(1), 1);
 		if (tmp->next)
 			pipping(tmp, cmd, other, 1);
 		while (tmp->red)
@@ -343,7 +339,96 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 	return (SUCCESSFUL);
 }
 
-int exec (t_cmd *cmd, t_env *env)
+int	find_path(t_other *other, t_env **env)
+{
+	int		i;
+	t_env	*tmp;
+
+	i = 0;
+	tmp = *env;
+	while (tmp)
+	{
+		if (tmp->key[0] == 'P' && tmp->key[1] == 'A')
+		{
+			if (tmp->key[2] == 'T' && tmp->key[3] == 'H')
+			{
+				if (tmp->key[4] == '=')
+				{
+					other->all_path = tmp->value;
+					return (SUCCESSFUL);
+				}
+			}
+		}
+		tmp = tmp->next;
+	}
+	other->all_path = NULL;
+	return (SUCCESSFUL);
+}
+
+void	count_path(t_other *other)
+{
+	t_ind	ind;
+
+	ind.i = 0;
+	other->count_path = 0;
+	while (other->all_path[ind.i])
+	{
+		while (other->all_path[ind.i] && other->all_path[ind.i] != ':')
+			ind.i ++;
+		if (other->all_path[ind.i] == ':')
+		{
+			other->count_path ++;
+			ind.i ++;
+		}
+		if (!other->all_path[ind.i])
+			other->count_path ++;
+	}
+	return ;
+}
+
+void	fill_path(t_other *other, t_ind *ind)
+{
+	int	a;
+
+	a = 0;
+	other->paths[ind->c] = malloc (sizeof(char) * (ind->j - ind->i) + 1);
+	if (!other->paths[ind->c])
+		free_all(NULL, other);
+	while (ind->i < ind->j)
+		other->paths[ind->c][a++] = other->all_path[ind->i++];
+	other->paths[ind->c][a] = 0;
+	return ;
+}
+
+void	edit_paths(t_other *other, t_env **env)
+{
+	t_ind	ind;
+
+	find_path(other, env);
+	count_path(other);
+	if (other->all_path == NULL)
+		return ;
+	other->paths = malloc (sizeof(char *) * other->count_path);
+	if (!other->paths)
+		why_exit("other->paths allocation failed !", FAILED);
+	ind.i = 0;
+	ind.c = 0;
+	ind.j = ind.i;
+	while (other->all_path[ind.i])
+	{
+		while (other->all_path[ind.j] && other->all_path[ind.j] != ':')
+			ind.j++;
+		if (!other->all_path[ind.j] || other->all_path[ind.j] == ':')
+			fill_path(other, &ind);
+		if (other->all_path[ind.j] == ':')
+			ind.j ++;
+		ind.i = ind.j;
+		ind.c ++;
+	}
+	return ;
+}
+
+int execution(t_cmd *cmd, t_env **env)
 {
 	t_other	other;
 	// t_env *tmp;
@@ -351,6 +436,7 @@ int exec (t_cmd *cmd, t_env *env)
 
 	// test(cmd);
 	is_pipe(cmd, &other);
+	edit_paths(&other, env);
 	work(cmd, env, &other);
 	return (0);
 }

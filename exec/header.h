@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/25 16:16:06 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/27 16:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ typedef struct s_ind
 	int	f;
 }	t_ind;
 
-int		exec (t_cmd *cmd, t_env *env);
+int		execution(t_cmd *cmd, t_env **env);
 // void	myputstr(char *str, int fd);
 // void	why_exit(char *str, int type);
 // char	*mixem(t_pipex *command, t_other *other, int path_ind);

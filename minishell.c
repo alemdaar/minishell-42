@@ -6,12 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:55:20 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/17 17:32:43 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/27 16:01:20 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./minishell.h"
-#include "exec/exec.h"
+#include "exec/header.h"
 
 void function (t_cmd *cmd)
 {
@@ -71,7 +71,7 @@ int	main(int ac, char **av, char **ev)
 		cmd = assemble_command(buffer, env);
 		if (!cmd)
 			continue ;
-		exec(cmd, env);
+		execution(cmd, env);
 		cmdfree(cmd);
 	}
 }
