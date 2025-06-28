@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/27 22:02:33 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/28 20:49:18 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,29 @@
 // 	}
 // }
 
+void nothing(void *tmp)
+{
+	if (tmp)
+		return ;
+	return ;
+}
+
 int	exec(t_cmd *tmp, t_cmd *cmd, t_other *other)
 {
+	
+	nothing(cmd);
+	nothing(other);
+	if (tmp->path_cmd == NULL)
+	{
+		// free_all(&cmd, other);
+		printf ("Error: %s command not found\n", tmp->commands[0]);
+		exit(1);
+	}
 	if (execve(tmp->path_cmd, tmp->argument, NULL) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)
 			unlink("/tmp/here_doc");
-		free_all(&cmd, other);
+		// free_all(&cmd, other);
 		perror ("execve: ");
 		exit(1);
 	}
@@ -59,6 +75,7 @@ int	dupping(t_cmd *tmp, t_other *other)
 {
 	t_ind	ind;
 
+	nothing(other);
 	ind.r = dup2(tmp->open1, 0);
 	if (ind.r == -1)
 	{
@@ -106,19 +123,19 @@ int	check_file(t_cmd *tmp, t_cmd *cmd, t_other *other, int flag)
 			{
 				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 				if (tmp->open2 == -1)
-					return (file_failed(tmp->red->file), 1);
+					return (1); // return (file_failed(tmp->red->file), 1);
 			}
 			else if (tmp->red->red_type == APPEND)
 			{
 				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
 				if (tmp->open2 == -1)
-					return (file_failed(tmp->red->file), 1);
+					return (1); // return (file_failed(tmp->red->file), 1);
 			}
 			else if (tmp->red->red_type == REDIR_IN)
 			{
 				tmp->open1 = open (tmp->red->file, O_RDONLY);
 				if (tmp->open1 == -1)
-					return (file_failed(tmp->red->file), 1);
+					return (1); // return (file_failed(tmp->red->file), 1);
 			}
 			tmp->red = tmp->red->next;
 		}
@@ -129,7 +146,7 @@ int	check_file(t_cmd *tmp, t_cmd *cmd, t_other *other, int flag)
 	{
 		r = open (tmp->commands[i], O_RDONLY);
 		if (r == -1)
-			return (file_failed(tmp->commands[i]), 1);
+			return (1); // return (file_failed(tmp->commands[i]), 1);
 		i++;
 	}
 	return (SUCCESSFUL);
@@ -144,7 +161,7 @@ int is_builtin()
 	// unset with no options
 	// env with no options or arguments
 	// exit with no options
-	
+	return 1;
 }
 
 char	*mixem(t_cmd *cmd, t_other *other, int path_ind)
@@ -241,6 +258,33 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 	return (SUCCESSFUL);
 }
 
+int	fill_argument(t_cmd *tmp)
+{
+	t_ind	ind;
+
+	ind.i = 0;
+	ind.f = 0;
+	tmp->argument = malloc (sizeof(char *) * (tmp->ar + 1));
+	if (!tmp->argument)
+		return (myputstr("argument failed !\n", 2), ERROR); //free_all(),
+	tmp->argument[ind.i] = malloc (mystrlen(tmp->commands[ind.i]) + 1);
+	if (!tmp->argument[ind.i])
+		return (myputstr("tmp->argument[ind.i] allocation failed\n", 2), ERROR);
+	ind.t = 0;
+	while (tmp->commands[ind.i][ind.f])
+		tmp->argument[ind.i][ind.t++] = tmp->commands[ind.i][ind.f++];
+	ind.i ++;
+	if (tmp->commands[ind.i] == NULL)
+		return (tmp->argument[ind.i] = NULL, SUCCESSFUL);
+	while (ind.i < tmp->ar)
+	{
+		tmp->argument[ind.i] = tmp->commands[ind.i];
+		ind.i ++;
+	}
+	tmp->argument[ind.i] = NULL;
+	return (SUCCESSFUL);
+}
+
 int	child_process(t_cmd *tmp, t_cmd *cmd, t_other *other, int position)
 {
 	t_ind	ind;
@@ -250,7 +294,7 @@ int	child_process(t_cmd *tmp, t_cmd *cmd, t_other *other, int position)
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
-		free_all(&cmd, other);
+		// free_all(&cmd, other);
 		return (perror("Error dup2: "), exit(1), 1);
 	}
 	exec(tmp, cmd, other);
@@ -296,7 +340,7 @@ int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
 		ind.r = pipe(tmp->red->pipedoc);
 	if (ind.r == -1)
 	{
-		free_all(&cmd, other);
+		// free_all(&cmd, other);
 		why_exit("Error: pipe failed\n", FAILED);
 	}
 	return (SUCCESSFUL);
@@ -350,20 +394,21 @@ int	set_reds(t_cmd *tmp)
 	tmp->red->pipedoc[READ] = -3;
 }
 
-int	set_fds(t_cmd *tmp)
+int	set_up(t_cmd *tmp)
 {
 	tmp->open1 = -3;
 	tmp->open2 = -3;
 	tmp->pipefd[WRITE] = -3;
 	tmp->pipefd[READ] = -3;
 	tmp->is_limiter = 0;
+	tmp->ar = 1;
 }
 
 int	execution2(t_cmd *tmp, t_cmd *cmd, t_other *other, int i)
 {
 	if (tmp->pid == -1)
 	{
-		free_all(&cmd, other);
+		// free_all(&cmd, other);
 		why_exit("Error: fork failed\n", FAILED);
 	}
 	if (tmp->pid == 0)
@@ -378,6 +423,14 @@ int	execution2(t_cmd *tmp, t_cmd *cmd, t_other *other, int i)
 	return (SUCCESSFUL);
 }
 
+void count_args(t_cmd *tmp)
+{
+	int i = 0;
+	while (tmp->commands[i])
+		i++;
+	tmp->ar = i;
+	return ;
+}
 int  work(t_cmd *cmd, t_env *env, t_other *other)
 {
 	t_cmd	*tmp;
@@ -387,13 +440,14 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 	tmp = cmd;
 	while (tmp)
 	{
-		set_fds(tmp);
+		set_up(tmp);
 		ind.c = check_cmd(tmp, other);
 		if (ind.c == ERROR)
-			return (free_all(cmd, other), exit(1), 1);
+			return (exit(1), 1); // free_all(cmd, other), 
+		count_opt(tmp);
 		ind.r = fill_argument(&tmp);
 		if (ind.r == ERROR)
-			return (free_all(cmd, other), exit(1), 1);
+			return (exit(1), 1); //free_all(cmd, other), 
 		if (tmp->next)
 			pipping(tmp, cmd, other, 1);
 		while (tmp->red)
@@ -423,13 +477,13 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 	return (SUCCESSFUL);
 }
 
-int	find_path(t_other *other, t_env **env)
+int	find_path(t_other *other, t_env *env)
 {
 	int		i;
 	t_env	*tmp;
 
 	i = 0;
-	tmp = *env;
+	tmp = env;
 	while (tmp)
 	{
 		if (tmp->key[0] == 'P' && tmp->key[1] == 'A')
@@ -477,14 +531,14 @@ void	fill_path(t_other *other, t_ind *ind)
 	a = 0;
 	other->paths[ind->c] = malloc (sizeof(char) * (ind->j - ind->i) + 1);
 	if (!other->paths[ind->c])
-		free_all(NULL, other);
+		// free_all(NULL, other);
 	while (ind->i < ind->j)
 		other->paths[ind->c][a++] = other->all_path[ind->i++];
 	other->paths[ind->c][a] = 0;
 	return ;
 }
 
-void	edit_paths(t_other *other, t_env **env)
+void	edit_paths(t_other *other, t_env *env)
 {
 	t_ind	ind;
 
@@ -512,7 +566,7 @@ void	edit_paths(t_other *other, t_env **env)
 	return ;
 }
 
-int execution(t_cmd *cmd, t_env **env)
+int execution(t_cmd *cmd, t_env *env)
 {
 	t_other	other;
 	// t_env *tmp;
