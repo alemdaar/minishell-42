@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oelhasso <elhassounioussama2@gmail.com>    +#+  +:+       +#+        */
+/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:48:04 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/02/21 17:48:03 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/29 18:16:13 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*return_new_line(char *buffer, char **left_address)
 	p = ft_strchr(buffer, '\n');
 	if (p == -1)
 	{
-		buffer = rtn_line(buffer, (int)(ft_strlen(buffer)) - 1);
+		buffer = rtn_line(buffer, (int)(gnl_strlen(buffer)) - 1);
 		return (free_str(left_address), buffer);
 	}
 	*left_address = ft_strdup_add(buffer + p + 1, 0);
@@ -61,7 +61,7 @@ char	*read_it(char *buffer, int fd, char **left)
 
 	while (1)
 	{
-		len = ft_strlen(buffer);
+		len = gnl_strlen(buffer);
 		r = read(fd, buffer + len, BUFFER_SIZE);
 		if (r == 0)
 			break ;

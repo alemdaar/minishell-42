@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/28 20:40:40 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/29 20:44:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # define FALSE 0
 # define ERROR -1
 # define INPUT 0
+# define DEBUG 1
 # define OUTPUT 1
 # define READ 0
 # define WRITE 1
@@ -48,6 +49,7 @@ typedef struct s_other {
 	int		prev_read;
 	int		a_pipe;
 	int		count_proc;
+	t_cmd	*orig_cmd;
 
 }	t_other;
 

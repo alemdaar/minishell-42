@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oelhasso <elhassounioussama2@gmail.com>    +#+  +:+       +#+        */
+/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 20:58:04 by oelhasso          #+#    #+#             */
-/*   Updated: 2024/12/04 21:21:17 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/29 18:16:29 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *str)
+size_t	gnl_strlen(char *str)
 {
 	size_t	i;
 
@@ -42,7 +42,7 @@ void	ft_strlcpy(char *dest, char *src, int add_bytes)
 	size_t	dest_len;
 
 	i = 0;
-	dest_len = ft_strlen(dest);
+	dest_len = gnl_strlen(dest);
 	if (dest_len > 0)
 	{
 		while (src[i] && i < dest_len)
@@ -69,7 +69,7 @@ char	*rtn_line(char *buffer, int p)
 
 	i = 0;
 	if (p == -1)
-		p = (ft_strlen(buffer)) - 1;
+		p = (gnl_strlen(buffer)) - 1;
 	str = malloc (p + 2);
 	if (!str)
 		return (free_str(&buffer), NULL);
@@ -89,7 +89,7 @@ char	*ft_strdup_add(char *src, int add_bytes)
 	int		i;
 
 	i = 0;
-	src_len = ft_strlen(src);
+	src_len = gnl_strlen(src);
 	ptr = (char *) malloc(src_len + add_bytes + 1);
 	if (ptr == NULL)
 		return (NULL);

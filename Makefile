@@ -30,7 +30,10 @@ SRC = 	minishell.c									\
 		./parsing/syntax/utils_scrap.c				\
 		./parsing/leaks/ffree.c						\
 		./parsing/leaks/free_cmd_list.c				\
-		exec/exec.c					\
+		exec/exec.c									\
+		exec/gnl/get_next_line.c					\
+		exec/gnl/get_next_line_utils.c				\
+
 
 HDR = 		minishell.h 					\
 		 	./parsing/include/token.h		\
