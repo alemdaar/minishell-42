@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/29 22:23:55 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:51:42 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "header.h"
 #include "gnl/get_next_line.h"
 
-// void test(t_cmd *cmd, t_env **env)
+// void test(t_cmd *cmd)
 // {
 // 	int i;
 
@@ -34,14 +34,8 @@
 // 		cmd = cmd->next;
 // 		printf ("2---\n");
 // 	}
-// 	while (env)
-// 	{
-// 		printf ("key : %s\n", env->key);
-// 		printf ("value %s\n", env->value);
-// 		env = env->next;
-// 	}
 // }
-// fd 1
+
 void why_exit(char *str, int flag)
 {
 	printf ("%s", str);
@@ -65,7 +59,7 @@ void nothing(void *tmp)
 	return ;
 }
 
-int	exec(t_cmd *tmp, t_other *other, t_env *env)
+int	exec(t_cmd *tmp, t_other *other)
 {
 	nothing(other);
 	if (tmp->path_cmd == NULL)
@@ -74,7 +68,7 @@ int	exec(t_cmd *tmp, t_other *other, t_env *env)
 		printf ("Error: %s command not found\n", tmp->commands[0]);
 		return (FAILED);
 	}
-	if (execve(tmp->path_cmd, tmp->argument, NULL) == ERROR)
+	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)
 			unlink("/tmp/here_doc");
@@ -166,11 +160,12 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 		}
 	}
 	int i = 1;
-	int r;
 	while (tmp->commands[i])
 	{
-		r = open (tmp->commands[i], O_RDONLY);
-		if (r == -1)
+		printf ("checked file : %s\n", tmp->commands[i]);
+		if (access(tmp->commands[i], F_OK) != SUCCESSFUL)
+			return (1); // return (file_failed(tmp->commands[i]), 1);
+		if (access(tmp->commands[i], X_OK) != SUCCESSFUL)
 			return (1); // return (file_failed(tmp->commands[i]), 1);
 		i++;
 	}
@@ -258,6 +253,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 
 	ind.i = 0;
 	ind.c = FALSE;
+	printf ("ENTERED THIS PART \n");
 	if (is_builtin(cmd, other) == SUCCESSFUL)
 	{
 		printf ("builtin\n");
@@ -429,11 +425,10 @@ int	set_up(t_cmd *tmp)
 	return (SUCCESSFUL);
 }
 
-int	execution2(t_cmd *tmp, t_other *other, t_env *env, int i)
+int	execution2(t_cmd *tmp, t_other *other, int i)
 {
 	t_ind ind;
 
-	nothing(env);
 	if (tmp->pid == -1)
 	{
 		// free_all(other);
@@ -462,6 +457,66 @@ void count_args(t_cmd *tmp)
 	tmp->ar = i;
 	return ;
 }
+
+int make_array(t_other *other, int len, t_env *env, int pos)
+{
+	char	array[len];
+	int		i;
+
+	i = 0;
+	while (env->key[i])
+	{
+		array[i] = env->key[i];
+		i++;
+	}
+	array[i++] = ':';
+	while (env->value[i])
+	{
+		array[i] = env->value[i];
+		i++;
+	}
+	array[i] = 0;
+	other->envr[pos] = array;
+	return (SUCCESSFUL);
+}
+
+int count_array(t_env *env)
+{
+	int	i;
+
+	i = 0;
+	while (env)
+	{
+		i++;
+		env = env->next;
+	}
+	return (i);
+}
+int init_env(t_env *env, t_other *other)
+{
+	int len;
+	int count;
+	int i;
+
+	count = count_array(env);
+	other->envr = malloc (sizeof(char *) * count + 1);
+	if (!other->envr)
+	{
+		// free_all(other);
+		why_exit("other->envr malloc failed\n", FAILED);
+	}
+	i = 0;
+	while (env)
+	{
+		len = ft_strlen(env->key) + ft_strlen(env->value) + 2;
+		make_array(other, len, env, i);
+		i++;
+		env = env->next;
+	}
+	other->envr[i] = NULL;
+	return (SUCCESSFUL);
+}
+
 int  work(t_cmd *cmd, t_env *env, t_other *other)
 {
 	t_cmd	*tmp;
@@ -490,12 +545,13 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 		ind.i++;
 		tmp = tmp->next;
 	}
+	init_env(env, other);
 	tmp = cmd;
 	ind.i = 0;
 	while (tmp)
 	{
 		tmp->pid = fork();
-		execution2(tmp, other, env, ind.i);
+		execution2(tmp, other, ind.i);
 		ind.i++;
 		tmp = tmp->next;
 	}
