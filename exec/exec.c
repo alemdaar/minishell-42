@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/30 19:51:42 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/01 22:48:50 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,59 @@
 #include "header.h"
 #include "gnl/get_next_line.h"
 
-// void test(t_cmd *cmd)
-// {
-// 	int i;
+void test(t_cmd *cmd)
+{
+	int i;
 
-// 	i = 0;
-// 	while (cmd)
-// 	{
-// 		printf ("1---\n");
-// 		i = 0;
-// 		while (cmd->commands[i])
-// 			printf ("cmd : %s\n", cmd->commands[i++]);
-// 		while (cmd->red)
-// 		{
-// 			printf ("file : %s\n", cmd->red->file);
-// 			printf ("type : %u\n", cmd->red->red_type);
-// 			cmd->red = cmd->red->next;
-// 		}
-// 		cmd = cmd->next;
-// 		printf ("2---\n");
-// 	}
-// }
+	i = 0;
+	while (cmd)
+	{
+		printf ("1---\n");
+		i = 0;
+		while (cmd->commands[i])
+			printf ("cmd : %s\n", cmd->commands[i++]);
+		while (cmd->red)
+		{
+			printf ("file : %s\n", cmd->red->file);
+			printf ("type : %u\n", cmd->red->red_type);
+			cmd->red = cmd->red->next;
+		}
+		cmd = cmd->next;
+		printf ("2---\n");
+	}
+}
 
+int free_all(t_other *other)
+{
+	int	i;
+
+	i = 0;
+	while (i < other->count_path && other->paths)
+	{
+		if (other->paths[i] == NULL)
+			return (free(other->paths), FAILED);
+		free(other->paths[i]);
+		i++;
+	}
+	if (other->paths == NULL)
+		return (FAILED);
+	else
+		free(other->paths);
+	while (other->orig_cmd)
+	{
+		if (other->orig_cmd->path_cmd)
+			free(other->orig_cmd->path_cmd);
+		if (other->orig_cmd->argument[0])
+			free(other->orig_cmd->argument[0]);
+		if (other->orig_cmd->argument)
+			free(other->orig_cmd->argument);
+		other->orig_cmd = other->orig_cmd->next;
+	}
+	if (other->envr)
+		free(other->envr);
+	return (0);
+	// parcing free;
+}
 void why_exit(char *str, int flag)
 {
 	printf ("%s", str);
@@ -158,16 +189,6 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			}
 			tmp->red = tmp->red->next;
 		}
-	}
-	int i = 1;
-	while (tmp->commands[i])
-	{
-		printf ("checked file : %s\n", tmp->commands[i]);
-		if (access(tmp->commands[i], F_OK) != SUCCESSFUL)
-			return (1); // return (file_failed(tmp->commands[i]), 1);
-		if (access(tmp->commands[i], X_OK) != SUCCESSFUL)
-			return (1); // return (file_failed(tmp->commands[i]), 1);
-		i++;
 	}
 	return (SUCCESSFUL);
 }
@@ -529,11 +550,11 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 		set_up(tmp);
 		ind.c = check_cmd(tmp, other);
 		if (ind.c == ERROR)
-			return (exit(1), 1); // free_all(other), 
+			return (free_all(other), exit(1), 1); 
 		count_args(tmp);
 		ind.r = fill_argument(tmp);
 		if (ind.r == ERROR)
-			return (exit(1), 1); //free_all(other), 
+			return (free_all(other), exit(1), 1);
 		if (tmp->next)
 			pipping(tmp, cmd, other, 1);
 		while (tmp->red)
@@ -656,13 +677,30 @@ void	edit_paths(t_other *other, t_env *env)
 	return ;
 }
 
+void protect_it(t_cmd *cmd, t_other *other)
+{
+	int	i;
+
+	while (cmd)
+	{
+		cmd->argument = NULL;
+		cmd->path_cmd = NULL;
+		cmd = cmd->next;
+	}
+	other->envr = NULL;
+	i = 0;
+	if (other->paths)
+		free(other->paths);
+}
+
 int execution(t_cmd *cmd, t_env *env)
 {
 	t_other	other;
 	// t_env *tmp;
 	// tmp = env;
 
-	// test(cmd);
+	test(cmd);
+	protect_it(cmd, &other);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, env, &other);
