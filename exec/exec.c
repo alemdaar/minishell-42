@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/01 22:48:50 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:50:49 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,29 @@
 #include "header.h"
 #include "gnl/get_next_line.h"
 
-void test(t_cmd *cmd)
-{
-	int i;
+// void test(t_cmd *cmd)
+// {
+// 	int i;
 
-	i = 0;
-	while (cmd)
-	{
-		printf ("1---\n");
-		i = 0;
-		while (cmd->commands[i])
-			printf ("cmd : %s\n", cmd->commands[i++]);
-		while (cmd->red)
-		{
-			printf ("file : %s\n", cmd->red->file);
-			printf ("type : %u\n", cmd->red->red_type);
-			cmd->red = cmd->red->next;
-		}
-		cmd = cmd->next;
-		printf ("2---\n");
-	}
-}
+// 	i = 0;
+// 	while (cmd)
+// 	{
+// 		printf ("1---\n");
+// 		i = 0;
+// 		while (cmd->commands[i])
+// 			printf ("cmd : %s\n", cmd->commands[i++]);
+// 		while (cmd->red)
+// 		{
+// 			printf ("file : %s\n", cmd->red->file);
+// 			printf ("type : %u\n", cmd->red->red_type);
+// 			cmd->red = cmd->red->next;
+// 		}
+// 		cmd = cmd->next;
+// 		printf ("2---\n");
+// 	}
+// }
 
-int free_all(t_other *other)
+int free_all(t_other *other, int flag)
 {
 	int	i;
 
@@ -44,32 +44,57 @@ int free_all(t_other *other)
 	while (i < other->count_path && other->paths)
 	{
 		if (other->paths[i] == NULL)
-			return (free(other->paths), FAILED);
+			return (free(other->paths), other->paths = NULL, FAILED);
 		free(other->paths[i]);
+		other->paths = NULL;
 		i++;
 	}
 	if (other->paths == NULL)
 		return (FAILED);
 	else
+	{
 		free(other->paths);
+		other->paths = NULL;
+	}
 	while (other->orig_cmd)
 	{
 		if (other->orig_cmd->path_cmd)
+		{
 			free(other->orig_cmd->path_cmd);
-		if (other->orig_cmd->argument[0])
-			free(other->orig_cmd->argument[0]);
-		if (other->orig_cmd->argument)
-			free(other->orig_cmd->argument);
+			other->orig_cmd->path_cmd = NULL;
+		}
+		if (flag)
+		{
+			if (other->orig_cmd->free_flag == 1)
+			{
+				if (other->orig_cmd->argument[0])
+				{
+					free(other->orig_cmd->argument[0]);
+					other->orig_cmd->argument[0] = NULL;
+				}
+			}
+		}
+			if (other->orig_cmd->argument)
+			{
+				free(other->orig_cmd->argument);
+				other->orig_cmd->argument = NULL;
+			}
 		other->orig_cmd = other->orig_cmd->next;
 	}
 	if (other->envr)
+	{
 		free(other->envr);
+		other->envr = NULL;
+	}
 	return (0);
 	// parcing free;
 }
 void why_exit(char *str, int flag)
 {
-	printf ("%s", str);
+	if (flag == SUCCESSFUL)
+		perror (str);
+	else if (flag == FAILED)
+		printf ("%s", str);
 	exit(flag);
 }
 
@@ -95,18 +120,23 @@ int	exec(t_cmd *tmp, t_other *other)
 	nothing(other);
 	if (tmp->path_cmd == NULL)
 	{
-		// free_all(other);
+		free_all(other, 1);
 		printf ("Error: %s command not found\n", tmp->commands[0]);
 		return (FAILED);
 	}
-	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
+	int i = 0;
+	while (tmp->argument[i])
+		printf ("arg : %s\n", tmp->argument[i++]);
+	printf ("EXECVE TIME !\n");
+	if (execve(tmp->path_cmd, tmp->argument, NULL) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)
 			unlink("/tmp/here_doc");
-		// free_all(other);
+		free_all(other, 1);
 		perror ("execve: ");
 		exit(1);
 	}
+	printf ("EXECVE ENDED !\n");
 	return (SUCCESSFUL);
 }
 
@@ -117,7 +147,10 @@ int	dupping(t_cmd *tmp, t_other *other)
 	ind.r = -99;
 	nothing(other);
 	if (tmp->open1 != -3)
+	{
 		ind.r = dup2(tmp->open1, 0);
+		close(tmp->open1);
+	}
 	#ifdef DEBUG
 	printf ("fd 1 : %d\n", tmp->open1);
 	#endif
@@ -274,7 +307,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 
 	ind.i = 0;
 	ind.c = FALSE;
-	printf ("ENTERED THIS PART \n");
+	// printf ("ENTERED THIS PART \n");
 	if (is_builtin(cmd, other) == SUCCESSFUL)
 	{
 		printf ("builtin\n");
@@ -298,7 +331,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 	return (SUCCESSFUL);
 }
 
-int	fill_argument(t_cmd *tmp)
+int	fill_argument(t_cmd *tmp, t_other *other)
 {
 	t_ind	ind;
 
@@ -306,10 +339,11 @@ int	fill_argument(t_cmd *tmp)
 	ind.f = 0;
 	tmp->argument = malloc (sizeof(char *) * (tmp->ar + 1));
 	if (!tmp->argument)
-		return (printf("argument failed !\n"), ERROR); //free_all(other),
+		return (printf("argument failed !\n"), free_all(other, 0), ERROR);
 	tmp->argument[ind.i] = malloc (mystrlen(tmp->commands[ind.i]) + 1);
 	if (!tmp->argument[ind.i])
-		return (printf("tmp->argument[ind.i] allocation failed\n"), ERROR);
+		return (printf("tmp->argument[ind.i] allocation failed\n"), free_all(other, 0), ERROR);
+	tmp->free_flag = 1;
 	ind.t = 0;
 	while (tmp->commands[ind.i][ind.f])
 		tmp->argument[ind.i][ind.t++] = tmp->commands[ind.i][ind.f++];
@@ -334,7 +368,7 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
-		// free_all(other);
+		free_all(other, 1);
 		return (perror("Error dup2: "), exit(1), 1);
 	}
 	ind.r = exec(tmp, other);
@@ -361,14 +395,17 @@ int	is_limiter(char *line, char *limiter)
 	t_ind	ind;
 
 	ind.i = 0;
+	printf("limiter : %s\n", limiter);
+	printf("line : %s\n", line);
 	while (limiter[ind.i] && limiter[ind.i] == line[ind.i])
 		ind.i ++;
+	printf("+++++++++++++++++++\n");
 	if (limiter[ind.i] == 0 && line[ind.i] == '\n')
 		return (TRUE);
 	return (FALSE);
 }
 
-int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
+int	pipping(t_cmd *tmp, t_other *other, int type)
 {
 	t_ind	ind;
 
@@ -378,9 +415,7 @@ int	pipping(t_cmd *tmp, t_cmd *cmd, t_other *other, int type)
 		ind.r = pipe(tmp->red->pipedoc);
 	if (ind.r == -1)
 	{
-		if (cmd || other)
-			why_exit("Error: pipe failed\n", FAILED);
-		// free_all(other);
+		free_all(other, 1);
 		why_exit("Error: pipe failed\n", FAILED);
 	}
 	return (SUCCESSFUL);
@@ -392,10 +427,10 @@ int	make_heredoc(t_cmd *tmp, t_cmd *cmd, t_other *other)
 	t_ind	ind;
 
 	ind.c = 0;
-	pipping(tmp, cmd, other, 2);
+	pipping(tmp, other, 2);
 	while (1)
 	{
-		printf("> ");
+		write (1, "> ", 2);
 		line = get_next_line(0);
 		if (line == NULL && ind.c == 0)
 		{
@@ -452,7 +487,7 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 
 	if (tmp->pid == -1)
 	{
-		// free_all(other);
+		free_all(other, 1);
 		why_exit("Error: fork failed\n", FAILED);
 	}
 	if (tmp->pid == 0)
@@ -523,7 +558,7 @@ int init_env(t_env *env, t_other *other)
 	other->envr = malloc (sizeof(char *) * count + 1);
 	if (!other->envr)
 	{
-		// free_all(other);
+		free_all(other, 1);
 		why_exit("other->envr malloc failed\n", FAILED);
 	}
 	i = 0;
@@ -541,27 +576,35 @@ int init_env(t_env *env, t_other *other)
 int  work(t_cmd *cmd, t_env *env, t_other *other)
 {
 	t_cmd	*tmp;
+	t_red	*red_copy;
 	t_ind	ind;
 
 	ind.i = 1;
 	tmp = cmd;
 	while (tmp)
 	{
+		tmp->free_flag = 0;
 		set_up(tmp);
 		ind.c = check_cmd(tmp, other);
+		printf ("......... \n");
 		if (ind.c == ERROR)
-			return (free_all(other), exit(1), 1); 
+			return (free_all(other, 0), exit(1), 1); 
 		count_args(tmp);
-		ind.r = fill_argument(tmp);
+		ind.r = fill_argument(tmp, other);
 		if (ind.r == ERROR)
-			return (free_all(other), exit(1), 1);
+			exit(1);
 		if (tmp->next)
-			pipping(tmp, cmd, other, 1);
-		while (tmp->red)
+			pipping(tmp, other, 1);
+		red_copy = tmp->red;
+		while (red_copy)
 		{
 			set_reds(tmp);
 			if (is_heredoc(tmp))
+			{
+				red_copy->limiter = red_copy->file;
 				make_heredoc(tmp, cmd, other);
+			}
+			red_copy = red_copy->next;
 		}
 		ind.i++;
 		tmp = tmp->next;
@@ -571,17 +614,21 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 	ind.i = 0;
 	while (tmp)
 	{
+		printf ("111111111\n");
 		tmp->pid = fork();
 		execution2(tmp, other, ind.i);
 		ind.i++;
 		tmp = tmp->next;
+		printf ("222222222\n");
 	}
 	ind.t = 0;
 	while (ind.t < ind.i)
 	{
+		printf ("waiting\n");
 		wait(NULL);
 		ind.t ++;
 	}
+	printf ("finished");
 	return (SUCCESSFUL);
 }
 
@@ -639,7 +686,7 @@ void	fill_path(t_other *other, t_ind *ind)
 	other->paths[ind->c] = malloc (sizeof(char) * (ind->j - ind->i) + 1);
 	if (!other->paths[ind->c])
 	{
-		// free_all(NULL, other);
+		free_all(other, 0);
 		printf ("malloc failed\n");
 		exit(1);
 	}
@@ -652,6 +699,7 @@ void	fill_path(t_other *other, t_ind *ind)
 void	edit_paths(t_other *other, t_env *env)
 {
 	t_ind	ind;
+	// ENTERED THIS PART
 
 	find_path(other, env);
 	count_path(other);
@@ -689,8 +737,7 @@ void protect_it(t_cmd *cmd, t_other *other)
 	}
 	other->envr = NULL;
 	i = 0;
-	if (other->paths)
-		free(other->paths);
+	other->paths = NULL;
 }
 
 int execution(t_cmd *cmd, t_env *env)
@@ -699,7 +746,7 @@ int execution(t_cmd *cmd, t_env *env)
 	// t_env *tmp;
 	// tmp = env;
 
-	test(cmd);
+	// test(cmd);
 	protect_it(cmd, &other);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
