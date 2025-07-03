@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/30 17:54:56 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/03 15:46:48 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@
 // }	t_cmd;
 
 typedef struct s_other {
+	int debug;
 	int		count_path;
 	char	*all_path;
 	char	**paths;
-	int		prev_read;
 	int		a_pipe;
 	int		count_proc;
 	char	**envr;
