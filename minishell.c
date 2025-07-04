@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:55:20 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/28 20:38:53 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/04 22:06:03 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	main(int ac, char **av, char **ev)
 		cmd = assemble_command(buffer, env);
 		if (!cmd)
 			continue ;
-		execution(cmd, env);
+		execution(cmd, env, ev);
 		cmdfree(cmd);
 	}
 }

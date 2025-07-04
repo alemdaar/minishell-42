@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/03 15:46:48 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/04 22:20:39 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@
 
 typedef struct s_other {
 	int debug;
-	int		count_path;
-	char	*all_path;
-	char	**paths;
-	int		a_pipe;
-	int		count_proc;
-	char	**envr;
-	t_cmd	*orig_cmd;
+	int			count_path;
+	char		*all_path;
+	char		**paths;
+	int			a_pipe;
+	int			count_proc;
+	char		**envr;
+	t_cmd		*orig_cmd;
 }	t_other;
 
 typedef struct s_ind
@@ -63,7 +63,7 @@ typedef struct s_ind
 	int	f;
 }	t_ind;
 
-int		execution(t_cmd *cmd, t_env *env);
+int execution(t_cmd *cmd, t_env *env, char **ev);
 // void	myputstr(char *str, int fd);
 // void	why_exit(char *str, int type);
 // char	*mixem(t_cmd *command, t_other *other, int path_ind);

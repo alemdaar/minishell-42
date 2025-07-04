@@ -1,29 +1,30 @@
 debug fd is : 3
+PIPE READ of cmd -> LS in address -> 0x10
+PIPE WRITE of cmd -> LS in address -> 0x14
 Loop : 0
+check read : 4, and its in cmd : LS
+FWST CHECKFILE fd in "LS" command, open 1 is : -3
+QBL EXEC fd in "LS" command, open 1 is : -3
+QBL EXEC fd in "LS" command, open 2 is : 5
+fd in "LS" command, open 1 is : -3
+fd in "LS" command, open 2 is : 5
 Loop : 1
-check read : 4, and its in cmd : ls
-FWST CHECKFILE fd in "ls" command, open 1 is : -3
-QBL EXEC fd in "ls" command, open 1 is : -3
-QBL EXEC fd in "ls" command, open 2 is : 5
-fd in "ls" command, open 1 is : -3
-fd in "ls" command, open 2 is : 5
-closed in ls -> tmp->open2 : 5
-close_fds in dup, cmd : ls
-+closed in ls -> tmp->open2 : 5
-+closed in ls -> tmp->pipefd[READ] : 4
-+closed in ls -> tmp->pipefd[WRITE] : 5
-arg ==== : ls
+closed in LS -> tmp->open2 : 5
+close_fds in dup, cmd : LS
++closed in LS -> tmp->open2 : 5
++closed in LS -> tmp->pipefd[READ] : 4
++closed in LS -> tmp->pipefd[WRITE] : 5
+arg ==== : LS
 EXECVE TIME !
-check open : 4, and its in cmd : cat
-check open OWNER : 4, and its in cmd : cat
-FWST CHECKFILE fd in "cat" command, open 1 is : 4
-QBL EXEC fd in "cat" command, open 1 is : 4
-QBL EXEC fd in "cat" command, open 2 is : -3
-fd in "cat" command, open 1 is : 4
-fd in "cat" command, open 2 is : -3
-closed in cat -> tmp->open1 : 4
-close_fds in dup, cmd : cat
-+closed in cat -> tmp->open1 : 4
-arg ==== : cat
+check open : 4, and its in cmd : CAT
+check open OWNER : 4, and its in cmd : CAT
+FWST CHECKFILE fd in "CAT" command, open 1 is : 4
+QBL EXEC fd in "CAT" command, open 1 is : 4
+QBL EXEC fd in "CAT" command, open 2 is : -3
+fd in "CAT" command, open 1 is : 4
+fd in "CAT" command, open 2 is : -3
+closed in CAT -> tmp->open1 : 4
+close_fds in dup, cmd : CAT
++closed in CAT -> tmp->open1 : 4
+arg ==== : CAT
 EXECVE TIME !
-waiting 1

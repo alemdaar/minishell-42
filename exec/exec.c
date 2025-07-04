@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/04 16:36:26 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/04 22:55:11 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void close_all_fds(t_cmd *cmd, t_other *other)
 	}
 }
 
-int free_all(t_other *other, int flag)
+int free_all(t_other *other)
 {
 	int	i;
 
@@ -162,22 +162,18 @@ int free_all(t_other *other, int flag)
 			free(other->orig_cmd->path_cmd);
 			other->orig_cmd->path_cmd = NULL;
 		}
-		if (flag)
+		i = 0;
+		while (other->orig_cmd->argument[i])
 		{
-			if (other->orig_cmd->free_flag == 1)
-			{
-				if (other->orig_cmd->argument[0])
-				{
-					free(other->orig_cmd->argument[0]);
-					other->orig_cmd->argument[0] = NULL;
-				}
-			}
+			free(other->orig_cmd->argument[i]);
+			other->orig_cmd->argument[i] = NULL;
+			i ++;
 		}
-			if (other->orig_cmd->argument)
-			{
-				free(other->orig_cmd->argument);
-				other->orig_cmd->argument = NULL;
-			}
+		if (other->orig_cmd->argument)
+		{
+			free(other->orig_cmd->argument);
+			other->orig_cmd->argument = NULL;
+		}
 		other->orig_cmd = other->orig_cmd->next;
 	}
 	if (other->envr)
@@ -216,10 +212,9 @@ void nothing(void *tmp)
 
 int	exec(t_cmd *tmp, t_other *other)
 {
-	nothing(other);
 	if (tmp->path_cmd == NULL)
 	{
-		free_all(other, 1);
+		free_all(other);
 		printf ("Error: %s command not found\n", tmp->commands[0]);
 		return (FAILED);
 	}
@@ -227,11 +222,16 @@ int	exec(t_cmd *tmp, t_other *other)
 	while (tmp->argument[i])
 		dprintf (other->debug, "arg ==== : %s\n", tmp->argument[i++]);
 	dprintf (other->debug, "EXECVE TIME !\n");
+	dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
+	dprintf (other->debug, "TEST=======\n");
+	if (other->envr == NULL)
+		dprintf (other->debug, "ENV IS NULL\n");
+	dprintf (other->debug, "TEST\n");
 	if (execve(tmp->path_cmd, tmp->argument, NULL) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)
 			unlink("/tmp/here_doc");
-		free_all(other, 1);
+		free_all(other);
 		perror ("execve: ");
 		exit(1);
 	}
@@ -252,18 +252,18 @@ int	dupping(t_cmd *tmp, t_other *other)
 		ind.r = dup2(tmp->open1, 0);
 		if (ind.r == -1)
 		{
-			dprintf (other->debug, "error in \"%s\" command, open 1", tmp->commands[0]);
+			printf ("error in \"%s\" command, open 1", tmp->commands[0]);
 			return (ERROR);
 		}
 		dprintf (other->debug, "closed in %s -> tmp->open1 : %d\n", tmp->commands[0], tmp->open1);
 		close(tmp->open1);
 	}
-	if (tmp->open2 != -3 && tmp->open1 != -1)
+	if (tmp->open2 != -3 && tmp->open2 != -1)
 	{
 		ind.r = dup2(tmp->open2, 1);
 		if (ind.r == -1)
 		{
-			dprintf (other->debug, "error in \"%s\" command, open 2", tmp->commands[0]);
+			printf ("error in \"%s\" command, open 2", tmp->commands[0]);
 			return (ERROR);
 		}
 		dprintf (other->debug, "closed in %s -> tmp->open2 : %d\n", tmp->commands[0], tmp->open2);
@@ -276,6 +276,8 @@ int	dupping(t_cmd *tmp, t_other *other)
 
 int	check_file(t_cmd *tmp, t_other *other, int flag)
 {
+	t_red	*copy_red;
+
 	if (other->a_pipe)
 	{
 		if (flag == 0)
@@ -296,52 +298,77 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 		}
 	}
 	dprintf (other->debug, "FWST CHECKFILE fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
-	if (tmp->red)
+	copy_red = tmp->red;
+	while (copy_red)
 	{
-		while (tmp->red)
+		if (copy_red->red_type == HERDOOC)
+		{
+			if (copy_red->pipedoc[READ] || copy_red->pipedoc[WRITE])
 			{
-			if (tmp->red->red_type == HERDOOC)
-			{
-				tmp->red->limiter = tmp->red->file;
-				if (tmp->open1 != -3)
-				{
-					dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
-					close(tmp->pipefd[READ]);
-				}
-				tmp->open1 = tmp->red->pipedoc[READ];
+				copy_red->limiter = NULL;
+				close (copy_red->pipedoc[READ]);
+				copy_red->pipedoc[READ] = -3;
+				close (copy_red->pipedoc[WRITE]);
+				copy_red->pipedoc[WRITE] = -3;
 			}
-			else if (tmp->red->red_type == REDIR_OUT)
+			copy_red->limiter = copy_red->file;
+			if (tmp->open1 != -3)
 			{
-				if (tmp->open2 != -3)
-				{
-					close(tmp->pipefd[WRITE]);
-				}
-				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-				if (tmp->open2 == -1)
-					return (perror("Error: "), -1);
+				dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
+				close(tmp->pipefd[READ]);
 			}
-			else if (tmp->red->red_type == APPEND)
-			{
-				if (tmp->open2 != -3)
-				{
-					close(tmp->pipefd[WRITE]);
-				}
-				tmp->open2 = open (tmp->red->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
-				if (tmp->open2 == -1)
-					return (perror("Error: "), -1);
-			}
-			else if (tmp->red->red_type == REDIR_IN)
-			{
-				if (tmp->open1 != -3)
-				{
-					close(tmp->pipefd[READ]);
-				}
-				tmp->open1 = open (tmp->red->file, O_RDONLY);
-				if (tmp->open1 == -1)
-					return (perror("Error: "), -1);
-			}
-			tmp->red = tmp->red->next;
+			tmp->open1 = copy_red->pipedoc[READ];
 		}
+		else if (copy_red->red_type == REDIR_OUT)
+		{
+			if (tmp->open2 != -3)
+			{
+				close(tmp->pipefd[WRITE]);
+			}
+			dprintf (other->debug, "REDIR_OUT in address -> %p\n", &tmp->open2);
+			if (tmp->open2)
+			{
+				close (tmp->open2);
+				tmp->open2 = -3;
+				
+			}
+			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			if (tmp->open2 == -1)
+				return (perror("Error: "), -1);
+		}
+		else if (copy_red->red_type == APPEND)
+		{
+			if (tmp->open2 != -3)
+			{
+				close(tmp->pipefd[WRITE]);
+			}
+			dprintf (other->debug, "APPEND in address -> %p\n", &tmp->open2);
+			if (tmp->open2)
+			{
+				close (tmp->open2);
+				tmp->open2 = -3;
+			}
+			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+			if (tmp->open2 == -1)
+				return (perror("Error: "), -1);
+		}
+		else if (copy_red->red_type == REDIR_IN)
+		{
+			if (tmp->open1 != -3)
+			{
+				close(tmp->pipefd[READ]);
+			}
+			dprintf (other->debug, "REDIR_in in address -> %p\n", &tmp->open1);
+			if (tmp->open1)
+			{
+				close (tmp->open1);
+				tmp->open1 = -3;
+			}
+			tmp->open1 = open (copy_red->file, O_RDONLY);
+			if (tmp->open1 == -1)
+				return (perror("Error: "), -1);
+		}
+		copy_red = copy_red->next;
 	}
 	return (SUCCESSFUL);
 }
@@ -427,12 +454,13 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 
 	ind.i = 0;
 	ind.c = FALSE;
-	// printf ("ENTERED THIS PART \n");
 	if (is_builtin(cmd, other) == SUCCESSFUL)
 	{
 		dprintf (other->debug, "builtin\n");
 		return (SUCCESSFUL);
 	}
+	if (other->all_path == NULL)
+		return (FAILED);
 	while (ind.i < other->count_path)
 	{
 		ind.c = check_access(cmd, other, ind.i);
@@ -455,19 +483,13 @@ int	fill_argument(t_cmd *tmp, t_other *other)
 {
 	t_ind	ind;
 
-	ind.i = 0;
 	ind.f = 0;
 	tmp->argument = malloc (sizeof(char *) * (tmp->ar + 1));
 	if (!tmp->argument)
-		return (printf("argument failed !\n"), free_all(other, 0), ERROR);
-	tmp->argument[ind.i] = malloc (mystrlen(tmp->commands[ind.i]) + 1);
-	if (!tmp->argument[ind.i])
-		return (printf("tmp->argument[ind.i] allocation failed\n"), free_all(other, 0), ERROR);
-	tmp->free_flag = 1;
+		return (printf("argument failed !\n"), free_all(other), ERROR);
 	ind.t = 0;
-	while (tmp->commands[ind.i][ind.f])
-		tmp->argument[ind.i][ind.t++] = tmp->commands[ind.i][ind.f++];
-	ind.i ++;
+	tmp->argument[0] = tmp->commands[0];
+	ind.i = 1;
 	if (tmp->commands[ind.i] == NULL)
 		return (tmp->argument[ind.i] = NULL, SUCCESSFUL);
 	while (ind.i < tmp->ar)
@@ -479,17 +501,32 @@ int	fill_argument(t_cmd *tmp, t_other *other)
 	return (SUCCESSFUL);
 }
 
+// int which_case(char *command, const char *dacase)
+// {
+// 	int	i;
+
+// 	if (command == NULL)
+// 		return (FAILED);
+// 	i = 0;
+// 	while (command[i] && dacase[i] && command[i] == dacase[i])
+// 		i++;
+// 	if (command[i] != dacase[i])
+// 		return (FAILED);
+// 	return (SUCCESSFUL);
+// }
+
 int	child_process(t_cmd *tmp, t_other *other, int position)
 {
 	t_ind	ind;
 
-	ind.r = 0;
+	if (tmp->commands[0] == NULL)
+		exit(SUCCESSFUL);
 	ind.r = check_file(tmp, other, position);
 	if (ind.r == -1)
 	{
 		dprintf(other->debug, "check_file failed\n");
 		close_fds(tmp, other);
-		free_all(other, 1);
+		free_all(other);
 		exit(1);
 	}
 	dprintf (other->debug, "QBL EXEC fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
@@ -500,9 +537,10 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 		dprintf(other->debug, "dupping failed\n");
 		dprintf (other->debug, "close_fds in child prc,  cmd : %s\n", tmp->commands[0]);
 		close_fds(tmp, other);
-		free_all(other, 1);
+		free_all(other);
 		return (perror("Error dup2: "), 1);
 	}
+	// while (1);
 	ind.r = exec(tmp, other);
 	return (ind.r);
 }
@@ -541,12 +579,20 @@ int	pipping(t_cmd *tmp, t_other *other, int type)
 	t_ind	ind;
 
 	if (type == 1)
+	{
+		dprintf (other->debug, "PIPE READ of cmd -> %s in address -> %p\n", tmp->commands[0], &tmp->red->pipedoc[READ]);
+		dprintf (other->debug, "PIPE WRITE of cmd -> %s in address -> %p\n", tmp->commands[0], &tmp->red->pipedoc[WRITE]);
 		ind.r = pipe(tmp->pipefd);
+	}
 	else
+	{
 		ind.r = pipe(tmp->red->pipedoc);
+		dprintf (other->debug, "HEREDOC READ in address -> %p\n", &tmp->red->pipedoc[READ]);
+		dprintf (other->debug, "HEREDOC WRITE in address -> %p\n", &tmp->red->pipedoc[WRITE]);
+	}
 	if (ind.r == -1)
 	{
-		free_all(other, 1);
+		free_all(other);
 		why_exit("Error: pipe failed\n", FAILED);
 	}
 	return (SUCCESSFUL);
@@ -623,7 +669,7 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 
 	if (tmp->pid == -1)
 	{
-		free_all(other, 1);
+		free_all(other);
 		why_exit("Error: fork failed\n", FAILED);
 	}
 	if (tmp->pid == 0)
@@ -631,8 +677,15 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 		ind.r = child_process(tmp, other, i);
 		exit (ind.r);
 	}
-	// close(tmp->pipefd[WRITE]);
-	// close(tmp->pipefd[READ]);
+	if (i == 0)
+		close(tmp->pipefd[WRITE]);
+	else if (tmp->next == NULL)
+		close(tmp->prev->pipefd[READ]);
+	else
+	{
+		close(tmp->pipefd[WRITE]);
+		close(tmp->prev->pipefd[READ]);
+	}
 	return (SUCCESSFUL);
 }
 
@@ -679,32 +732,8 @@ int count_array(t_env *env)
 	}
 	return (i);
 }
-int init_env(t_env *env, t_other *other)
-{
-	int len;
-	int count;
-	int i;
 
-	count = count_array(env);
-	other->envr = malloc (sizeof(char *) * count + 1);
-	if (!other->envr)
-	{
-		free_all(other, 1);
-		why_exit("other->envr malloc failed\n", FAILED);
-	}
-	i = 0;
-	while (env)
-	{
-		len = ft_strlen(env->key) + ft_strlen(env->value) + 2;
-		make_array(other, len, env, i);
-		i++;
-		env = env->next;
-	}
-	other->envr[i] = NULL;
-	return (SUCCESSFUL);
-}
-
-int  work(t_cmd *cmd, t_env *env, t_other *other)
+int  work(t_cmd *cmd, t_other *other)
 {
 	t_cmd	*tmp;
 	t_red	*red_copy;
@@ -716,15 +745,6 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 	{
 		tmp->free_flag = 0;
 		set_up(tmp);
-		ind.c = check_cmd(tmp, other);
-		if (ind.c == ERROR)
-			return (free_all(other, 0), exit(1), 1); 
-		count_args(tmp);
-		ind.r = fill_argument(tmp, other);
-		if (ind.r == ERROR)
-			exit(1);
-		if (tmp->next)
-			pipping(tmp, other, 1);
 		red_copy = tmp->red;
 		while (red_copy)
 		{
@@ -736,10 +756,21 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 			}
 			red_copy = red_copy->next;
 		}
+		if (tmp->commands[0])
+		{
+			ind.c = check_cmd(tmp, other);
+			if (ind.c == ERROR)
+				return (free_all(other), exit(1), 1); 
+			count_args(tmp);
+			ind.r = fill_argument(tmp, other);
+			if (ind.r == ERROR)
+				exit(1);
+		}
+		if (tmp->next)
+			pipping(tmp, other, 1);
 		ind.i++;
 		tmp = tmp->next;
 	}
-	init_env(env, other);
 	tmp = cmd;
 	ind.i = 0;
 	while (tmp)
@@ -750,6 +781,7 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 		ind.i++;
 		tmp = tmp->next;
 	}
+	while (1);
 	while (ind.i--)
 	{
 		wait(NULL);
@@ -815,7 +847,7 @@ void	fill_path(t_other *other, t_ind *ind)
 	other->paths[ind->c] = malloc (sizeof(char) * (ind->j - ind->i) + 1);
 	if (!other->paths[ind->c])
 	{
-		free_all(other, 0);
+		free_all(other);
 		printf ("malloc failed\n");
 		exit(1);
 	}
@@ -869,7 +901,7 @@ void protect_it(t_cmd *cmd, t_other *other)
 	other->paths = NULL;
 }
 
-int execution(t_cmd *cmd, t_env *env)
+int execution(t_cmd *cmd, t_env *env, char **ev)
 {
 	t_other	other;
 	// t_env *tmp;
@@ -883,9 +915,10 @@ int execution(t_cmd *cmd, t_env *env)
 		return 1;
 	}
 	dprintf(other.debug, "debug fd is : %d\n", other.debug);
+	other.envr = ev;
 	protect_it(cmd, &other);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
-	work(cmd, env, &other);
+	work(cmd, &other);
 	return (0);
 }

@@ -1,0 +1,8 @@
+COMMAND    PID     USER   FD   TYPE DEVICE SIZE/OFF                NODE NAME
+minishell 8629 oelhasso  cwd    DIR    1,6      736 1152921500315577606 /goinfre/oelhasso/mini
+minishell 8629 oelhasso  txt    REG    1,6    47536 1152921500315577855 /goinfre/oelhasso/mini/minishell
+minishell 8629 oelhasso  txt    REG    1,6  1568368 1152921500311885630 /usr/lib/dyld
+minishell 8629 oelhasso    0u   CHR   16,2  0t54943                 707 /dev/ttys002
+minishell 8629 oelhasso    1u   CHR   16,2  0t54943                 707 /dev/ttys002
+minishell 8629 oelhasso    2u   CHR   16,2  0t54943                 707 /dev/ttys002
+minishell 8629 oelhasso    3u   REG    1,6     1087 1152921500315577673 /goinfre/oelhasso/mini/debug

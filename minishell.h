@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/03 13:26:21 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/04 20:18:58 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct s_env
 typedef struct s_red
 {
 	char	*file;
-	int		open;
+	// int		open;
 	char	*limiter;
 	int		pipedoc[2];
 	bool	expand;
