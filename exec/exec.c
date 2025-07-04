@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/03 22:37:43 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:36:26 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,7 +299,7 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 	if (tmp->red)
 	{
 		while (tmp->red)
-		{
+			{
 			if (tmp->red->red_type == HERDOOC)
 			{
 				tmp->red->limiter = tmp->red->file;
@@ -598,11 +598,11 @@ int is_heredoc(t_cmd *cmd)
 	return (0);
 }
 
-int	set_reds(t_cmd *tmp)
+int	set_reds(t_red *red)
 {
-	tmp->red->limiter = NULL;
-	tmp->red->pipedoc[WRITE] = -3;
-	tmp->red->pipedoc[READ] = -3;
+	red->limiter = NULL;
+	red->pipedoc[WRITE] = -3;
+	red->pipedoc[READ] = -3;
 	return (SUCCESSFUL);
 }
 
@@ -631,7 +631,8 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 		ind.r = child_process(tmp, other, i);
 		exit (ind.r);
 	}
-	dprintf (other->debug, "close_fds in exe2, cmd : %s, parent\n", tmp->commands[0]);
+	// close(tmp->pipefd[WRITE]);
+	// close(tmp->pipefd[READ]);
 	return (SUCCESSFUL);
 }
 
@@ -727,7 +728,7 @@ int  work(t_cmd *cmd, t_env *env, t_other *other)
 		red_copy = tmp->red;
 		while (red_copy)
 		{
-			set_reds(tmp);
+			set_reds(red_copy);
 			if (is_heredoc(tmp))
 			{
 				red_copy->limiter = red_copy->file;

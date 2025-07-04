@@ -1,7 +1,5 @@
 debug fd is : 3
-close_fds in exe2, cmd : ls, parent
 Loop : 0
-close_fds in exe2, cmd : cat, parent
 Loop : 1
 check read : 4, and its in cmd : ls
 FWST CHECKFILE fd in "ls" command, open 1 is : -3
@@ -10,17 +8,17 @@ QBL EXEC fd in "ls" command, open 2 is : 5
 fd in "ls" command, open 1 is : -3
 fd in "ls" command, open 2 is : 5
 closed in ls -> tmp->open2 : 5
-check open : 4, and its in cmd : cat
-check open OWNER : 4, and its in cmd : cat
-FWST CHECKFILE fd in "cat" command, open 1 is : 4
-QBL EXEC fd in "cat" command, open 1 is : 4
-QBL EXEC fd in "cat" command, open 2 is : -3
 close_fds in dup, cmd : ls
 +closed in ls -> tmp->open2 : 5
 +closed in ls -> tmp->pipefd[READ] : 4
 +closed in ls -> tmp->pipefd[WRITE] : 5
 arg ==== : ls
 EXECVE TIME !
+check open : 4, and its in cmd : cat
+check open OWNER : 4, and its in cmd : cat
+FWST CHECKFILE fd in "cat" command, open 1 is : 4
+QBL EXEC fd in "cat" command, open 1 is : 4
+QBL EXEC fd in "cat" command, open 2 is : -3
 fd in "cat" command, open 1 is : 4
 fd in "cat" command, open 2 is : -3
 closed in cat -> tmp->open1 : 4
