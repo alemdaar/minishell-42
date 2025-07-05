@@ -1,0 +1,3 @@
+cat << a << s << d << f << g | cat
+cat << a << s << d << f << g
+cat < file << a < file1 << s

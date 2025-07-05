@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/04 22:55:11 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/05 17:22:46 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,45 @@
 // 	}
 // }
 void nothing(void *tmp);
+
+// void close_reds(t_cmd *tmp, int flag)
+// {
+// 	t_red *copy;
+
+// 	if (flag == -65656)
+// 		return;
+// 	copy = tmp->red;
+// 	while (copy)
+// 	{
+// 		if (copy)
+// 		{
+// 			if (copy->pipedoc[READ] != tmp->open1 && copy->pipedoc[READ] != tmp->open2)
+// 			{
+// 				close (copy->pipedoc[READ]);
+// 				copy->pipedoc[READ] = -3;
+// 			}
+// 			if (copy->pipedoc[WRITE])
+// 			{
+// 				close (copy->pipedoc[WRITE]);
+// 				copy->pipedoc[WRITE] = -3;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			if (copy->pipedoc[READ])
+// 			{
+// 				close (copy->pipedoc[READ]);
+// 				copy->pipedoc[READ] = -3;
+// 			}
+// 			if (copy->pipedoc[WRITE])
+// 			{
+// 				close (copy->pipedoc[WRITE]);
+// 				copy->pipedoc[WRITE] = -3;
+// 			}
+// 		}
+// 		copy = copy->next;
+// 	}
+// }
 
 void close_fds(t_cmd *tmp, t_other *other)
 {
@@ -72,12 +111,10 @@ void close_fds(t_cmd *tmp, t_other *other)
 		if (tmp->red->pipedoc[READ] != -3)
 		{
 			close(tmp->red->pipedoc[READ]);
-			printf ("+closed in %s tmp->red->pipedoc[READ] : %d\n", tmp->commands[0], tmp->red->pipedoc[READ]);
 			tmp->red->pipedoc[READ] = -3;
 		}
 		if (tmp->red->pipedoc[WRITE] != -3)
 		{
-			printf ("+closed in %s tmp->red->pipedoc[WRITE] : %d\n" ,tmp->commands[0], tmp->red->pipedoc[WRITE]);
 			close(tmp->red->pipedoc[WRITE]);
 			tmp->red->pipedoc[WRITE] = -3;
 		}
@@ -119,13 +156,11 @@ void close_all_fds(t_cmd *cmd, t_other *other)
 		{
 			if (cmd->red->pipedoc[READ] != -3)
 			{
-				printf ("cmd->red->pipedoc[READ] : %d\n", cmd->red->pipedoc[READ]);
 				close(cmd->red->pipedoc[READ]);
 				cmd->red->pipedoc[READ] = -3;
 			}
 			if (cmd->red->pipedoc[WRITE] != -3)
 			{
-				printf ("cmd->red->pipedoc[WRITE] : %d\n", cmd->red->pipedoc[WRITE]);
 				close(cmd->red->pipedoc[WRITE]);
 				cmd->red->pipedoc[WRITE] = -3;
 			}
@@ -227,7 +262,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	if (other->envr == NULL)
 		dprintf (other->debug, "ENV IS NULL\n");
 	dprintf (other->debug, "TEST\n");
-	if (execve(tmp->path_cmd, tmp->argument, NULL) == ERROR)
+	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)
 			unlink("/tmp/here_doc");
@@ -257,6 +292,7 @@ int	dupping(t_cmd *tmp, t_other *other)
 		}
 		dprintf (other->debug, "closed in %s -> tmp->open1 : %d\n", tmp->commands[0], tmp->open1);
 		close(tmp->open1);
+		tmp->open1 = -3;
 	}
 	if (tmp->open2 != -3 && tmp->open2 != -1)
 	{
@@ -268,6 +304,7 @@ int	dupping(t_cmd *tmp, t_other *other)
 		}
 		dprintf (other->debug, "closed in %s -> tmp->open2 : %d\n", tmp->commands[0], tmp->open2);
 		close(tmp->open2);
+		tmp->open2 = -3;
 	}
 	dprintf (other->debug, "close_fds in dup, cmd : %s\n", tmp->commands[0]);
 	close_fds(tmp, other);
@@ -297,41 +334,31 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			tmp->open2 = tmp->pipefd[WRITE];
 		}
 	}
-	dprintf (other->debug, "FWST CHECKFILE fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
 	copy_red = tmp->red;
 	while (copy_red)
 	{
 		if (copy_red->red_type == HERDOOC)
 		{
-			if (copy_red->pipedoc[READ] || copy_red->pipedoc[WRITE])
-			{
-				copy_red->limiter = NULL;
-				close (copy_red->pipedoc[READ]);
-				copy_red->pipedoc[READ] = -3;
-				close (copy_red->pipedoc[WRITE]);
-				copy_red->pipedoc[WRITE] = -3;
-			}
-			copy_red->limiter = copy_red->file;
 			if (tmp->open1 != -3)
 			{
 				dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
 				close(tmp->pipefd[READ]);
+				tmp->pipefd[READ] = -3;
 			}
 			tmp->open1 = copy_red->pipedoc[READ];
+			dprintf (other->debug, "check open1 init is : %d,  cmd : %s\n", copy_red->pipedoc[READ], tmp->commands[0]);
+			dprintf (other->debug, "****see limiter : '%s',  cmd : %s\n", copy_red->limiter, tmp->commands[0]);
+			// while (1);
 		}
 		else if (copy_red->red_type == REDIR_OUT)
 		{
-			if (tmp->open2 != -3)
-			{
-				close(tmp->pipefd[WRITE]);
-			}
-			dprintf (other->debug, "REDIR_OUT in address -> %p\n", &tmp->open2);
 			if (tmp->open2)
 			{
 				close (tmp->open2);
 				tmp->open2 = -3;
 				
 			}
+			// dprintf (other->debug, "REDIR_OUT in address -> %p\n", &tmp->open2);
 			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			if (tmp->open2 == -1)
 				return (perror("Error: "), -1);
@@ -341,6 +368,7 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			if (tmp->open2 != -3)
 			{
 				close(tmp->pipefd[WRITE]);
+				tmp->pipefd[WRITE] = -3;
 			}
 			dprintf (other->debug, "APPEND in address -> %p\n", &tmp->open2);
 			if (tmp->open2)
@@ -357,6 +385,7 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			if (tmp->open1 != -3)
 			{
 				close(tmp->pipefd[READ]);
+				tmp->pipefd[READ] = -3;
 			}
 			dprintf (other->debug, "REDIR_in in address -> %p\n", &tmp->open1);
 			if (tmp->open1)
@@ -524,23 +553,24 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	ind.r = check_file(tmp, other, position);
 	if (ind.r == -1)
 	{
-		dprintf(other->debug, "check_file failed\n");
+		printf("<check file> failed\n");
+		dprintf (other->debug, "close_fds in child prc,  cmd : %s after <check file> failed\n", tmp->commands[0]);
 		close_fds(tmp, other);
 		free_all(other);
 		exit(1);
 	}
-	dprintf (other->debug, "QBL EXEC fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
-	dprintf (other->debug, "QBL EXEC fd in \"%s\" command, open 2 is : %d\n", tmp->commands[0], tmp->open2);
+	dprintf (other->debug, "open1 is : %d,  cmd : %s\n", tmp->open1, tmp->commands[0]);
+	dprintf (other->debug, "open2 is : %d,  cmd : %s\n", tmp->open2, tmp->commands[0]);
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
-		dprintf(other->debug, "dupping failed\n");
-		dprintf (other->debug, "close_fds in child prc,  cmd : %s\n", tmp->commands[0]);
+		printf("dupping failed\n");
+		dprintf (other->debug, "close_fds in child prc,  cmd : %s after dupping failed\n", tmp->commands[0]);
 		close_fds(tmp, other);
 		free_all(other);
 		return (perror("Error dup2: "), 1);
 	}
-	// while (1);
+	while (1);
 	ind.r = exec(tmp, other);
 	return (ind.r);
 }
@@ -574,7 +604,7 @@ int	is_limiter(char *line, char *limiter)
 	return (FALSE);
 }
 
-int	pipping(t_cmd *tmp, t_other *other, int type)
+int	pipping(t_cmd *tmp, t_red *copy, t_other *other, int type)
 {
 	t_ind	ind;
 
@@ -586,9 +616,9 @@ int	pipping(t_cmd *tmp, t_other *other, int type)
 	}
 	else
 	{
-		ind.r = pipe(tmp->red->pipedoc);
-		dprintf (other->debug, "HEREDOC READ in address -> %p\n", &tmp->red->pipedoc[READ]);
-		dprintf (other->debug, "HEREDOC WRITE in address -> %p\n", &tmp->red->pipedoc[WRITE]);
+		ind.r = pipe(copy->pipedoc);
+		dprintf (other->debug, "HEREDOC READ in address -> %p\n", &copy->pipedoc[READ]);
+		dprintf (other->debug, "HEREDOC WRITE in address -> %p\n", &copy->pipedoc[WRITE]);
 	}
 	if (ind.r == -1)
 	{
@@ -604,7 +634,15 @@ int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_cmd *cmd, t_other *other)
 	t_ind	ind;
 
 	ind.c = 0;
-	pipping(tmp, other, 2);
+	while (1);
+	dprintf (other->debug, "limiter address =: %p\n", &red_copy->limiter);
+	dprintf (other->debug, "limiter : %s\n", red_copy->limiter);
+	if (tmp->old_doc != -3)
+	{
+		close (tmp->old_doc);
+		tmp->old_doc = -3;
+	}
+	pipping(tmp, red_copy, other, 2);
 	while (1)
 	{
 		write (1, "> ", 2);
@@ -612,15 +650,19 @@ int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_cmd *cmd, t_other *other)
 		if (line == NULL && ind.c == 0)
 		{
 			close(red_copy->pipedoc[READ]);
+			red_copy->pipedoc[READ] = -3;
 			close(red_copy->pipedoc[WRITE]);
+			red_copy->pipedoc[WRITE] = -3;
 			return (perror("gnl failed: \n"), 1);
 		}
 		if (line == NULL && ind.c == 1)
 			break ;
 		ind.c = 1;
-		if (is_limiter(line, tmp->red->limiter) == TRUE)
+		if (is_limiter(line, red_copy->limiter) == TRUE)
 		{
 			close(red_copy->pipedoc[WRITE]);
+			red_copy->pipedoc[WRITE] = -3;
+			tmp->old_doc = red_copy->pipedoc[READ];
 			return (free(line), SUCCESSFUL);
 		}
 		write (red_copy->pipedoc[WRITE], line, mystrlen(line));
@@ -629,19 +671,9 @@ int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_cmd *cmd, t_other *other)
 	if (line)
 		free(line);
 	close(red_copy->pipedoc[WRITE]);
-	return (close(cmd->open1), cmd->open1 = -1, SUCCESSFUL);
-}
-
-int is_heredoc(t_cmd *cmd)
-{
-	if (cmd->red)
-	{
-		if (cmd->red->red_type == HERDOOC)
-		{
-			return (1);
-		}
-	}
-	return (0);
+	red_copy->pipedoc[WRITE] = -3;
+	tmp->old_doc = red_copy->pipedoc[READ];
+	return (SUCCESSFUL);
 }
 
 int	set_reds(t_red *red)
@@ -660,6 +692,7 @@ int	set_up(t_cmd *tmp)
 	tmp->pipefd[READ] = -3;
 	tmp->is_limiter = 0;
 	tmp->ar = 1;
+	tmp->old_doc = -3;
 	return (SUCCESSFUL);
 }
 
@@ -674,18 +707,46 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 	}
 	if (tmp->pid == 0)
 	{
+		// while (1);
 		ind.r = child_process(tmp, other, i);
 		exit (ind.r);
 	}
+	// while (1);
+	dprintf (other->debug, "tmp->open1 1: %d\n", tmp->open1);
+	dprintf (other->debug, "tmp->open2 1: %d\n", tmp->open2);
 	if (i == 0)
-		close(tmp->pipefd[WRITE]);
+	{
+		if (tmp->pipefd[WRITE])
+		{
+			close(tmp->pipefd[WRITE]);
+			tmp->pipefd[WRITE] = -3;
+		}
+	}
 	else if (tmp->next == NULL)
-		close(tmp->prev->pipefd[READ]);
+	{
+		if (tmp->prev->pipefd[READ])
+		{
+			close(tmp->prev->pipefd[READ]);
+			tmp->prev->pipefd[READ] = -3;
+		}
+	}
 	else
 	{
-		close(tmp->pipefd[WRITE]);
-		close(tmp->prev->pipefd[READ]);
+		if (tmp->pipefd[WRITE])
+		{
+			close(tmp->pipefd[WRITE]);
+			tmp->pipefd[WRITE] = -3;
+		}
+		if (tmp->prev->pipefd[READ])
+		{
+			close(tmp->prev->pipefd[READ]);
+			tmp->prev->pipefd[READ] = -3;
+		}
 	}
+	close(tmp->old_doc);
+	tmp->old_doc = -3;
+	
+	// while (1);
 	return (SUCCESSFUL);
 }
 
@@ -748,14 +809,17 @@ int  work(t_cmd *cmd, t_other *other)
 		red_copy = tmp->red;
 		while (red_copy)
 		{
+			printf ("loop got %d , file : %s\n", red_copy->red_type, red_copy->file);
 			set_reds(red_copy);
-			if (is_heredoc(tmp))
+			if (red_copy->red_type == HERDOOC)
 			{
+				printf ("hada heredoc \n");
 				red_copy->limiter = red_copy->file;
 				make_heredoc(tmp, red_copy, cmd, other);
 			}
 			red_copy = red_copy->next;
 		}
+		dprintf (other->debug, "tmp->open1 ----: %d\n", tmp->open1);
 		if (tmp->commands[0])
 		{
 			ind.c = check_cmd(tmp, other);
@@ -767,7 +831,7 @@ int  work(t_cmd *cmd, t_other *other)
 				exit(1);
 		}
 		if (tmp->next)
-			pipping(tmp, other, 1);
+			pipping(tmp, NULL, other, 1);
 		ind.i++;
 		tmp = tmp->next;
 	}
@@ -781,7 +845,9 @@ int  work(t_cmd *cmd, t_other *other)
 		ind.i++;
 		tmp = tmp->next;
 	}
-	while (1);
+	// while (1);
+	dprintf(other->debug, "ENVIR1 TEST : %s\n", other->envr[0]);
+	dprintf(other->debug, "ENVIR2 TEST : %s\n", other->envr[1]);
 	while (ind.i--)
 	{
 		wait(NULL);
@@ -915,8 +981,12 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 		return 1;
 	}
 	dprintf(other.debug, "debug fd is : %d\n", other.debug);
-	other.envr = ev;
 	protect_it(cmd, &other);
+	dprintf(other.debug, "ENVIR1 : %s\n", ev[0]);
+	dprintf(other.debug, "ENVIR2 : %s\n", ev[1]);
+	other.envr = ev;
+	// dprintf(other.debug, "ENVIR1 TEST : %s\n", other.envr[0]);
+	// dprintf(other.debug, "ENVIR2 TEST : %s\n", other.envr[1]);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, &other);
