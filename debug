@@ -1,3 +1,21 @@
 debug fd is : 3
 ENVIR1 : TERM_PROGRAM=vscode
-ENVIR2 : SHELL=/bin/zsh
+ENVIR2 : TERM=xterm-256color
+limiter address =: 0x7f9890604368
+limiter : a
+HEREDOC READ in address -> 0x7f9890604370
+HEREDOC WRITE in address -> 0x7f9890604374
+limiter address =: 0x7f98906043e8
+limiter : s
+HEREDOC READ in address -> 0x7f98906043f0
+HEREDOC WRITE in address -> 0x7f98906043f4
+tmp->open1 ----: -3
+tmp->open1 1: -3
+tmp->open2 1: -3
+Loop : 0
+ENVIR1 TEST : TERM_PROGRAM=vscode
+ENVIR2 TEST : TERM=xterm-256color
+REDIR_in in address -> 0x7f98906042b8
+closed in cat -> tmp->pipefd[READ] : -3
+check open1 init is : 4,  cmd : cat
+****see limiter : 'a',  cmd : cat

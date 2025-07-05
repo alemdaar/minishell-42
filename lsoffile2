@@ -1,0 +1,17 @@
+COMMAND     PID     USER   FD   TYPE             DEVICE SIZE/OFF                NODE NAME
+minishell 27412 oelhasso  cwd    DIR                1,5      832 1152921500313443137 /goinfre/oelhasso/mini
+minishell 27412 oelhasso  txt    REG                1,5    47440 1152921500313453461 /goinfre/oelhasso/mini/minishell
+minishell 27412 oelhasso  txt    REG                1,5  1568368 1152921500311885630 /usr/lib/dyld
+minishell 27412 oelhasso    0u   CHR               16,1 0t636900                 679 /dev/ttys001
+minishell 27412 oelhasso    1u   CHR               16,1 0t636900                 679 /dev/ttys001
+minishell 27412 oelhasso    2u   CHR               16,1 0t636900                 679 /dev/ttys001
+# minishell 27412 oelhasso    3u   REG                1,5      615 1152921500313453099 /goinfre/oelhasso/mini/debug
+
+minishell 27427 oelhasso  cwd    DIR                1,5      832 1152921500313443137 /goinfre/oelhasso/mini
+minishell 27427 oelhasso  txt    REG                1,5    47440 1152921500313453461 /goinfre/oelhasso/mini/minishell
+minishell 27427 oelhasso  txt    REG                1,5  1568368 1152921500311885630 /usr/lib/dyld
+minishell 27427 oelhasso    0u   CHR               16,1 0t636900                 679 /dev/ttys001
+minishell 27427 oelhasso    1u   CHR               16,1 0t636900                 679 /dev/ttys001
+minishell 27427 oelhasso    2u   CHR               16,1 0t636900                 679 /dev/ttys001
+# minishell 27427 oelhasso    3u   REG                1,5      615 1152921500313453099 /goinfre/oelhasso/mini/debug
+minishell 27427 oelhasso    4   PIPE 0xd3bcbf75aa0f6aa5    16384                     

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/05 17:22:46 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/05 20:56:58 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,24 +339,38 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 	{
 		if (copy_red->red_type == HERDOOC)
 		{
-			if (tmp->open1 != -3)
+			printf ("doc\n");
+			printf ("first open is : %d\n", tmp->open1);
+			if (tmp->pipefd[READ] != -3  && other->a_pipe)
 			{
-				dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
+				printf ("closed pipe\n");
 				close(tmp->pipefd[READ]);
 				tmp->pipefd[READ] = -3;
 			}
+			if (tmp->open1 != -3)
+			{
+				printf ("closed open1\n");
+				dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
+				close(tmp->open1);
+				tmp->open1 = -3;
+			}
 			tmp->open1 = copy_red->pipedoc[READ];
+			printf ("open is : %d\n", tmp->open1);
 			dprintf (other->debug, "check open1 init is : %d,  cmd : %s\n", copy_red->pipedoc[READ], tmp->commands[0]);
 			dprintf (other->debug, "****see limiter : '%s',  cmd : %s\n", copy_red->limiter, tmp->commands[0]);
-			// while (1);
+			while (1);
 		}
 		else if (copy_red->red_type == REDIR_OUT)
 		{
-			if (tmp->open2)
+			if (tmp->pipefd[WRITE] != -3 && other->a_pipe)
+			{
+				close(tmp->pipefd[WRITE]);
+				tmp->pipefd[WRITE] = -3;
+			}
+			if (tmp->open2 != -3)
 			{
 				close (tmp->open2);
 				tmp->open2 = -3;
-				
 			}
 			// dprintf (other->debug, "REDIR_OUT in address -> %p\n", &tmp->open2);
 			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
@@ -365,13 +379,13 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 		}
 		else if (copy_red->red_type == APPEND)
 		{
-			if (tmp->open2 != -3)
+			if (tmp->pipefd[WRITE] != -3 && other->a_pipe)
 			{
 				close(tmp->pipefd[WRITE]);
 				tmp->pipefd[WRITE] = -3;
 			}
 			dprintf (other->debug, "APPEND in address -> %p\n", &tmp->open2);
-			if (tmp->open2)
+			if (tmp->open2 != -3)
 			{
 				close (tmp->open2);
 				tmp->open2 = -3;
@@ -382,23 +396,32 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 		}
 		else if (copy_red->red_type == REDIR_IN)
 		{
-			if (tmp->open1 != -3)
+			printf ("red in\n");
+			printf ("first open is : %d\n", tmp->open1);
+			if (tmp->pipefd[READ] != -3 && other->a_pipe)
 			{
+				printf ("closed pipe\n");
 				close(tmp->pipefd[READ]);
 				tmp->pipefd[READ] = -3;
 			}
-			dprintf (other->debug, "REDIR_in in address -> %p\n", &tmp->open1);
-			if (tmp->open1)
+			if (tmp->open1 != -3)
 			{
+				printf ("closed open1\n");
 				close (tmp->open1);
 				tmp->open1 = -3;
 			}
+			dprintf (other->debug, "REDIR_in in address -> %p\n", &tmp->open1);
 			tmp->open1 = open (copy_red->file, O_RDONLY);
+			// printf ("name : %s\n", copy_red->file);
+			printf ("open is : %d\n", tmp->open1);
 			if (tmp->open1 == -1)
 				return (perror("Error: "), -1);
+			// while (1);
 		}
+		printf ("final open is : %d\n", tmp->open1);
 		copy_red = copy_red->next;
 	}
+	// while (1);
 	return (SUCCESSFUL);
 }
 
@@ -561,6 +584,7 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	}
 	dprintf (other->debug, "open1 is : %d,  cmd : %s\n", tmp->open1, tmp->commands[0]);
 	dprintf (other->debug, "open2 is : %d,  cmd : %s\n", tmp->open2, tmp->commands[0]);
+	while (1);
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
@@ -570,7 +594,7 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 		free_all(other);
 		return (perror("Error dup2: "), 1);
 	}
-	while (1);
+	// while (1);
 	ind.r = exec(tmp, other);
 	return (ind.r);
 }
@@ -628,19 +652,18 @@ int	pipping(t_cmd *tmp, t_red *copy, t_other *other, int type)
 	return (SUCCESSFUL);
 }
 
-int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_cmd *cmd, t_other *other)
+int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_other *other)
 {
 	char	*line;
 	t_ind	ind;
 
 	ind.c = 0;
-	while (1);
 	dprintf (other->debug, "limiter address =: %p\n", &red_copy->limiter);
 	dprintf (other->debug, "limiter : %s\n", red_copy->limiter);
-	if (tmp->old_doc != -3)
+	if (tmp->old_doc->pipedoc[READ] != -3)
 	{
-		close (tmp->old_doc);
-		tmp->old_doc = -3;
+		close (tmp->old_doc->pipedoc[READ]);
+		tmp->old_doc->pipedoc[READ] = -3;
 	}
 	pipping(tmp, red_copy, other, 2);
 	while (1)
@@ -662,7 +685,7 @@ int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_cmd *cmd, t_other *other)
 		{
 			close(red_copy->pipedoc[WRITE]);
 			red_copy->pipedoc[WRITE] = -3;
-			tmp->old_doc = red_copy->pipedoc[READ];
+			tmp->old_doc = red_copy;
 			return (free(line), SUCCESSFUL);
 		}
 		write (red_copy->pipedoc[WRITE], line, mystrlen(line));
@@ -672,7 +695,7 @@ int	make_heredoc(t_cmd *tmp, t_red *red_copy, t_cmd *cmd, t_other *other)
 		free(line);
 	close(red_copy->pipedoc[WRITE]);
 	red_copy->pipedoc[WRITE] = -3;
-	tmp->old_doc = red_copy->pipedoc[READ];
+	tmp->old_doc = red_copy;
 	return (SUCCESSFUL);
 }
 
@@ -809,16 +832,17 @@ int  work(t_cmd *cmd, t_other *other)
 		red_copy = tmp->red;
 		while (red_copy)
 		{
-			printf ("loop got %d , file : %s\n", red_copy->red_type, red_copy->file);
+			// printf ("loop got %d , file : %s\n", red_copy->red_type, red_copy->file);
 			set_reds(red_copy);
 			if (red_copy->red_type == HERDOOC)
 			{
-				printf ("hada heredoc \n");
+				// printf ("hada heredoc \n");
 				red_copy->limiter = red_copy->file;
-				make_heredoc(tmp, red_copy, cmd, other);
+				make_heredoc(tmp, red_copy, other);
 			}
 			red_copy = red_copy->next;
 		}
+		// printf ("SALA \n");
 		dprintf (other->debug, "tmp->open1 ----: %d\n", tmp->open1);
 		if (tmp->commands[0])
 		{
