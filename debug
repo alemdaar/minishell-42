@@ -1,21 +1,62 @@
 debug fd is : 3
 ENVIR1 : TERM_PROGRAM=vscode
 ENVIR2 : TERM=xterm-256color
-limiter address =: 0x7f9890604368
+limiter address =: 0x7fbebe6047a8
 limiter : a
-HEREDOC READ in address -> 0x7f9890604370
-HEREDOC WRITE in address -> 0x7f9890604374
-limiter address =: 0x7f98906043e8
+HEREDOC READ in address -> 0x7fbebe6047b0
+HEREDOC WRITE in address -> 0x7fbebe6047b4
+limiter address =: 0x7fbebe6047e8
 limiter : s
-HEREDOC READ in address -> 0x7f98906043f0
-HEREDOC WRITE in address -> 0x7f98906043f4
+HEREDOC READ in address -> 0x7fbebe6047f0
+HEREDOC WRITE in address -> 0x7fbebe6047f4
+limiter address =: 0x7fbebe604828
+limiter : d
+HEREDOC READ in address -> 0x7fbebe604830
+HEREDOC WRITE in address -> 0x7fbebe604834
+limiter address =: 0x7fbebe604868
+limiter : f
+HEREDOC READ in address -> 0x7fbebe604870
+HEREDOC WRITE in address -> 0x7fbebe604874
+limiter address =: 0x7fbebe6048a8
+limiter : g
+HEREDOC READ in address -> 0x7fbebe6048b0
+HEREDOC WRITE in address -> 0x7fbebe6048b4
 tmp->open1 ----: -3
+limiter address =: 0x7fbebe604978
+limiter : a
+HEREDOC READ in address -> 0x7fbebe604980
+HEREDOC WRITE in address -> 0x7fbebe604984
+tmp->open1 ----: -3
+limiter address =: 0x7fbebe6049c8
+limiter : b
+HEREDOC READ in address -> 0x7fbebe6049d0
+HEREDOC WRITE in address -> 0x7fbebe6049d4
+tmp->open1 ----: -3
+PIPE READ of cmd -> cat in address -> 0x7fbebe6047b0
+PIPE WRITE of cmd -> cat in address -> 0x7fbebe6047b4
 tmp->open1 1: -3
 tmp->open2 1: -3
 Loop : 0
-ENVIR1 TEST : TERM_PROGRAM=vscode
-ENVIR2 TEST : TERM=xterm-256color
-REDIR_in in address -> 0x7f98906042b8
-closed in cat -> tmp->pipefd[READ] : -3
-check open1 init is : 4,  cmd : cat
+PIPE READ of cmd -> cat in address -> 0x7fbebe604920
+PIPE WRITE of cmd -> cat in address -> 0x7fbebe604924
+tmp->open1 1: -3
+tmp->open2 1: -3
+check read : 7, and its in cmd : cat
+check open1 init is : -3,  cmd : cat
 ****see limiter : 'a',  cmd : cat
+check open1 init is : -3,  cmd : cat
+****see limiter : 's',  cmd : cat
+check open1 init is : -3,  cmd : cat
+****see limiter : 'd',  cmd : cat
+check open1 init is : -3,  cmd : cat
+Loop : 1
+****see limiter : 'f',  cmd : cat
+check open1 init is : 4,  cmd : cat
+****see limiter : 'g',  cmd : cat
+REDIR_in in address -> 0x7fbebe6046b8
+closed in cat -> tmp->pipefd[READ] : -3
+check open1 init is : 5,  cmd : cat
+****see limiter : 'a',  cmd : cat
+tmp->open1 1: -3
+tmp->open2 1: -3
+Loop : 2
