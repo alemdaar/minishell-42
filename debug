@@ -1,28 +1,14 @@
 debug fd is : 3
 ENVIR1 : TERM_PROGRAM=vscode
 ENVIR2 : TERM=xterm-256color
-fd in "ls" command, open 1 is : -3
-fd in "ls" command, open 2 is : 5
-closed in ls -> tmp->open2 : 5
-close_fds in dup, cmd : ls
-+closed in ls -> tmp->pipefd[READ] : 4
-+closed in ls -> tmp->pipefd[WRITE] : 5
-fd in "cat" command, open 1 is : 4
-fd in "cat" command, open 2 is : 6
-closed in cat -> tmp->open1 : 4
-closed in cat -> tmp->open2 : 6
-close_fds in dup, cmd : cat
-+closed in cat -> tmp->pipefd[READ] : 5
-+closed in cat -> tmp->pipefd[WRITE] : 6
-fd in "cat" command, open 1 is : 5
-fd in "cat" command, open 2 is : 6
-closed in cat -> tmp->open1 : 5
-closed in cat -> tmp->open2 : 6
-close_fds in dup, cmd : cat
-+closed in cat -> tmp->pipefd[READ] : 4
-+closed in cat -> tmp->pipefd[WRITE] : 6
-fd in "cat" command, open 1 is : 4
-fd in "cat" command, open 2 is : 5
-closed in cat -> tmp->open1 : 4
-closed in cat -> tmp->open2 : 5
-close_fds in dup, cmd : cat
+fd in "cd" command, open 1 is : -3
+fd in "cd" command, open 2 is : -3
+close_fds in dup, cmd : cd
+arg ==== : cd
+EXECVE TIME !
+HAVE A LOOK ON THE ENV : TERM_PROGRAM=vscode
+TEST=======
+TEST
+waiting 0
+finished1
+finished2

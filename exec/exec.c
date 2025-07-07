@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/07 13:54:41 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/07 23:49:20 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,10 +245,92 @@ void nothing(void *tmp)
 	return ;
 }
 
+int	is_equal(char *command, char *b_in)
+{
+	int i = 0;
+	while (command[i] && b_in[i] && b_in[i] == command[i])
+		i++;
+	if (b_in[i] == command[i])
+		return (1);
+	return (0);
+}
+
+int echo_nl(char *opt)
+{
+	int i = 0;
+	if (opt[i++] != '-')
+		return (1);
+	if (!opt[i])
+		return (1);
+	while (opt[i])
+	{
+		if (opt[i] != '-')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int builtin_echo(t_cmd *tmp)
+{
+    int i = 1;
+    int newline = 1;
+
+    if (tmp->commands[1])
+    {
+		if (tmp->commands[1][0])
+		{
+			if (echo_nl(tmp->commands[1]) == 1)
+        		newline = 0;
+		}
+    }
+    {
+    while (tmp->commands[i])
+		printf ("%s", tmp->commands[i++]);
+    if (newline)
+        printf("\n");
+    return (0);
+}
+
+int run_bin(t_cmd *tmp, t_other *other)
+{
+	if (is_equal(tmp->commands[0], "echo"))
+	{
+		builtin_echo();
+		return (SUCCESSFUL);
+	}
+	if (is_equal(tmp->commands[0], "cd"))
+	{
+		if (chdir(args[1]) != 0)
+    	{
+    	    perror("cd");
+    	    return 1;
+    	}
+		return (SUCCESSFUL);
+	}
+	if (is_equal(tmp->commands[0], "pwd") == 1)
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "export"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "unset"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "env"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "exit"))
+		return (SUCCESSFUL);
+	return (FAILED);
+}
+
 int	exec(t_cmd *tmp, t_other *other)
 {
-	// while (1);
-	if (tmp->path_cmd == NULL)
+	int	r;
+
+	if (tmp->bin == 1)
+	{
+		r = run_bin(tmp, other);
+		return (r);
+	}
+	else if (tmp->path_cmd == NULL)
 	{
 		free_all(other);
 		printf ("Error: %s command not found\n", tmp->commands[0]);
@@ -295,21 +377,14 @@ int	dupping(t_cmd *tmp, t_other *other)
 		close(tmp->open1);
 		tmp->open1 = -3;
 	}
-	// printf ("tmp->open2 -> %d\n", tmp->open2);
 	if (tmp->open2 != -3 && tmp->open2 != -1)
 	{
-		// printf ("-----------1\n");
-		// system ("ps");
-		// system ("lsof -c minishell > lsoffile");
 		ind.r = dup2(tmp->open2, 1);
-		// printf ("-----------2\n");
 		if (ind.r == -1)
 		{
-			// printf ("+++++++\n");
 			printf ("error in \"%s\" command, open 2", tmp->commands[0]);
 			return (ERROR);
 		}
-		// printf ("+++++++*******\n");
 		dprintf (other->debug, "closed in %s -> tmp->open2 : %d\n", tmp->commands[0], tmp->open2);
 		close(tmp->open2);
 		tmp->open2 = -3;
@@ -508,8 +583,8 @@ int is_builtin(t_cmd *tmp, t_other *other)
 	// 	return (SUCCESSFUL);
 	// if (is_equal(tmp->commands[0]), "cd")
 	// 	return (SUCCESSFUL);
-	// if (is_equal(tmp->commands[0]), "pwd")
-	// 	return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "pwd") == 1)
+		return (SUCCESSFUL);
 	// if (is_equal(tmp->commands[0]), "export")
 	// 	return (SUCCESSFUL);
 	// if (is_equal(tmp->commands[0]), "unset")
@@ -518,10 +593,10 @@ int is_builtin(t_cmd *tmp, t_other *other)
 	// 	return (SUCCESSFUL);
 	// if (is_equal(tmp->commands[0]), "exit")
 	// 	return (SUCCESSFUL);
-	if (tmp)
-		return (FAILED);
-	if (other)
-		return (FAILED);
+	// if (tmp)
+	// 	return (FAILED);
+	// if (other)
+	// 	return (FAILED);
 	return (FAILED);
 }
 
@@ -534,10 +609,17 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 	if (is_builtin(cmd, other) == SUCCESSFUL)
 	{
 		dprintf (other->debug, "builtin\n");
+		cmd->bin = 1;
 		return (SUCCESSFUL);
 	}
 	if (other->all_path == NULL)
 		return (FAILED);
+	// if (abs_path(cmd->commands[0]))
+	// {
+		
+	// }
+	// else
+	// {
 	while (ind.i < other->count_path)
 	{
 		ind.c = check_access(cmd, other, ind.i);
@@ -553,6 +635,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 		if (ind.c == FALSE)
 			return (cmd->path_cmd = NULL, FAILED);
 	}
+	// }
 	return (SUCCESSFUL);
 }
 
@@ -599,7 +682,6 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	ind.r = check_file(tmp, other, position);
 	if (ind.r == -1)
 	{
-		printf("<check file> failed\n");
 		dprintf (other->debug, "close_fds in child prc,  cmd : %s after <check file> failed\n", tmp->commands[0]);
 		close_fds(tmp, other);
 		free_all(other);
@@ -612,7 +694,6 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
-		printf("dupping failed\n");
 		// dprintf (other->debug, "close_fds in child prc,  cmd : %s after dupping failed\n", tmp->commands[0]);
 		close_fds(tmp, other);
 		free_all(other);
@@ -745,6 +826,7 @@ int	set_up(t_cmd *tmp)
 	tmp->is_limiter = 0;
 	tmp->ar = 1;
 	tmp->old_doc = NULL;
+	tmp->bin = 0;
 	return (SUCCESSFUL);
 }
 
@@ -754,13 +836,14 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 
 	if (tmp->pid == -1)
 	{
-		free_all(other);
-		why_exit("Error: fork failed\n", FAILED);
+		perror ("minishel: fork: ");
+		return (ERROR);
 	}
-	if (tmp->pid == 0)
+	else if (tmp->pid == 0)
 	{
 		// while (1);
 		ind.r = child_process(tmp, other, i);
+		// exit_status();
 		exit (ind.r);
 	}
 	// dprintf (other->debug, "tmp->open1 1: %d\n", tmp->open1);
@@ -891,35 +974,46 @@ int  work(t_cmd *cmd, t_other *other)
 			if (ind.r == ERROR)
 				exit(1);
 		}
+		else
+			return (SUCCESSFUL);
 		ind.i++;
 		tmp = tmp->next;
 	}
 	tmp = cmd;
 	ind.i = 0;
 	// while (1);
-	while (tmp)
+	if (cmd->next == NULL)
+		child_process(cmd, other, 0);
+	else
 	{
-		if (tmp->next)
-			pipping(tmp, NULL, other, 1);
+		while (tmp)
+		{
+			if (tmp->next)
+				pipping(tmp, NULL, other, 1);
+			// while (1);
+			tmp->pid = fork();
+			ind.r = execution2(tmp, other, ind.i);
+			if (ind.r == ERROR)
+			{
+				// exit_status(other);
+				break;
+			}
+			// while (1);
+			// dprintf (other->debug, "Loop : %d\n", ind.i);
+			ind.i++;
+			tmp = tmp->next;
+		}
 		// while (1);
-		tmp->pid = fork();
-		execution2(tmp, other, ind.i);
-		// while (1);
-		// dprintf (other->debug, "Loop : %d\n", ind.i);
-		ind.i++;
-		tmp = tmp->next;
+		// dprintf(other->debug, "ENVIR1 TEST : %s\n", other->envr[0]);
+		// dprintf(other->debug, "ENVIR2 TEST : %s\n", other->envr[1]);
+		while (ind.i--)
+		{
+			wait(NULL);
+			dprintf (other->debug, "waiting %d\n", ind.i);
+		}
 	}
-	// while (1);
-	// dprintf(other->debug, "ENVIR1 TEST : %s\n", other->envr[0]);
-	// dprintf(other->debug, "ENVIR2 TEST : %s\n", other->envr[1]);
-	while (ind.i--)
-	{
-		wait(NULL);
-		dprintf (other->debug, "waiting %d\n", ind.i);
-	}
-	dprintf (other->debug, "finished1\n");
 	close_all_fds(cmd, other);
-	dprintf (other->debug, "finished2\n");
+	dprintf (other->debug, "finished\n");
 	return (SUCCESSFUL);
 }
 

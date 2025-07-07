@@ -1,15 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
-int main(int ac, char **av, char **env)
+int main(void)
 {
-    (void)ac;
-    (void)av;
-    char *args[] = {"/usr/bin/which", "ls", NULL};
-    execve("/usr/bin/which", args, env);
-
-    // If execve fails
-    perror("execve failed");
-    return 1;
+    // Try to change to a directory that exists
+    if (chdir("/tmp") == -1)
+        perror("cd");
+    else
+        printf("Changed to /tmp successfully\n");
+    return 0;
 }
