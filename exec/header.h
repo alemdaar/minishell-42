@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/06 16:40:16 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/08 17:15:42 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ typedef struct s_other {
 	int			a_pipe;
 	int			count_proc;
 	char		**envr;
+	t_env		*envrp;
+	int			exit_status;
 	t_cmd		*orig_cmd;
 }	t_other;
 

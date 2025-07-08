@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/07 22:39:28 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/08 17:09:57 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ typedef struct s_red
 {
 	char	*file;
 	// int		open;
-	char	*limiter;
-	int		pipedoc[2];
 	bool	expand;
 	t_type	red_type;
 	t_red	*next;
@@ -49,7 +47,9 @@ typedef struct s_cmd
 {
 	char	**commands;
 	pid_t	pid;
+	int		pipedoc[2];
 	int		pipefd[2];
+	char	*limiter;
 	int		is_limiter;
 	int		open1;
 	int		open2;
@@ -59,8 +59,8 @@ typedef struct s_cmd
 	int		ar;
 	t_red	*red;
 	int		free_flag;
-	t_red	*old_doc;
 	int		bin;
+	int		count_doc;
 	t_cmd	*prev;
 	t_cmd	*next;
 }	t_cmd;
