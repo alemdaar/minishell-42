@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 13:41:53 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:09:28 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1181,41 +1181,6 @@ void count_args(t_cmd *tmp)
 		i++;
 	tmp->ar = i;
 	return ;
-}
-
-int make_array(t_other *other, int len, t_env *env, int pos)
-{
-	char	array[len];
-	int		i;
-
-	i = 0;
-	while (env->key[i])
-	{
-		array[i] = env->key[i];
-		i++;
-	}
-	array[i++] = ':';
-	while (env->value[i])
-	{
-		array[i] = env->value[i];
-		i++;
-	}
-	array[i] = 0;
-	other->envr[pos] = array;
-	return (SUCCESSFUL);
-}
-
-int count_array(t_env *env)
-{
-	int	i;
-
-	i = 0;
-	while (env)
-	{
-		i++;
-		env = env->next;
-	}
-	return (i);
 }
 
 int count_heredoc(t_cmd *tmp)
