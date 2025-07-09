@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 15:59:14 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 16:20:16 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -664,6 +664,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	{
 		free_all(other);
 		printf ("Error: %s command not found\n", tmp->commands[0]);
+		exit_status(1);
 		return (FAILED);
 	}
 	// int i = 0;
@@ -683,6 +684,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	{
 		free_all(other);
 		perror ("execve: ");
+		exit_status(1);
 		exit(1);
 	}
 	// dprintf (other->debug, "EXECVE ENDED !\n");
@@ -1079,6 +1081,7 @@ int	make_heredoc(t_cmd *tmp, t_other *other)
 	t_ind	ind;
 
 	ind.c = 0;
+	nothing(other);
 	while (1)
 	{
 		write (1, "> ", 2);
