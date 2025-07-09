@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 15:48:53 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 15:59:14 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1073,7 +1073,7 @@ int	pipping(t_cmd *tmp, int type)
 	return (SUCCESSFUL);
 }
 
-int	make_heredoc(t_cmd *tmp)
+int	make_heredoc(t_cmd *tmp, t_other *other)
 {
 	char	*line;
 	t_ind	ind;
@@ -1270,7 +1270,7 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 			if (red_copy->red_type == HERDOOC)
 			{
 				tmp->count_doc --;
-				make_heredoc(tmp);
+				make_heredoc(tmp, other);
 			}
 			red_copy = red_copy->next;
 		}
