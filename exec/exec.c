@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 12:08:46 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 12:24:23 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1297,14 +1297,17 @@ int  work(t_cmd *cmd, t_other *other)
 	while (tmp)
 	{
 		set_up(tmp);
-		count_heredoc(tmp);
-		ind.r = pipping(tmp, other, 2);
-		if (ind.r == ERROR)
-			return (exit_status(1), free_all(other), 1);
-		ind.r = fork ();
-		ind.c = child_doc(tmp, other, &ind);
-		if (ind.c == FAILED)
-			return (FAILED);
+		ind.r = count_heredoc(tmp);
+		if (ind.r > 0)
+		{
+			ind.r = pipping(tmp, other, 2);
+			if (ind.r == ERROR)
+				return (exit_status(1), free_all(other), 1);
+			ind.r = fork ();
+			ind.c = child_doc(tmp, other, &ind);
+			if (ind.c == FAILED)
+				return (FAILED);
+		}
 		if (tmp->commands[0])
 		{
 			ind.c = check_cmd(tmp, other);

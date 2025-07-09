@@ -1,11 +1,3 @@
-debug fd is : 4
+debug fd is : 3
 ENVIR1 : TERM_PROGRAM=vscode
 ENVIR2 : TERM=xterm-256color
-fd in "ls" command, open 1 is : -3
-fd in "ls" command, open 2 is : -3
-close_fds in dup, cmd : ls
-arg ==== : ls
-EXECVE TIME !
-HAVE A LOOK ON THE ENV : TERM_PROGRAM=vscode
-TEST=======
-TEST
