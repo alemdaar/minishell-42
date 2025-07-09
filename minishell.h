@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/08 20:21:22 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:53:25 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_cmd
 	int		free_flag;
 	int		bin;
 	int		count_doc;
+	int		flag_exit;
 	t_cmd	*prev;
 	t_cmd	*next;
 }	t_cmd;

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 14:52:12 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 15:32:48 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -673,8 +673,6 @@ int	exec(t_cmd *tmp, t_other *other)
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
-		if (access("/tmp/here_doc", F_OK) == 0)
-			unlink("/tmp/here_doc");
 		free_all(other);
 		perror ("execve: ");
 		exit(1);
@@ -923,11 +921,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 	ind.i = 0;
 	ind.c = FALSE;
 	if (is_builtin(cmd, other) == SUCCESSFUL)
-	{
-		// dprintf (other->debug, "builtin\n");
-		cmd->bin = 1;
-		return (SUCCESSFUL);
-	}
+		return (cmd->bin = 1, 0);
 	if (other->all_path == NULL)
 		return (FAILED);
 	// if (abs_path(cmd->commands[0]))
@@ -1087,7 +1081,9 @@ int	make_heredoc(t_cmd *tmp)
 			tmp->pipedoc[READ] = -3;
 			close(tmp->pipedoc[WRITE]);
 			tmp->pipedoc[WRITE] = -3;
-			exit(1);
+			if (tmp->flag_exit == 0)
+				exit_status(1);
+			return (1);
 		}
 		if (line == NULL && ind.c == 1)
 			break ;
@@ -1124,6 +1120,7 @@ int	set_up(t_cmd *tmp)
 	tmp->ar = 1;
 	tmp->bin = 0;
 	tmp->count_doc = 0;
+	tmp->flag_exit = 0;
 	return (SUCCESSFUL);
 }
 
@@ -1233,15 +1230,16 @@ int work3(t_cmd *tmp, t_other *other)
 			}
 		}
 		tmp->pid = fork();
-		// while (1);
 		r = execution2(tmp, other, i);
 		if (r == ERROR)
 			return (0);
 		i++;
 		tmp = tmp->next;
 	}
+	tmp = other->orig_cmd;
 	while (i--)
 	{
+		// printf ("st : %d\n", other->exit_status);
 		waitpid(tmp->pid, &other->exit_status, 0);
 		r = handle_exit_status(other->exit_status);
 		if (r == 1)
@@ -1256,8 +1254,9 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 
 	if (ind->r == ERROR)
 	{
-		exit_status(1);
-		return (free_all(other) ,close_all_fds(other->orig_cmd), FAILED);
+		if (tmp->flag_exit == 0)
+			return (exit_status(1), 1);
+		return (close_all_fds(other->orig_cmd), FAILED);
 	}
 	if (ind->r == SUCCESSFUL)
 	{
@@ -1277,9 +1276,12 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 	{
 		close(tmp->pipedoc[WRITE]);
 		waitpid(ind->r, &other->exit_status, 0);
-		ind->r = handle_exit_status(other->exit_status);
-		if (ind->r == 1)
-			return (1);
+		if (tmp->flag_exit == 0)
+		{
+			ind->r = handle_exit_status(other->exit_status);
+			if (ind->r == 1)
+				return (1);
+		}
 	}
 	return (0);
 }
@@ -1298,7 +1300,11 @@ int  work(t_cmd *cmd, t_other *other)
 		{
 			ind.r = pipping(tmp, 2);
 			if (ind.r == ERROR)
-				return (exit_status(1), 1);
+			{
+				if (tmp->flag_exit == 0)
+					return (exit_status(1), 1);
+				return (1);
+			}
 			ind.r = fork ();
 			ind.c = child_doc(tmp, other, &ind);
 			if (ind.c == FAILED)
@@ -1310,9 +1316,10 @@ int  work(t_cmd *cmd, t_other *other)
 			ind.c = check_cmd(tmp, other);
 			if (ind.c == ERROR)
 			{
+				if (tmp->flag_exit == 0)
 				exit_status(1);
 				close_all_fds(other->orig_cmd);
-				return (free_all(other), 1); 
+				return (1);
 			}
 			count_args(tmp);
 			ind.r = fill_argument(tmp, other);
@@ -1320,12 +1327,13 @@ int  work(t_cmd *cmd, t_other *other)
 			{
 				exit_status(1);
 				close_all_fds(other->orig_cmd);
-				return (free_all(other), 1); 
+				return (1); 
 			}
 		}
 		else
 		{
-			exit_status(0);
+			if (tmp->flag_exit == 0)
+				exit_status(0);
 			return (0);
 		}
 		ind.i++;
@@ -1335,18 +1343,15 @@ int  work(t_cmd *cmd, t_other *other)
 	if (cmd->next == NULL && cmd->bin == 1)
 	{
 		ind.r = child_process(cmd, other, 0);
-		exit_status(ind.r);
 		if (ind.r == 1)
-			return (close_all_fds(other->orig_cmd), free_all(other), 1);
+			return (close_all_fds(other->orig_cmd), 1);
 	}
 	else
 	{
 		ind.r = work3(tmp, other);
 		if (ind.r == 1)
-			return (close_all_fds(cmd), free_all(other), 1);
+			return (close_all_fds(cmd), 1);
 	}
-	if (ind.r == ERROR)
-		exit_status(1);
 	return (close_all_fds(cmd), free_all(other), SUCCESSFUL);
 }
 
@@ -1486,6 +1491,7 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, &other);
+	// while (1);
 	free_all(&other);
 	close_all_fds(cmd);
 	return (0);

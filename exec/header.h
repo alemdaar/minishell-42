@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 14:44:03 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:53:19 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct s_other {
 	char		**envr;
 	t_env		*envrp;
 	int			exit_status;
-	int			flag_exit;
 	t_cmd		*orig_cmd;
 }	t_other;
 

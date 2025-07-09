@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:55:20 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/09 13:57:36 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 15:08:58 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	exit_status(int val)
 	return (exit);
 }
 
-void	handle_exit_status(int status)
+int	handle_exit_status(int status)
 {
 	int	rtn;
 
@@ -36,7 +36,7 @@ void	handle_exit_status(int status)
 		rtn = WTERMSIG(status);
 		exit_status(rtn);
 	}
-	return ;
+	return (0);
 }
 
 static char	*rd_line(t_env *env)
