@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 18:31:54 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:00:41 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int		execution(t_cmd *cmd, t_env *env, char **ev);
 void	ft_lstadd_back(t_env **lst, t_env *new);
 t_env	*ft_lstlast(t_env *lst);
 t_env	*ft_lstnew(char *content1, char *content2);
-int		handle_exit_status(int status);
+void		handle_exit_status(int status);
 // void	myputstr(char *str, int fd);
 // void	why_exit(char *str, int type);
 // char	*mixem(t_cmd *command, t_other *other, int path_ind);

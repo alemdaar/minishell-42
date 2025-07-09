@@ -1,6 +1,0 @@
-<< a << s << d << f > hna
-cat << a << s << d << f << g | cat
-cat << a << s << d << f << g
-cat < file << a < file1 << s
-ls | cat file | cat file1 | cat file < file1 > see < file2
-cat << a << s << d << f << g | cat < file file 1 << a | << b < file2 > q

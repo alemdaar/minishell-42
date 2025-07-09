@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 19:22:47 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:37:32 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,16 +169,18 @@ int free_all(t_other *other)
 	i = 0;
 	while (i < other->count_path && other->paths)
 	{
+		printf ("free(other->paths[i]);\n");
 		if (other->paths[i] == NULL)
 			return (free(other->paths), other->paths = NULL, FAILED);
 		free(other->paths[i]);
-		other->paths = NULL;
+		other->paths[i] = NULL;
 		i++;
 	}
 	if (other->paths == NULL)
 		return (FAILED);
 	else
 	{
+		printf ("free(other->paths);\n");
 		free(other->paths);
 		other->paths = NULL;
 	}
@@ -186,27 +188,44 @@ int free_all(t_other *other)
 	{
 		if (other->orig_cmd->path_cmd)
 		{
+			printf ("FREE other->orig_cmd->path_cmd\n");
 			free(other->orig_cmd->path_cmd);
 			other->orig_cmd->path_cmd = NULL;
 		}
 		i = 0;
 		while (other->orig_cmd->argument[i])
 		{
+			printf ("FREE other->orig_cmd->argument[i]\n");
 			free(other->orig_cmd->argument[i]);
 			other->orig_cmd->argument[i] = NULL;
 			i ++;
 		}
 		if (other->orig_cmd->argument)
 		{
+			printf ("FREE other->orig_cmd->argument\n");
 			free(other->orig_cmd->argument);
 			other->orig_cmd->argument = NULL;
 		}
 		other->orig_cmd = other->orig_cmd->next;
 	}
-	if (other->envr)
+	if (other->envrp)
 	{
-		free(other->envr);
-		other->envr = NULL;
+		while (other->envrp)
+		{
+			if (other->envrp->key)
+			{
+				free(other->envrp->key);
+				other->envrp->key = NULL;
+			}
+			if (other->envrp->value)
+			{
+				free(other->envrp->value);
+				other->envrp->value = NULL;
+			}
+			other->envrp = other->envrp->next;
+		}
+		free(other->envrp);
+		other->envrp = NULL;
 	}
 	return (0);
 	// parcing free;
@@ -283,6 +302,8 @@ int builtin_echo(t_cmd *tmp)
         		newline = 0;
 		}
     }
+	else
+		j = 1;
     while (tmp->commands[j])
 	{
 		if (c == 1)
@@ -422,6 +443,7 @@ int	init_export(char *opt, t_other *other)
 {
 	int i;
 	int j;
+	int t;
 	char *con1;
 	char *con2;
 	t_env *new;
@@ -436,11 +458,24 @@ int	init_export(char *opt, t_other *other)
 	con1 = malloc (i + 1);
 	if (!con1)
 		return (1);
-	if (j != i + 1)
+	t = 0;
+	while (t < i)
 	{
-		con2 = malloc (i + 1);
+		con1[t] = opt[t];
+		t++;
+	}
+	if ((j - i) >= i)
+	{
+		con2 = malloc ((j - i) + 1);
 		if (!con2)
 			return (free(con1), 1);
+		t = 0;
+		while (opt[i + 1])
+		{
+			con2[t] = opt[i + 1];
+			i++;
+			t++;
+		}
 	}
 	new = ft_lstnew(con1, con2);
 	if (new == NULL)
@@ -477,13 +512,13 @@ int check_unset(char *opt)
 
 	i = 0;
 	if (!opt[0] || opt[0] == '-')
-		return (printf ("minishell: export: '%s': not a valid identifier", opt), 0);
+		return (printf ("minishell: export: '%s': not a valid identifier\n", opt), 0);
     if (!ft_isalpha(opt[0]) && opt[0] != '_')
-		return (printf ("minishell: export: '%s': not a valid identifier", opt), 1);
+		return (printf ("minishell: export: '%s': not a valid identifier\n", opt), 1);
     while (opt[i])
     {
         if (!ft_isalnum(opt[i]) && opt[i] != '_')
-            return (printf ("minishell: export: '%s': not a valid identifier", opt), 1);
+            return (printf ("minishell: export: '%s': not a valid identifier\n", opt), 1);
         i++;
     }
     return (0);
@@ -505,11 +540,15 @@ int find_unset(char *opt, t_other *other)
 		{
 			if (tenv->next == NULL)
 			{
+				tempo2 = other->envrp;
+				while (tempo2->next->next)
+					tempo2 = tempo2->next;
 				free(tenv->key);
 				free(tenv->value);
+				free(tenv);
 				tenv->key = NULL;
 				tenv->value = NULL;
-				tenv = NULL;
+				tempo2->next = NULL;
 			}
 			else if (c == 0)
 			{
@@ -610,7 +649,7 @@ int builtin_exit(t_cmd *tmp)
 	i = 0;
 	if (!tmp->commands[1])
 		return (exit_status (0), exit(1), 1);
-	while (tmp->commands[1])
+	while (tmp->commands[1][i])
 	{
 		if (tmp->commands[1][i] > '9' || tmp->commands[1][i] < '0')
 		{
@@ -634,36 +673,43 @@ int run_bin(t_cmd *tmp, t_other *other)
 	if (is_equal(tmp->commands[0], "echo"))
 	{
 		builtin_echo(tmp);
+		exit_status(0);
 		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "cd"))
 	{
 		builtin_cd(tmp, other);
+		exit_status(0);
 		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "pwd") == 1)
 	{
 		r = builtin_pwd(other);
+		exit_status(0);
 		return (r);
 	}
 	else if (is_equal(tmp->commands[0], "export"))
 	{
 		r = builtin_export(tmp, other);
+		exit_status(0);
 		return (r);
 	}
 	else if (is_equal(tmp->commands[0], "unset"))
 	{
 		r = builtin_unset(tmp, other);
+		exit_status(0);
 		return (r);
 	}
 	else if (is_equal(tmp->commands[0], "env"))
 	{
 		builtin_env(tmp, other);
+		exit_status(0);
 		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "exit"))
 	{
 		r = builtin_exit(tmp);
+		exit_status(r);
 		return (r);
 	}
 	return (FAILED);
@@ -671,16 +717,14 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 int	exec(t_cmd *tmp, t_other *other)
 {
-	int	r;
-
 	int i = 0;
 	while (tmp->argument[i])
 		dprintf (other->debug, "QBL arg ==== : %s\n", tmp->argument[i++]);
 	if (tmp->bin == 1)
 	{
-		r = run_bin(tmp, other);
+		run_bin(tmp, other);
 		dprintf (other->debug, "==== \n");
-		return (r);
+		return (0);
 	}
 	else if (tmp->path_cmd == NULL)
 	{
@@ -689,23 +733,13 @@ int	exec(t_cmd *tmp, t_other *other)
 		write (2, "Error: ", ft_strlen("Error: "));
 		write (2, tmp->commands[0], ft_strlen(tmp->commands[0]));
 		write (2, " command not found\n", ft_strlen(" command not found\n"));
-		exit_status(1);
-		return (FAILED);
+		return (127);
 	}
-	i = 0;
-	while (tmp->argument[i])
-		dprintf (other->debug, "arg ==== : %s\n", tmp->argument[i++]);
 	// dprintf (other->debug, "EXECVE TIME !\n");
 	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
-	// dprintf (other->debug, "TEST=======\n");
-	// if (other->envr == NULL)
-		// dprintf (other->debug, "ENV IS NULL\n");
-	// dprintf (other->debug, "TEST\n");
-	// dprintf (other->debug, "FULL PATH ==== : %s\n", tmp->path_cmd);
 	// while (1);
 	// printf ("FULL PATH ==== : %s\n", tmp->path_cmd);
 	// while (1);
-	dprintf (other->debug, "khrj mn hna\n");
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
 		free_all(other);
@@ -713,7 +747,6 @@ int	exec(t_cmd *tmp, t_other *other)
 		exit_status(1);
 		exit(1);
 	}
-	// dprintf (other->debug, "EXECVE ENDED !\n");
 	return (SUCCESSFUL);
 }
 
@@ -723,29 +756,24 @@ int	dupping(t_cmd *tmp, t_other *other)
 
 	ind.r = -99;
 	nothing(other);
-	// dprintf (other->debug, "fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
-	// dprintf (other->debug, "fd in \"%s\" command, open 2 is : %d\n", tmp->commands[0], tmp->open2);
 	if (tmp->open1 != -3 && tmp->open1 != -1)
 	{
-		ind.r = dup2(tmp->open1, STDIN_FILENO);
+		ind.r = dup2(tmp->open1, 0);
 		other->stdin_flag = 1;
 		if (ind.r == -1)
 			return (ERROR);
-		// dprintf (other->debug, "closed in %s -> tmp->open1 : %d\n", tmp->commands[0], tmp->open1);
 		close(tmp->open1);
 		tmp->open1 = -3;
 	}
 	if (tmp->open2 != -3 && tmp->open2 != -1)
 	{
-		ind.r = dup2(tmp->open2, STDOUT_FILENO);
+		ind.r = dup2(tmp->open2, 1);
 		other->stdout_flag = 1;
 		if (ind.r == -1)
 			return (ERROR);
-		// dprintf (other->debug, "closed in %s -> tmp->open2 : %d\n", tmp->commands[0], tmp->open2);
 		close(tmp->open2);
 		tmp->open2 = -3;
 	}
-	// dprintf (other->debug, "close_fds in dup, cmd : %s\n", tmp->commands[0]);
 	close_fds(tmp);
 	return (SUCCESSFUL);
 }
@@ -765,8 +793,6 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 		else if (tmp->next == NULL)
 		{
 			tmp->open1 = tmp->prev->pipefd[READ];
-			// dprintf (other->debug, "check open : %d, and its in cmd : %s\n", tmp->open1, tmp->commands[0]);
-			// dprintf (other->debug, "check open OWNER : %d, and its in cmd : %s\n", tmp->open1, tmp->commands[0]);
 		}
 		else
 		{
@@ -791,7 +817,6 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			if (tmp->open1 != -3)
 			{
 				// printf ("closed open1\n");
-				// dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
 				close(tmp->open1);
 				tmp->open1 = -3;
 			}
@@ -811,7 +836,6 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 				close (tmp->open2);
 				tmp->open2 = -3;
 			}
-			// dprintf (other->debug, "REDIR_OUT in address -> %p\n", &tmp->open2);
 			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			if (tmp->open2 == -1)
 			{
@@ -827,7 +851,6 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 				close(tmp->pipefd[WRITE]);
 				tmp->pipefd[WRITE] = -3;
 			}
-			// dprintf (other->debug, "APPEND in address -> %p\n", &tmp->open2);
 			if (tmp->open2 != -3)
 			{
 				close (tmp->open2);
@@ -857,7 +880,6 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 				close (tmp->open1);
 				tmp->open1 = -3;
 			}
-			// dprintf (other->debug, "REDIR_in in address -> %p\n", &tmp->open1);
 			tmp->open1 = open (copy_red->file, O_RDONLY);
 			// printf ("name : %s\n", copy_red->file);
 			// printf ("open is : %d\n", tmp->open1);
@@ -1034,13 +1056,10 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 		close_all_fds(tmp);
 		return (1);
 	}
-	// dprintf (other->debug, "open1 is : %d,  cmd : %s\n", tmp->open1, tmp->commands[0]);
-	// dprintf (other->debug, "open2 is : %d,  cmd : %s\n", tmp->open2, tmp->commands[0]);
 	// printf ("......\n");
 	// while (1);
 	if (!tmp->commands[0])
 		return (0);
-	dprintf (other->debug, "qbl dub\n");
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
@@ -1052,7 +1071,6 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	// while (1);
 	// printf ("exec time\n");
 	ind.r = exec(tmp, other);
-	dprintf (other->debug, "9999998989898989898989898989898989898\n");
 	return (ind.r);
 }
 
@@ -1091,15 +1109,11 @@ int	pipping(t_cmd *tmp, int type)
 
 	if (type == 1)
 	{
-		// dprintf (other->debug, "PIPE READ of cmd -> %s in address -> %p\n", tmp->commands[0], &tmp->red->pipedoc[READ]);
-		// dprintf (other->debug, "PIPE WRITE of cmd -> %s in address -> %p\n", tmp->commands[0], &tmp->red->pipedoc[WRITE]);
 		ind.r = pipe(tmp->pipefd);
 	}
 	else
 	{
 		ind.r = pipe(tmp->pipedoc);
-		// dprintf (other->debug, "HEREDOC READ in address -> %p\n", &copy->pipedoc[READ]);
-		// dprintf (other->debug, "HEREDOC WRITE in address -> %p\n", &copy->pipedoc[WRITE]);
 	}
 	if (ind.r == -1)
 	{
@@ -1185,16 +1199,12 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 	{
 		// while (1);
 		// printf ("hna\n");
+		set_signals_child();
 		restore_fds(other);
 		ind.r = child_process(tmp, other, i);
 		close_all_fds(other->orig_cmd);
-		// close (other->debug);
-		// printf ("hna\n");
-		exit_status(ind.r);
 		exit (ind.r);
 	}
-	// dprintf (other->debug, "tmp->open1 1: %d\n", tmp->open1);
-	// dprintf (other->debug, "tmp->open2 1: %d\n", tmp->open2);
 	// while (1);
 	if (i == 0 && other->a_pipe)
 	{
@@ -1302,16 +1312,7 @@ int work3(t_cmd *tmp, t_other *other)
 		r = wait(&other->exit_status);
 		if (r == last)
 		{
-        	if (WIFSIGNALED(other->exit_status))
-        	{
-        	    if (WTERMSIG(other->exit_status) == SIGINT)
-        	        exit_status(130);
-        	    if (WTERMSIG(other->exit_status) == SIGQUIT)
-        	    {
-        	        exit_status(131);
-        	        write(1, "Quit: 3\n", 8);
-        	    }
-        	}
+			handle_exit_status(other->exit_status);
 		}
 	}
 	// while (1);
@@ -1333,6 +1334,7 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 	}
 	if (ind->r == SUCCESSFUL)
 	{
+		set_signals_heredoc();
 		restore_fds(other);
 		red_copy = tmp->red;
 		while (red_copy)
@@ -1350,12 +1352,7 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 	{
 		close(tmp->pipedoc[WRITE]);
 		waitpid(ind->r, &other->exit_status, 0);
-		if (tmp->flag_exit == 0)
-		{
-			ind->r = handle_exit_status(other->exit_status);
-			if (ind->r == 1)
-				return (1);
-		}
+		handle_exit_status(other->exit_status);
 	}
 	return (0);
 }
@@ -1559,20 +1556,9 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	// tmp = env;
 
 	// test(cmd);
-	other.debug = open ("debug", O_RDWR | O_TRUNC);
-	if (other.debug == ERROR)
-	{
-		printf ("debug file failed\n");
-		return 1;
-	}
-	// dprintf(other.debug, "debug fd is : %d\n", other.debug);
-	protect_it(cmd, &other);
-	// dprintf(other.debug, "ENVIR1 : %s\n", ev[0]);
-	// dprintf(other.debug, "ENVIR2 : %s\n", ev[1]);
+	signal(SIGINT, SIG_IGN);
 	other.envr = ev;
 	other.envrp = env;
-	// dprintf(other.debug, "ENVIR1 TEST : %s\n", other.envr[0]);
-	// dprintf(other.debug, "ENVIR2 TEST : %s\n", other.envr[1]);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, &other);
@@ -1580,6 +1566,6 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	restore_fds(&other);
 	free_all(&other);
 	close_all_fds(cmd);
-	dprintf (other.debug, "skldbvalshbdcahjdvhjb\n");
+	while (1);
 	return (0);
 }

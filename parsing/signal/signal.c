@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:17:01 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/09 12:11:32 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:01:54 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	sigint_heredoc(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
-	exit(130);
+	exit(1);
 }
 
 void	set_signals_main(void)
