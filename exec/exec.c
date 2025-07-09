@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 14:09:28 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:50:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void close_fds(t_cmd *tmp)
 
 void close_all_fds(t_cmd *cmd)
 {
+	
 	while (cmd)
 	{
 		if (cmd->open1 != -3)
@@ -657,16 +658,18 @@ int	exec(t_cmd *tmp, t_other *other)
 		printf ("Error: %s command not found\n", tmp->commands[0]);
 		return (FAILED);
 	}
-	int i = 0;
-	while (tmp->argument[i])
+	// int i = 0;
+	// while (tmp->argument[i])
 		// dprintf (other->debug, "arg ==== : %s\n", tmp->argument[i++]);
 	// dprintf (other->debug, "EXECVE TIME !\n");
 	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
 	// dprintf (other->debug, "TEST=======\n");
-	if (other->envr == NULL)
+	// if (other->envr == NULL)
 		// dprintf (other->debug, "ENV IS NULL\n");
 	// dprintf (other->debug, "TEST\n");
 	// dprintf (other->debug, "FULL PATH ==== : %s\n", tmp->path_cmd);
+	// while (1);
+	// printf ("FULL PATH ==== : %s\n", tmp->path_cmd);
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
@@ -1043,7 +1046,7 @@ int	is_limiter(char *line, char *limiter)
 	return (FALSE);
 }
 
-int	pipping(t_cmd *tmp, t_other *other, int type)
+int	pipping(t_cmd *tmp, int type)
 {
 	t_ind	ind;
 
@@ -1061,7 +1064,7 @@ int	pipping(t_cmd *tmp, t_other *other, int type)
 	}
 	if (ind.r == -1)
 	{
-		free_all(other);
+		// free_all(other);
 		perror ("Error: pipe failed\n");
 		return (ERROR);
 	}
@@ -1142,6 +1145,7 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 	}
 	// dprintf (other->debug, "tmp->open1 1: %d\n", tmp->open1);
 	// dprintf (other->debug, "tmp->open2 1: %d\n", tmp->open2);
+	// while (1);
 	if (i == 0 && other->a_pipe)
 	{
 		// printf ("111\n");
@@ -1171,6 +1175,17 @@ int	execution2(t_cmd *tmp, t_other *other, int i)
 			tmp->prev->pipefd[READ] = -3;
 		}
 	}
+	if (tmp->pipedoc[READ] != -3)
+	{
+		close(tmp->pipedoc[READ]);
+		tmp->pipedoc[READ] = -3;
+	}
+	if (tmp->pipedoc[WRITE] != -3)
+	{
+		close(tmp->pipedoc[WRITE]);
+		tmp->pipedoc[WRITE] = -3;
+	}
+	// while (1);
 	return (SUCCESSFUL);
 }
 
@@ -1210,7 +1225,7 @@ int work3(t_cmd *tmp, t_other *other)
 	{
 		if (tmp->next)
 		{
-			r = pipping(tmp, other, 1);
+			r = pipping(tmp, 1);
 			if (r == ERROR)
 			{
 				exit_status(1);
@@ -1218,6 +1233,7 @@ int work3(t_cmd *tmp, t_other *other)
 			}
 		}
 		tmp->pid = fork();
+		// while (1);
 		r = execution2(tmp, other, i);
 		if (r == ERROR)
 			return (0);
@@ -1249,15 +1265,15 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 			}
 			red_copy = red_copy->next;
 		}
+		exit (0);
 	}
 	else
 	{
+		close(tmp->pipedoc[WRITE]);
 		waitpid(ind->r, &other->exit_status, 0);
-		if (WIFEXITED(other->exit_status))
-		{
-		    exit_status(WEXITSTATUS(other->exit_status));
-			return (free_all(other), close_all_fds(other->orig_cmd), 0);
-		}
+		ind->r = handle_exit_status(other->exit_status);
+		if (ind->r == 1)
+			return (1);
 	}
 	return (0);
 }
@@ -1274,14 +1290,15 @@ int  work(t_cmd *cmd, t_other *other)
 		ind.r = count_heredoc(tmp);
 		if (ind.r > 0)
 		{
-			ind.r = pipping(tmp, other, 2);
+			ind.r = pipping(tmp, 2);
 			if (ind.r == ERROR)
-				return (exit_status(1), free_all(other), 1);
+				return (exit_status(1), 1);
 			ind.r = fork ();
 			ind.c = child_doc(tmp, other, &ind);
 			if (ind.c == FAILED)
 				return (FAILED);
 		}
+		// while (1);
 		if (tmp->commands[0])
 		{
 			ind.c = check_cmd(tmp, other);
@@ -1320,7 +1337,7 @@ int  work(t_cmd *cmd, t_other *other)
 	{
 		ind.r = work3(tmp, other);
 		if (ind.r == 1)
-			return (1);
+			return (close_all_fds(cmd), free_all(other), 1);
 	}
 	if (ind.r == ERROR)
 		exit_status(1);
@@ -1463,5 +1480,7 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, &other);
+	free_all(&other);
+	close_all_fds(cmd);
 	return (0);
 }
