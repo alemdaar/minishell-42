@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 12:24:23 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 12:36:54 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -658,6 +658,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	if (other->envr == NULL)
 		dprintf (other->debug, "ENV IS NULL\n");
 	dprintf (other->debug, "TEST\n");
+	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
 		if (access("/tmp/here_doc", F_OK) == 0)

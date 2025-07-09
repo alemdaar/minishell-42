@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:55:20 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/08 17:32:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 12:29:39 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	main(int ac, char **av, char **ev)
 	while (1)
 	{
 		// rl_catch_signals = 0;
-		set_signals_main();
+		// set_signals_main();
 		buffer = rd_line(env);
 		cmd = assemble_command(buffer, env);
 		if (!cmd)

@@ -1,16 +1,24 @@
 COMMAND    PID     USER   FD   TYPE             DEVICE SIZE/OFF                NODE NAME
-minishell 3097 oelhasso  cwd    DIR                1,4      960 1152921500313443137 /goinfre/oelhasso/mini
-minishell 3097 oelhasso  txt    REG                1,4    43280 1152921500313453886 /goinfre/oelhasso/mini/minishell
-minishell 3097 oelhasso  txt    REG                1,4  1568368 1152921500311885630 /usr/lib/dyld
-minishell 3097 oelhasso    0u   CHR               16,1   0t7779                 691 /dev/ttys001
-minishell 3097 oelhasso    1u   CHR               16,1   0t7779                 691 /dev/ttys001
-minishell 3097 oelhasso    2u   CHR               16,1   0t7779                 691 /dev/ttys001
-<!-- minishell 3097 oelhasso    3u   REG                1,4      217 1152921500313453099 /goinfre/oelhasso/mini/debug -->
+minishell 6947 oelhasso  cwd    DIR                1,9     1054             9687846 /Users/oelhasso/Desktop/hna
+minishell 6947 oelhasso  txt    REG                1,9    57912             9692035 /Users/oelhasso/Desktop/hna/minishell
+minishell 6947 oelhasso  txt    REG                1,4  1568368 1152921500311885629 /usr/lib/dyld
+minishell 6947 oelhasso    0u   CHR               16,7   0t3249                 707 /dev/ttys007
+minishell 6947 oelhasso    1u   CHR               16,7   0t3249                 707 /dev/ttys007
+minishell 6947 oelhasso    2u   CHR               16,7   0t3249                 707 /dev/ttys007
+<!-- minishell 6947 oelhasso    3u   REG                1,9      513             9687915 /Users/oelhasso/Desktop/hna/debug -->
 
-minishell 3103 oelhasso  cwd    DIR                1,4      960 1152921500313443137 /goinfre/oelhasso/mini
-minishell 3103 oelhasso  txt    REG                1,4    43280 1152921500313453886 /goinfre/oelhasso/mini/minishell
-minishell 3103 oelhasso  txt    REG                1,4  1568368 1152921500311885630 /usr/lib/dyld
-minishell 3103 oelhasso    0   PIPE 0x83f500b191a62a1a    16384                     
-minishell 3103 oelhasso    1u   CHR               16,1   0t7779                 691 /dev/ttys001
-minishell 3103 oelhasso    2u   CHR               16,1   0t7779                 691 /dev/ttys001
-<!-- minishell 3103 oelhasso    3u   REG                1,4      217 1152921500313453099 /goinfre/oelhasso/mini/debug -->
+minishell 6955 oelhasso  cwd    DIR                1,9     1054             9687846 /Users/oelhasso/Desktop/hna
+minishell 6955 oelhasso  txt    REG                1,9    57912             9692035 /Users/oelhasso/Desktop/hna/minishell
+minishell 6955 oelhasso  txt    REG                1,4  1568368 1152921500311885629 /usr/lib/dyld
+minishell 6955 oelhasso    0u   CHR               16,7   0t3249                 707 /dev/ttys007
+minishell 6955 oelhasso    1   PIPE 0x46d60385493989f0    16384                     ->0xb1456fcb0377aca5
+minishell 6955 oelhasso    2u   CHR               16,7   0t3249                 707 /dev/ttys007
+<!-- minishell 6955 oelhasso    3u   REG                1,9      513             9687915 /Users/oelhasso/Desktop/hna/debug -->
+
+minishell 6956 oelhasso  cwd    DIR                1,9     1054             9687846 /Users/oelhasso/Desktop/hna
+minishell 6956 oelhasso  txt    REG                1,9    57912             9692035 /Users/oelhasso/Desktop/hna/minishell
+minishell 6956 oelhasso  txt    REG                1,4  1568368 1152921500311885629 /usr/lib/dyld
+minishell 6956 oelhasso    0   PIPE 0xb1456fcb0377aca5    16384                     ->0x46d60385493989f0
+minishell 6956 oelhasso    1u   CHR               16,7   0t3249                 707 /dev/ttys007
+minishell 6956 oelhasso    2u   CHR               16,7   0t3249                 707 /dev/ttys007
+<!-- minishell 6956 oelhasso    3u   REG                1,9      513             9687915 /Users/oelhasso/Desktop/hna/debug -->
