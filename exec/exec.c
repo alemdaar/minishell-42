@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 12:36:54 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 12:55:53 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -658,6 +658,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	if (other->envr == NULL)
 		dprintf (other->debug, "ENV IS NULL\n");
 	dprintf (other->debug, "TEST\n");
+	dprintf (other->debug, "FULL PATH ==== : %s\n", tmp->path_cmd);
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
@@ -883,20 +884,20 @@ int is_builtin(t_cmd *tmp, t_other *other)
 	// ◦ unset with no options
 	// ◦ env with no options or arguments
 	// ◦ exit with no options
-	// if (is_equal(tmp->commands[0]), "echo")
-	// 	return (SUCCESSFUL);
-	// if (is_equal(tmp->commands[0]), "cd")
-	// 	return (SUCCESSFUL);
-	if (is_equal(tmp->commands[0], "pwd") == 1)
+	if (is_equal(tmp->commands[0], "echo"))
 		return (SUCCESSFUL);
-	// if (is_equal(tmp->commands[0]), "export")
-	// 	return (SUCCESSFUL);
-	// if (is_equal(tmp->commands[0]), "unset")
-	// 	return (SUCCESSFUL);
-	// if (is_equal(tmp->commands[0]), "env")
-	// 	return (SUCCESSFUL);
-	// if (is_equal(tmp->commands[0]), "exit")
-	// 	return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "cd"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "pwd"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "export"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "unset"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "env"))
+		return (SUCCESSFUL);
+	if (is_equal(tmp->commands[0], "exit"))
+		return (SUCCESSFUL);
 	// if (tmp)
 	// 	return (FAILED);
 	// if (other)
@@ -1064,7 +1065,7 @@ int	make_heredoc(t_cmd *tmp)
 	char	*line;
 	t_ind	ind;
 
-	ind.c = 0;	
+	ind.c = 0;
 	while (1)
 	{
 		write (1, "> ", 2);
@@ -1223,7 +1224,7 @@ int count_heredoc(t_cmd *tmp)
 		}
 		copy = copy->next;
 	}
-	return (SUCCESSFUL);
+	return (tmp->count_doc);
 }
 
 int work3(t_cmd *tmp, t_other *other)
@@ -1299,6 +1300,7 @@ int  work(t_cmd *cmd, t_other *other)
 	{
 		set_up(tmp);
 		ind.r = count_heredoc(tmp);
+		printf ("counT %d\n", ind.r);
 		if (ind.r > 0)
 		{
 			ind.r = pipping(tmp, other, 2);
