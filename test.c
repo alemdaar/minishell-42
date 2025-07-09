@@ -1,17 +1,20 @@
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <fcntl.h>
 
-int main(void)
-{
-    char *args[] = {"/usr/bin/yes", NULL};   // command + arguments
-    char *envp[] = {NULL};                    // environment (can be inherited or empty)
+// 1. Save original stdout
+int stdout_copy = dup(STDOUT_FILENO);
 
-    if (execve(args[0], args, envp) == -1) {
-        perror("execve failed");
-        exit(EXIT_FAILURE);
-    }
+// 2. Redirect stdout to a file
+int fd = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+dup2(fd, STDOUT_FILENO);
+close(fd); // optional but recommended after dup2
 
-    // This will never run unless execve fails
-    return 0;
-}
+// 3. Execute the built-in that writes to stdout
+printf("this goes to file\n");
+
+// 4. Restore original stdout
+dup2(stdout_copy, STDOUT_FILENO);
+close(stdout_copy);
+
+// 5. Now stdout goes back to terminal
+printf("this goes to terminal\n");

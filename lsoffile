@@ -1,7 +1,0 @@
-COMMAND    PID     USER   FD   TYPE DEVICE SIZE/OFF                NODE NAME
-minishell 6351 oelhasso  cwd    DIR    1,9     1054             9687846 /Users/oelhasso/Desktop/hna
-minishell 6351 oelhasso  txt    REG    1,9    53728             9712919 /Users/oelhasso/Desktop/hna/minishell
-minishell 6351 oelhasso  txt    REG    1,4  1568368 1152921500311885630 /usr/lib/dyld
-minishell 6351 oelhasso    0u   CHR   16,1  0t36693                 675 /dev/ttys001
-minishell 6351 oelhasso    1u   CHR   16,1  0t36693                 675 /dev/ttys001
-minishell 6351 oelhasso    2u   CHR   16,1  0t36693                 675 /dev/ttys001
