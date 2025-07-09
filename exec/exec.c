@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 18:54:36 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 19:22:47 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -494,7 +494,7 @@ int find_unset(char *opt, t_other *other)
 	int		r;
 	int		c;
 	t_env	*tenv;
-	t_env	*tempo;
+	t_env	*tempo2;
 
 	c = 0;
 	tenv = other->envrp;
@@ -522,16 +522,19 @@ int find_unset(char *opt, t_other *other)
 			}
 			else
 			{
-				tempo = tenv->next;
+				tempo2 = tenv->next;
 				free(tenv->key);
 				free(tenv->value);
 				tenv->key = NULL;
 				tenv->value = NULL;
 				tenv = other->envrp;
-				while (tenv->next)
+				while (tenv->next->key)
 					tenv = tenv->next;
-				tenv->next = tempo;
+				free(tenv->next);
+				tenv->next = tempo2;
+				tenv->next = tempo2;
 			}
+			return (0);
 		}
 		c = 1;
 		tenv = tenv->next;
@@ -683,7 +686,9 @@ int	exec(t_cmd *tmp, t_other *other)
 	{
 		restore_fds(other);
 		free_all(other);
-		printf ("Error: %s command not found\n", tmp->commands[0]);
+		write (2, "Error: ", ft_strlen("Error: "));
+		write (2, tmp->commands[0], ft_strlen(tmp->commands[0]));
+		write (2, " command not found\n", ft_strlen(" command not found\n"));
 		exit_status(1);
 		return (FAILED);
 	}
@@ -1036,11 +1041,6 @@ int	child_process(t_cmd *tmp, t_other *other, int position)
 	if (!tmp->commands[0])
 		return (0);
 	dprintf (other->debug, "qbl dub\n");
-	printf ("jaaaaaat \n");
-	int i = 0;
-	while (tmp->argument[i])
-		printf ("arrrrr : %s\n", tmp->argument[i++]);
-	printf (".....\n");
 	ind.r = dupping(tmp, other);
 	if (ind.r == -1)
 	{
