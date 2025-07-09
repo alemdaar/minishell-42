@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 12:55:53 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 13:41:53 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,7 @@ int builtin_echo(t_cmd *tmp)
         		newline = 0;
 		}
     }
+	printf ("here\n");
     while (tmp->commands[i])
 		printf ("%s", tmp->commands[i++]);
     if (newline)
@@ -280,7 +281,7 @@ char	*bring_this(t_env *env, char *cmp)
 		while (cmp[i] && env->key[i] && cmp[i] == env->key[i])
 			i++;
 		if (cmp[i] == env->key[i])
-			return (env->key);
+			return (env->value);
 		env = env->next;
 	}
 	return (NULL);
@@ -290,17 +291,24 @@ int builtin_cd(t_cmd *tmp, t_other *other)
 {
 	char *home;
 
+	if (!tmp->commands[1] || !tmp->commands[1][0])
+		return (exit_status(0), 0);
+	home = bring_this(other->envrp, "HOME");
 	if (tmp->commands[1] && tmp->commands[1][0])
 	{
-		if (tmp->commands[1][0] != '~' && tmp->commands[1][1])
-			if (chdir(tmp->commands[1]) == -1)
+		if (tmp->commands[1][0] == '~' && !tmp->commands[1][1])
+		{
+			printf ("home : %s\n", home);
+			if (home == NULL)
+				return (printf ("minishell: cd: HOME not set"), 1);
+			printf ("heere\n");
+			if (chdir(home) == -1)
 				return (perror("minishell: "), 1);
-	}
-	home = bring_this(other->envrp, "HOME");
-	if (home == NULL)
-		return (printf ("minishell: cd: HOME not set"), 1);
-	if (chdir(home) == -1)
+			return (0);
+		}
+		if (chdir(tmp->commands[1]) == -1)
 			return (perror("minishell: "), 1);
+	}
 	return (0);
 }
 
@@ -651,14 +659,14 @@ int	exec(t_cmd *tmp, t_other *other)
 	}
 	int i = 0;
 	while (tmp->argument[i])
-		dprintf (other->debug, "arg ==== : %s\n", tmp->argument[i++]);
-	dprintf (other->debug, "EXECVE TIME !\n");
-	dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
-	dprintf (other->debug, "TEST=======\n");
+		// dprintf (other->debug, "arg ==== : %s\n", tmp->argument[i++]);
+	// dprintf (other->debug, "EXECVE TIME !\n");
+	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
+	// dprintf (other->debug, "TEST=======\n");
 	if (other->envr == NULL)
-		dprintf (other->debug, "ENV IS NULL\n");
-	dprintf (other->debug, "TEST\n");
-	dprintf (other->debug, "FULL PATH ==== : %s\n", tmp->path_cmd);
+		// dprintf (other->debug, "ENV IS NULL\n");
+	// dprintf (other->debug, "TEST\n");
+	// dprintf (other->debug, "FULL PATH ==== : %s\n", tmp->path_cmd);
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
@@ -668,7 +676,7 @@ int	exec(t_cmd *tmp, t_other *other)
 		perror ("execve: ");
 		exit(1);
 	}
-	dprintf (other->debug, "EXECVE ENDED !\n");
+	// dprintf (other->debug, "EXECVE ENDED !\n");
 	return (SUCCESSFUL);
 }
 
@@ -678,14 +686,14 @@ int	dupping(t_cmd *tmp, t_other *other)
 
 	ind.r = -99;
 	nothing(other);
-	dprintf (other->debug, "fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
-	dprintf (other->debug, "fd in \"%s\" command, open 2 is : %d\n", tmp->commands[0], tmp->open2);
+	// dprintf (other->debug, "fd in \"%s\" command, open 1 is : %d\n", tmp->commands[0], tmp->open1);
+	// dprintf (other->debug, "fd in \"%s\" command, open 2 is : %d\n", tmp->commands[0], tmp->open2);
 	if (tmp->open1 != -3 && tmp->open1 != -1)
 	{
 		ind.r = dup2(tmp->open1, 0);
 		if (ind.r == -1)
 			return (ERROR);
-		dprintf (other->debug, "closed in %s -> tmp->open1 : %d\n", tmp->commands[0], tmp->open1);
+		// dprintf (other->debug, "closed in %s -> tmp->open1 : %d\n", tmp->commands[0], tmp->open1);
 		close(tmp->open1);
 		tmp->open1 = -3;
 	}
@@ -694,11 +702,11 @@ int	dupping(t_cmd *tmp, t_other *other)
 		ind.r = dup2(tmp->open2, 1);
 		if (ind.r == -1)
 			return (ERROR);
-		dprintf (other->debug, "closed in %s -> tmp->open2 : %d\n", tmp->commands[0], tmp->open2);
+		// dprintf (other->debug, "closed in %s -> tmp->open2 : %d\n", tmp->commands[0], tmp->open2);
 		close(tmp->open2);
 		tmp->open2 = -3;
 	}
-	dprintf (other->debug, "close_fds in dup, cmd : %s\n", tmp->commands[0]);
+	// dprintf (other->debug, "close_fds in dup, cmd : %s\n", tmp->commands[0]);
 	close_fds(tmp);
 	return (SUCCESSFUL);
 }
@@ -744,7 +752,7 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			if (tmp->open1 != -3)
 			{
 				// printf ("closed open1\n");
-				dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
+				// dprintf (other->debug, "closed in %s -> tmp->pipefd[READ] : %d\n", tmp->commands[0], tmp->pipefd[READ]);
 				close(tmp->open1);
 				tmp->open1 = -3;
 			}
@@ -885,19 +893,19 @@ int is_builtin(t_cmd *tmp, t_other *other)
 	// ◦ env with no options or arguments
 	// ◦ exit with no options
 	if (is_equal(tmp->commands[0], "echo"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	if (is_equal(tmp->commands[0], "cd"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	if (is_equal(tmp->commands[0], "pwd"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	if (is_equal(tmp->commands[0], "export"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	if (is_equal(tmp->commands[0], "unset"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	if (is_equal(tmp->commands[0], "env"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	if (is_equal(tmp->commands[0], "exit"))
-		return (SUCCESSFUL);
+		return (tmp->bin = 1, SUCCESSFUL);
 	// if (tmp)
 	// 	return (FAILED);
 	// if (other)
@@ -913,7 +921,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 	ind.c = FALSE;
 	if (is_builtin(cmd, other) == SUCCESSFUL)
 	{
-		dprintf (other->debug, "builtin\n");
+		// dprintf (other->debug, "builtin\n");
 		cmd->bin = 1;
 		return (SUCCESSFUL);
 	}
@@ -1279,8 +1287,7 @@ int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 	}
 	else
 	{
-		wait(NULL);
-		waitpid(tmp->pid, &other->exit_status, 0);
+		waitpid(ind->r, &other->exit_status, 0);
 		if (WIFEXITED(other->exit_status))
 		{
 		    exit_status(WEXITSTATUS(other->exit_status));
@@ -1300,7 +1307,6 @@ int  work(t_cmd *cmd, t_other *other)
 	{
 		set_up(tmp);
 		ind.r = count_heredoc(tmp);
-		printf ("counT %d\n", ind.r);
 		if (ind.r > 0)
 		{
 			ind.r = pipping(tmp, other, 2);
@@ -1475,16 +1481,16 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	// tmp = env;
 
 	// test(cmd);
-	other.debug = open ("debug", O_RDWR | O_TRUNC);
-	if (other.debug == ERROR)
-	{
-		printf ("debug file failed\n");
-		return 1;
-	}
-	dprintf(other.debug, "debug fd is : %d\n", other.debug);
+	// other.debug = open ("debug", O_RDWR | O_TRUNC);
+	// if (other.debug == ERROR)
+	// {
+	// 	printf ("debug file failed\n");
+	// 	return 1;
+	// }
+	// dprintf(other.debug, "debug fd is : %d\n", other.debug);
 	protect_it(cmd, &other);
-	dprintf(other.debug, "ENVIR1 : %s\n", ev[0]);
-	dprintf(other.debug, "ENVIR2 : %s\n", ev[1]);
+	// dprintf(other.debug, "ENVIR1 : %s\n", ev[0]);
+	// dprintf(other.debug, "ENVIR2 : %s\n", ev[1]);
 	other.envr = ev;
 	other.envrp = env;
 	// dprintf(other.debug, "ENVIR1 TEST : %s\n", other.envr[0]);

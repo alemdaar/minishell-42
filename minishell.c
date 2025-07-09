@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:55:20 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/09 12:29:39 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 13:57:36 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,23 @@ int	exit_status(int val)
 	if (val > -1)
 		exit = val;
 	return (exit);
+}
+
+void	handle_exit_status(int status)
+{
+	int	rtn;
+
+	if (WIFEXITED(status))
+	{
+		rtn = WEXITSTATUS(status);
+		exit_status(rtn);
+	}
+	else if (WIFSIGNALED(status))
+	{
+		rtn = WTERMSIG(status);
+		exit_status(rtn);
+	}
+	return ;
 }
 
 static char	*rd_line(t_env *env)
