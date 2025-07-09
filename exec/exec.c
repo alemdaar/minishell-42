@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 15:32:48 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 15:48:53 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,7 @@ int echo_nl(char *opt)
 		return (1);
 	while (opt[i])
 	{
-		if (opt[i] != '-')
+		if (opt[i] != 'n')
 			return (1);
 		i++;
 	}
@@ -254,19 +254,27 @@ int echo_nl(char *opt)
 int builtin_echo(t_cmd *tmp)
 {
     int i = 1;
+    int c = 0;
     int newline = 1;
 
     if (tmp->commands[1])
     {
 		if (tmp->commands[1][0])
 		{
-			if (echo_nl(tmp->commands[1]) == 1)
+			if (echo_nl(tmp->commands[1]) == 0)
+			{
         		newline = 0;
+				i++;
+			}
 		}
     }
-	printf ("here\n");
     while (tmp->commands[i])
+	{
+		if (c == 1)
+			printf (" ");
 		printf ("%s", tmp->commands[i++]);
+		c = 1;
+	}
     if (newline)
         printf("\n");
     return (0);
@@ -1241,10 +1249,6 @@ int work3(t_cmd *tmp, t_other *other)
 	{
 		// printf ("st : %d\n", other->exit_status);
 		waitpid(tmp->pid, &other->exit_status, 0);
-		r = handle_exit_status(other->exit_status);
-		if (r == 1)
-			return (1);
-
 	}
 	return (SUCCESSFUL);
 }
