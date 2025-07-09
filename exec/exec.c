@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 14:50:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:52:12 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1241,7 +1241,13 @@ int work3(t_cmd *tmp, t_other *other)
 		tmp = tmp->next;
 	}
 	while (i--)
-		wait(NULL);
+	{
+		waitpid(tmp->pid, &other->exit_status, 0);
+		r = handle_exit_status(other->exit_status);
+		if (r == 1)
+			return (1);
+
+	}
 	return (SUCCESSFUL);
 }
 int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
