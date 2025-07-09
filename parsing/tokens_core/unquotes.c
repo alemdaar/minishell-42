@@ -6,7 +6,7 @@
 /*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 16:00:51 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/01 09:34:13 by mbarhoun         ###   ########.fr       */
+/*   Updated: 2025/07/08 09:24:10 by mbarhoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ char	*remove_quotes(char *str)
 	t_var.flag = 0;
 	t_var.new = malloc((skip_quotes_len(str) + analyze_quotes(str) + 1));
 	if (!t_var.new)
-		return (p1char(&str), NULL);
+		return (p1char(&str), eprintf(ERR_MEM), NULL);
 	while (str[t_var.r])
 	{
 		if (!t_var.flag && (str[t_var.r] == '\'' || str[t_var.r] == '"'))

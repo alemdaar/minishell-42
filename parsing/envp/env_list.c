@@ -6,7 +6,7 @@
 /*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:38:17 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/01 09:35:00 by mbarhoun         ###   ########.fr       */
+/*   Updated: 2025/07/08 09:11:35 by mbarhoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*get_env_key(char *env)
 		r++;
 	key = malloc(sizeof(char) * (r + 1));
 	if (!key)
-		return (NULL);
+		return (eprintf(ERR_MEM), NULL);
 	r = 0;
 	while (*env && *env != '=')
 		key[r++] = *env++;
@@ -55,7 +55,7 @@ static char	*get_env_value(char *env)
 		len++;
 	value = malloc(sizeof(char) * (len + 1));
 	if (!value)
-		return (NULL);
+		return (eprintf(ERR_MEM), NULL);
 	len = 0;
 	while (env[r])
 		value[len++] = env[r++];
@@ -69,7 +69,7 @@ static t_env	*new_env(char *key, char *value)
 
 	env = malloc(sizeof(t_env));
 	if (!env)
-		return (NULL);
+		return (eprintf(ERR_MEM), NULL);
 	env->key = key;
 	env->value = value;
 	env->next = NULL;
@@ -96,7 +96,7 @@ t_env	*construct_env(char **ev)
 	{
 		new = new_env(get_env_key(ev[r]), get_env_value(ev[r]));
 		if (!new)
-			return (env_leaks(env), NULL);
+			return (env_leaks(env), eprintf(ERR_MEM), NULL);
 		tmp->next = new;
 		tmp = new;
 	}

@@ -6,7 +6,7 @@
 /*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:19:30 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/01 15:12:54 by mbarhoun         ###   ########.fr       */
+/*   Updated: 2025/07/08 09:14:24 by mbarhoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ t_token	*segment_input(char *tokens)
 		spl.r = cut_value(tokens + spl.i, tokens[spl.i], spl.f_quotes);
 		spl.new_token = malloc(sizeof(char) * (spl.r + 1));
 		if (!spl.new_token)
-			return (NULL);
+			return (eprintf(ERR_MEM), NULL);
 		ft_strncpy(spl.new_token, tokens + spl.i, spl.r);
 		spl.new_token[spl.r] = '\0';
 		build_list(&head, spl.new_token);

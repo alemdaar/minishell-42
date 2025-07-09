@@ -1,20 +1,17 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(void)
 {
-    char buffer[1024];
+    char *args[] = {"/usr/bin/yes", NULL};   // command + arguments
+    char *envp[] = {NULL};                    // environment (can be inherited or empty)
 
-    if (chdir("pppppp") == -1)
-        perror("cd");
-    else
-        printf("Changed to /tmp successfully\n");
+    if (execve(args[0], args, envp) == -1) {
+        perror("execve failed");
+        exit(EXIT_FAILURE);
+    }
 
-    // Show the new working directory of this process
-    if (getcwd(buffer, sizeof(buffer)))
-        printf("Current directory: %s\n", buffer);
-    else
-        perror("getcwd");
-
+    // This will never run unless execve fails
     return 0;
 }

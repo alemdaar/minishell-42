@@ -6,7 +6,7 @@
 /*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 20:50:15 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/02 17:24:42 by mbarhoun         ###   ########.fr       */
+/*   Updated: 2025/06/22 19:46:19 by mbarhoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	ft_strncpy(char *s1, char *s2, int n);
 char	*ft_strdup(const char *s1);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_itoa(int n);
 int		ft_strlen(const char *s);
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);

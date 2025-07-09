@@ -6,7 +6,7 @@
 /*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 14:01:34 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/01 15:41:31 by mbarhoun         ###   ########.fr       */
+/*   Updated: 2025/07/08 09:25:35 by mbarhoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	norm(t_cm *var, t_red **v4, t_token **tokens)
 static bool	control_cmd(t_cm1 *l_var, t_red **tmd, t_token **tokens, int *i)
 {
 	if (!(*tokens)->next)
-		return (printf(ERR_RED), 0);
+		return (eprintf(ERR_RED), 0);
 	if (!*i)
 		*tmd = first_node(*tmd, &l_var->tmp_red, *tokens, i);
 	else
@@ -76,6 +76,7 @@ bool	hydrate_cmd(t_cmd **cmd, t_token *tokens)
 			else if (tokens->type_token != WORD)
 				if (!control_cmd(&l_var, &tmd->red, &tokens, &var.i))
 					return (0);
+			amb_next(tokens, tmd);
 			tokens = tokens->next;
 		}
 		tmd->commands[var.r] = NULL;

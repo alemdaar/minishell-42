@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   token.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:11:49 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/06/21 20:18:39 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/08 09:09:41 by mbarhoun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKEN_H
 # define TOKEN_H
 
-# define ERR_MEM "Allocation Failed\n"
+# define ERR_MEM "Allocation Faield\n"
 
 typedef struct s_token	t_token;
 typedef struct s_env	t_env;
@@ -36,6 +36,7 @@ typedef struct s_token
 	char	*content;
 	bool	red;
 	bool	exp;
+	bool	amb;
 	t_type	type_token;
 	t_token	*next;
 }	t_token;
@@ -85,8 +86,16 @@ typedef struct s_cm1
 	t_red	*tmp_red;
 }	t_cm1;
 
+typedef struct s_amb
+{
+	bool	d_quotes;
+	bool	s_quotes;
+	bool	ambiguous;
+	int		r;
+}	t_ambg;
+
 /*~~~~~~~~~~~~~~~~~~~~~~~<history.c>~~~~~~~~~~~~~~~~~~~~~~~*/
-void		glance_input(char *input, t_env *env);
+void		history_input(char *input);
 /*~~~~~~~~~~~~~~~~~~~~~~~<token.c>~~~~~~~~~~~~~~~~~~~~~~~*/
 t_cmd		*assemble_command(char *input, t_env *env);
 /*~~~~~~~~~~~~~~~~~~~~<list_tokens.c>~~~~~~~~~~~~~~~~~~~~~*/
@@ -110,14 +119,24 @@ bool		quotes_is_valid(char *tokens);
 /*~~~~~~~~~~~~~~~~~~~~<utils3_tokens.c>~~~~~~~~~~~~~~~~~~*/
 void		cut_value_quotes(int *r, char *tokens, char c, bool flag);
 /*~~~~~~~~~~~~~~~~~~~~~<env_expander.c>~~~~~~~~~~~~~~~~~~~*/
-void		is_env(char **content, t_env *env, bool expander);
+void		is_env(t_token **token, t_env *env, bool expander, bool ambg);
 char		*key_value(char **content, char *v_env, int pos, int len_key);
 char		*key_not_found(char **content, int pos_key, int len_key);
+char		*env_value(char *key, t_env *env);
+/*~~~~~~~~~~~~~~~~~~~~~<env_heredoc.c>~~~~~~~~~~~~~~~~~~~*/
+void		resolve_heredoc(t_env *env, char **input, int fd);
 /*~~~~~~~~~~~~~~~~~~~~~~<env_list.c>~~~~~~~~~~~~~~~~~~~~~~*/
 t_env		*construct_env(char **env);
+/*~~~~~~~~~~~~~~~~~~~~~~<env_split.c>~~~~~~~~~~~~~~~~~~~~~~*/
+void		env_space(char **input, t_env *env);
 /*~~~~~~~~~~~~~~~~~~~~~~<exp_special.c>~~~~~~~~~~~~~~~~~~~~~~*/
+void		ambiguous_redirect(t_token **token, bool amb, char *key);
 bool		is_special(char c, bool f_quotes);
+int			count_word(char *content);
 int			expand_meta(char **content, int pos, int r, bool f_quotes);
+/*~~~~~~~~~~~~~~~~~~~~~~<utils1_env.c>~~~~~~~~~~~~~~~~~~~~~~*/
+void		set_new_content(t_token **token, t_exp *exp, t_ambg *amb);
+char		*new_value_quotes(char *str);
 /*~~~~~~~~~~~~~~~~~~~~~~<utils_env.c>~~~~~~~~~~~~~~~~~~~~~~*/
 void		change_value(bool *quotes, int value);
 void		increment(int *v1, int *v2);
@@ -132,6 +151,7 @@ t_cmd		*create_list_cmd(t_token *tokens);
 int			counter_pipe(t_token *tokens);
 int			analyze_word(t_token *tokens);
 bool		mvalloc(char ***commands, int size);
+void		amb_next(t_token *token, t_cmd *tmd);
 /*~~~~~~~~~~~~~~~~~~~~~~<nodes_cmd.c>~~~~~~~~~~~~~~~~~~~~~~*/
 t_cmd		*cmd_node(void);
 t_red		*red_node(void);
@@ -148,5 +168,11 @@ void		p1char(char **ptr);
 void		p2char(char ***ptr);
 /*~~~~~~~~~~~~~~~~~~~~~~<leaks.c>~~~~~~~~~~~~~~~~~~~~~~*/
 void		cmdfree(t_cmd *cmd);
+/*~~~~~~~~~~~~~~~~~~~~~~<signal.c>~~~~~~~~~~~~~~~~~~~~~~*/
+void		set_signals_main(void);
+void		set_signals_child(void);
+void		set_signals_heredoc(void);
+/*~~~~~~~~~~~~~~~~~~~~~~<error.c>~~~~~~~~~~~~~~~~~~~~~~*/
+void		eprintf(const char *str);
 
 #endif

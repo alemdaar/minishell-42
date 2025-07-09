@@ -6,29 +6,23 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:55:20 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/04 22:06:03 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/08 17:32:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./minishell.h"
 #include "exec/header.h"
 
-void function (t_cmd *cmd)
+int	exit_status(int val)
 {
-	int i;
-	while (cmd)
-	{
-		i = 0;
-		while (cmd->commands[i])
-		{
-			printf ("cmd : %s\n", cmd->commands[i]);
-			i++;
-		}
-		cmd = cmd->next;
-	}
+	static int	exit;
+
+	if (val > -1)
+		exit = val;
+	return (exit);
 }
 
-char	*rd_line(t_env *env)
+static char	*rd_line(t_env *env)
 {
 	char	*rd_line;
 
@@ -42,18 +36,9 @@ char	*rd_line(t_env *env)
 		printf("exit\n");
 		exit(0);
 	}
-	glance_input(rd_line, env);
+	history_input(rd_line);
 	return (rd_line);
 }
-
-// void ctrl_c(int sig)
-// {
-//     (void)sig;
-//     write(STDOUT_FILENO, "\n", 1); 
-//     rl_on_new_line();
-//     rl_replace_line("", 0);
-//     rl_redisplay();               
-// }
 
 int	main(int ac, char **av, char **ev)
 {
@@ -66,7 +51,8 @@ int	main(int ac, char **av, char **ev)
 	env = construct_env(ev);
 	while (1)
 	{
-		// signal(SIGINT, ctrl_c);
+		// rl_catch_signals = 0;
+		set_signals_main();
 		buffer = rd_line(env);
 		cmd = assemble_command(buffer, env);
 		if (!cmd)

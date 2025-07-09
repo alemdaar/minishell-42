@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 13:19:12 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/08 17:09:57 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/07/08 20:21:22 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "./parsing/include/token.h"
 # include "./parsing/include/syntax.h"
 # include "./libft/libft.h"
+# include <limits.h>
 
 typedef struct s_env	t_env;
 typedef struct s_cmd	t_cmd;
@@ -37,7 +38,6 @@ typedef struct s_env
 typedef struct s_red
 {
 	char	*file;
-	// int		open;
 	bool	expand;
 	t_type	red_type;
 	t_red	*next;
@@ -46,6 +46,7 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	char	**commands;
+	bool	amb;
 	pid_t	pid;
 	int		pipedoc[2];
 	int		pipefd[2];
@@ -65,9 +66,7 @@ typedef struct s_cmd
 	t_cmd	*next;
 }	t_cmd;
 
-typedef struct s_global
-{
-	int	exit_status;
-}	t_global;
+/*~~~~~~~~~~~~~~~~~~~~~~<minishell.c>~~~~~~~~~~~~~~~~~~~~~~*/
+int		exit_status(int value);
 
 #endif
