@@ -125,7 +125,6 @@ void close_fds(t_cmd *tmp)
 
 void close_all_fds(t_cmd *cmd)
 {
-	
 	while (cmd)
 	{
 		if (cmd->open1 != -3)
@@ -160,6 +159,7 @@ void close_all_fds(t_cmd *cmd)
 		}
 		cmd = cmd->next;
 	}
+	printf ("DAZ MN HNAYA\n");
 }
 
 void free_env(t_other *other)
@@ -197,7 +197,8 @@ void free_env(t_other *other)
 }
 int free_all(t_other *other)
 {
-	int	i;
+	int		i;
+	t_cmd	*tmp;
 
 	i = 0;
 	int debug = open ("debug", O_WRONLY);
@@ -238,7 +239,7 @@ int free_all(t_other *other)
 			other->orig_cmd->path_cmd = NULL;
 		}
 		i = 0;
-		while (1);
+		// while (1);
 		while (other->orig_cmd->argument[i])
 		{
 			printf ("FREE other->orig_cmd->argument[i]\n");
@@ -257,9 +258,15 @@ int free_all(t_other *other)
 			dprintf (debug, "orig_cmd->argument has been freed succesfully !\n");
 			other->orig_cmd->argument = NULL;
 		}
+		printf ("FREE orig_cmd\n");
+		dprintf (debug, "address orig_cmd : %p\n", other->orig_cmd);
+		tmp = other->orig_cmd;
 		other->orig_cmd = other->orig_cmd->next;
+		free(tmp);
+		dprintf (debug, "orig_cmd has been freed succesfully !\n");
+		tmp = NULL;
 	}
-
+	// while (1);
 	return (0);
 }
 void why_exit(char *str, int flag)
@@ -773,7 +780,10 @@ int	exec(t_cmd *tmp, t_other *other)
 	}
 	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
 	// while (1);
-	printf ("FULL PATH ==== : %s\n", tmp->path_cmd);
+	printf ("FULL PATH of tmp ==== : %s\n", tmp->path_cmd);
+	printf ("FULL PATH of other ==== : %s\n", other->orig_cmd->path_cmd);
+	printf ("cmd of tmp ==== : %s\n", tmp->commands[0]);
+	printf ("cmd of other ==== : %s\n", other->orig_cmd->commands[0]);
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
@@ -1353,8 +1363,9 @@ int work3(t_cmd *tmp, t_other *other)
 			handle_exit_status(other->exit_status);
 		}
 	}
-	printf ("ha huwa hna")
-	while (1);
+	printf ("ha huwa hna\n");
+	printf ("cmd with path : %s\n", other->orig_cmd->path_cmd);
+	// while (1);
 	return (SUCCESSFUL);
 }
 int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
@@ -1594,13 +1605,16 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	signal(SIGINT, SIG_IGN);
 	other.envr = ev;
 	other.envrp = env;
+	other.orig_cmd = cmd;
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, &other);
-	// while (1);
 	restore_fds(&other);
-	free_all(&other);
-	close_all_fds(cmd);
 	// while (1);
+	close_all_fds(cmd);
+	while (1);
+	printf ("CAME FROM HERE \n");
+	// free_all(&other);
+	while (1);
 	return (0);
 }

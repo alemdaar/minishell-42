@@ -1,0 +1,77 @@
+paths[i] : /home/hassuunee/.vscode-server/bin/cb0c47c0cfaad0757385834bd89d410c78a856c0/bin/remote-cli
+address paths[i] : 0x6080000001a0
+paths[i] has been freed succefully !
+paths[i] : /usr/local/sbin
+address paths[i] : 0x602000002dd0
+paths[i] has been freed succefully !
+paths[i] : /usr/local/bin
+address paths[i] : 0x602000002df0
+paths[i] has been freed succefully !
+paths[i] : /usr/sbin
+address paths[i] : 0x602000002e10
+paths[i] has been freed succefully !
+paths[i] : /usr/bin
+address paths[i] : 0x602000002e30
+paths[i] has been freed succefully !
+paths[i] : /sbin
+address paths[i] : 0x602000002e50
+paths[i] has been freed succefully !
+paths[i] : /bin
+address paths[i] : 0x602000002e70
+paths[i] has been freed succefully !
+paths[i] : /usr/games
+address paths[i] : 0x602000002e90
+paths[i] has been freed succefully !
+paths[i] : /usr/local/games
+address paths[i] : 0x603000000a00
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Program Files/WindowsApps/CanonicalGroupLimited.Ubuntu_2404.1.68.0_x64__79rhkp1fndgsc
+address paths[i] : 0x608000000220
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Windows/system32
+address paths[i] : 0x603000000a30
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Windows
+address paths[i] : 0x602000002eb0
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Windows/System32/Wbem
+address paths[i] : 0x603000000a60
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Windows/System32/WindowsPowerShell/v1.0/
+address paths[i] : 0x6040000001d0
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Windows/System32/OpenSSH/
+address paths[i] : 0x604000000210
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Program Files/Microsoft SQL Server/150/Tools/Binn/
+address paths[i] : 0x606000000140
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Users/h/AppData/Local/Microsoft/WindowsApps
+address paths[i] : 0x6060000001a0
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Users/h/Downloads/bin
+address paths[i] : 0x603000000a90
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/MinGW/bin
+address paths[i] : 0x603000000ac0
+paths[i] has been freed succefully !
+paths[i] : /mnt/c/Users/h/AppData/Local/Programs/Microsoft VS Code/bin
+address paths[i] : 0x606000000200
+paths[i] has been freed succefully !
+paths[i] : /snap/bin
+address paths[i] : 0x602000002ed0
+paths[i] has been freed succefully !
+address other->paths : 0x60f000000220
+other->paths has been freed succecfully !
+address orig_cmd->path_cmd : 0x602000002f10
+orig_cmd->path_cmd : /usr/bin/ls
+ja hna !!1666968875457
+other->orig_cmd->commands[0] : ls
+orig_cmd->path_cmd has been freed succesfully !
+address orig_cmd->argument[i] : 0x602000002db0
+orig_cmd->argument[i] : ls
+orig_cmd->argument[i] has been freed succesfully !
+address orig_cmd->argument : 0x602000002f30
+orig_cmd->argument has been freed succesfully !
+address orig_cmd : 0x60c000000040
+orig_cmd has been freed succesfully !
