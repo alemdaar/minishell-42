@@ -162,17 +162,55 @@ void close_all_fds(t_cmd *cmd)
 	}
 }
 
+void free_env(t_other *other)
+{
+	
+	int debug = open ("debug", O_WRONLY);
+	if (other->envrp)
+	{
+		while (other->envrp)
+		{
+			if (other->envrp->key)
+			{
+				dprintf (debug, "address other->envrp->key : %p\n", other->envrp->key);
+				dprintf (debug, "other->envrp->key : %s\n", other->envrp->key);
+				free(other->envrp->key);
+				dprintf (debug, "other->envrp->key has been freed succesfully !\n");
+				other->envrp->key = NULL;
+			}
+			if (other->envrp->value)
+			{
+				dprintf (debug, "address other->envrp->value : %p\n", other->envrp->value);
+				dprintf (debug, "other->envrp->value : %s\n", other->envrp->value);
+				free(other->envrp->value);
+				dprintf (debug, "other->envrp->value has been freed succecfully !\n");
+				other->envrp->value = NULL;
+			}
+			other->envrp = other->envrp->next;
+		}
+		dprintf (debug, "address other->envrp : %p\n", other->envrp);
+		free(other->envrp);
+		dprintf (debug, "other->envrp->value has been freed succecfully !\n");
+		other->envrp = NULL;
+	}
+	return ;
+}
 int free_all(t_other *other)
 {
 	int	i;
 
 	i = 0;
+	int debug = open ("debug", O_WRONLY);
+	// dprintf (debug, "tester : %s\n", other->paths[0]);
 	while (i < other->count_path && other->paths)
 	{
 		printf ("free(other->paths[i]);\n");
 		if (other->paths[i] == NULL)
 			return (free(other->paths), other->paths = NULL, FAILED);
+		dprintf (debug, "paths[i] : %s\n", other->paths[i]);
+		dprintf (debug, "address paths[i] : %p\n", other->paths[i]);
 		free(other->paths[i]);
+		dprintf (debug, "paths[i] has been freed succefully !\n");
 		other->paths[i] = NULL;
 		i++;
 	}
@@ -181,7 +219,9 @@ int free_all(t_other *other)
 	else
 	{
 		printf ("free(other->paths);\n");
+		dprintf (debug, "address other->paths : %p\n", other->paths);
 		free(other->paths);
+		dprintf (debug, "other->paths has been freed succecfully !\n");
 		other->paths = NULL;
 	}
 	while (other->orig_cmd)
@@ -189,46 +229,38 @@ int free_all(t_other *other)
 		if (other->orig_cmd->path_cmd)
 		{
 			printf ("FREE other->orig_cmd->path_cmd\n");
+			dprintf (debug, "address orig_cmd->path_cmd : %p\n", other->orig_cmd->path_cmd);
+			dprintf (debug, "orig_cmd->path_cmd : %s\n", other->orig_cmd->path_cmd);
+			dprintf (debug, "ja hna !!1666968875457\n");
+			dprintf (debug, "other->orig_cmd->commands[0] : %s\n", other->orig_cmd->commands[0]);
 			free(other->orig_cmd->path_cmd);
+			dprintf (debug, "orig_cmd->path_cmd has been freed succesfully !\n");
 			other->orig_cmd->path_cmd = NULL;
 		}
 		i = 0;
+		while (1);
 		while (other->orig_cmd->argument[i])
 		{
 			printf ("FREE other->orig_cmd->argument[i]\n");
+			dprintf (debug, "address orig_cmd->argument[i] : %p\n", other->orig_cmd->argument[i]);
+			dprintf (debug, "orig_cmd->argument[i] : %s\n", other->orig_cmd->argument[i]);
 			free(other->orig_cmd->argument[i]);
+			dprintf (debug, "orig_cmd->argument[i] has been freed succesfully !\n");
 			other->orig_cmd->argument[i] = NULL;
 			i ++;
 		}
 		if (other->orig_cmd->argument)
 		{
 			printf ("FREE other->orig_cmd->argument\n");
+			dprintf (debug, "address orig_cmd->argument : %p\n", other->orig_cmd->argument);
 			free(other->orig_cmd->argument);
+			dprintf (debug, "orig_cmd->argument has been freed succesfully !\n");
 			other->orig_cmd->argument = NULL;
 		}
 		other->orig_cmd = other->orig_cmd->next;
 	}
-	if (other->envrp)
-	{
-		while (other->envrp)
-		{
-			if (other->envrp->key)
-			{
-				free(other->envrp->key);
-				other->envrp->key = NULL;
-			}
-			if (other->envrp->value)
-			{
-				free(other->envrp->value);
-				other->envrp->value = NULL;
-			}
-			other->envrp = other->envrp->next;
-		}
-		free(other->envrp);
-		other->envrp = NULL;
-	}
+
 	return (0);
-	// parcing free;
 }
 void why_exit(char *str, int flag)
 {
@@ -450,10 +482,14 @@ int	init_export(char *opt, t_other *other)
 
 	i = 0;
     while (opt[i] && opt[i] != '=')
-        i++;
+	{
+        i++;	
+	}
 	j = i + 1;
     while (opt[j])
+	{
         j++;
+	}
 	con2 = NULL;
 	con1 = malloc (i + 1);
 	if (!con1)
@@ -735,10 +771,9 @@ int	exec(t_cmd *tmp, t_other *other)
 		write (2, " command not found\n", ft_strlen(" command not found\n"));
 		return (127);
 	}
-	// dprintf (other->debug, "EXECVE TIME !\n");
 	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
 	// while (1);
-	// printf ("FULL PATH ==== : %s\n", tmp->path_cmd);
+	printf ("FULL PATH ==== : %s\n", tmp->path_cmd);
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
@@ -1157,7 +1192,9 @@ int	make_heredoc(t_cmd *tmp, t_other *other, char *limmiter)
 		if (tmp->count_doc == 0 && tmp->red->expand == 0)
         	write (tmp->pipedoc[WRITE], line, mystrlen(line));
         if (tmp->count_doc == 0 && tmp->red->expand == 1)
+		{
         	resolve_heredoc(other->envrp, &line, tmp->pipedoc[WRITE]);
+		}
 		free(line);
 	}
 	if (line)
@@ -1295,6 +1332,7 @@ int work3(t_cmd *tmp, t_other *other)
 			}
 		}
 		// printf ("hna\n");
+		// while (1);
 		tmp->pid = fork();
 		last = tmp->pid;
 		r = execution2(tmp, other, i);
@@ -1315,7 +1353,8 @@ int work3(t_cmd *tmp, t_other *other)
 			handle_exit_status(other->exit_status);
 		}
 	}
-	// while (1);
+	printf ("ha huwa hna")
+	while (1);
 	return (SUCCESSFUL);
 }
 int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
@@ -1433,10 +1472,8 @@ int  work(t_cmd *cmd, t_other *other)
 
 int	find_path(t_other *other, t_env *env)
 {
-	int		i;
 	t_env	*tmp;
 
-	i = 0;
 	tmp = env;
 	while (tmp)
 	{
@@ -1532,7 +1569,6 @@ void	edit_paths(t_other *other, t_env *env)
 
 void protect_it(t_cmd *cmd, t_other *other)
 {
-	int	i;
 
 	other->stdout_copy = dup(STDOUT_FILENO);
 	other->stdin_copy = dup(STDIN_FILENO);
@@ -1545,7 +1581,6 @@ void protect_it(t_cmd *cmd, t_other *other)
 		cmd = cmd->next;
 	}
 	other->envr = NULL;
-	i = 0;
 	other->paths = NULL;
 }
 
@@ -1566,6 +1601,6 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	restore_fds(&other);
 	free_all(&other);
 	close_all_fds(cmd);
-	while (1);
+	// while (1);
 	return (0);
 }

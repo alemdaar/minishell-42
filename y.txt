@@ -1,3 +1,0 @@
-fork in any command 
-fork in heredoc
-segfault ctrl + d in heredooc 
