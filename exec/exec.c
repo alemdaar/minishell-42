@@ -336,7 +336,7 @@ int echo_nl(t_cmd *tmp, int ind)
 int builtin_echo(t_cmd *tmp)
 {
     int i = 1;
-    int j = 0;
+    int j = 1;
     int c = 0;
     int newline = 1;
 
@@ -349,8 +349,6 @@ int builtin_echo(t_cmd *tmp)
         		newline = 0;
 		}
     }
-	else
-		j = 1;
     while (tmp->commands[j])
 	{
 		if (c == 1)
@@ -390,10 +388,11 @@ int builtin_cd(t_cmd *tmp, t_other *other)
 	{
 		if (tmp->commands[1][0] == '~' && !tmp->commands[1][1])
 		{
-			// printf ("home : %s\n", home);
 			if (home == NULL)
-				return (printf ("minishell: cd: HOME not set"), 1);
-			// printf ("heere\n");
+			{
+				write (2, "minishell: cd: HOME not set\n", 28);
+				return (1);
+			}
 			if (chdir(home) == -1)
 				return (perror("minishell: "), 1);
 			return (0);
@@ -423,7 +422,7 @@ int replace_pwd(int len, t_other *other, char *cwdp)
 			en->value = NULL;
 			en->value = malloc (len + 1);
 			if (!en->value)
-				return (perror("minishel: ") ,-1);
+				return (perror("malloc: ") ,-1);
 			i = 0;
 			while (cwdp[i])
 			{
@@ -446,7 +445,7 @@ int builtin_pwd(t_other *other)
 	int	r;
 
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
-		return (perror("pwd"), 1);
+		return (perror("pwd "), 1);
 	len = ft_strlen(cwd);
 	cwdp = cwd;
 	r = replace_pwd(len, other, cwdp);
@@ -471,14 +470,28 @@ int check_export(char *opt)
 	int i;
 
 	i = 0;
-	if (!opt[0] || opt[0] == '-')
-		return (printf ("minishell: export: '%s': not a valid identifier", opt), 0);
+	if (!opt[0])
+	{
+		write (2, "minishell: export: '", 20);
+		write (2, "': not a valid identifier\n", 25);
+		return (0);
+	}
     if (!ft_isalpha(opt[0]) && opt[0] != '_')
-		return (printf ("minishell: export: '%s': not a valid identifier", opt), 1);
+	{
+		write (2, "minishell: export: '", 20);
+		write (2, opt, ft_strlen(opt));
+		write (2, "': not a valid identifier\n", 25);
+		return (1);
+	}
     while (opt[i] && opt[i] != '=')
     {
-        if (!ft_isalnum(opt[i]) && opt[i] != '_')
-			return (printf ("minishell: export: '%s': not a valid identifier", opt), 1);
+		if (!ft_isalnum(opt[i]) && opt[i] != '_')
+		{
+			write (2, "minishell: export: '", 20);
+			write (2, opt, ft_strlen(opt));
+			write (2, "': not a valid identifier\n", 25);
+			return (1);
+		}
         i++;
     }
     if (opt[i] && opt[i] == '=')
@@ -508,7 +521,7 @@ int	init_export(char *opt, t_other *other)
 	con2 = NULL;
 	con1 = malloc (i + 1);
 	if (!con1)
-		return (1);
+		return (perror("malloc "), 1);
 	t = 0;
 	while (t < i)
 	{
@@ -519,7 +532,7 @@ int	init_export(char *opt, t_other *other)
 	{
 		con2 = malloc ((j - i) + 1);
 		if (!con2)
-			return (free(con1), 1);
+			return (perror("malloc "), free(con1), 1);
 		t = 0;
 		while (opt[i + 1])
 		{
@@ -530,7 +543,7 @@ int	init_export(char *opt, t_other *other)
 	}
 	new = ft_lstnew(con1, con2);
 	if (new == NULL)
-		return (free(con1), free(con2), 1);
+		return (perror("malloc "), free(con1), free(con2), 1);
 	ft_lstadd_back(&other->envrp, new);
 	return (0);
 }
@@ -768,8 +781,8 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 int	exec(t_cmd *tmp, t_other *other)
 {
-	int i = 0;
-	while (tmp->argument[i])
+	// int i = 0;
+	// while (tmp->argument[i])
 		// dprintf (other->debug, "QBL arg ==== : %s\n", tmp->argument[i++]);
 	if (tmp->bin == 1)
 	{
@@ -793,6 +806,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	// printf ("FULL PATH of other ==== : %s\n", other->orig_cmd->path_cmd);
 	// printf ("cmd of tmp ==== : %s\n", tmp->commands[0]);
 	// printf ("cmd of other ==== : %s\n", other->orig_cmd->commands[0]);
+	// printf ("here\n");
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
