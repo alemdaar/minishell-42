@@ -55,7 +55,6 @@ typedef struct s_cmd
 	int		open1;
 	int		open2;
 	char	*path_cmd;
-	char	*opt;
 	char	**argument;
 	int		ar;
 	t_red	*red;

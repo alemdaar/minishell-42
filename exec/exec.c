@@ -159,39 +159,41 @@ void close_all_fds(t_cmd *cmd)
 		}
 		cmd = cmd->next;
 	}
-	printf ("DAZ MN HNAYA\n");
+	// printf ("DAZ MN HNAYA\n");
 }
 
 void free_env(t_other *other)
 {
-	
-	int debug = open ("debug", O_WRONLY);
+	t_env *tmp;
+
+	// int debug = open ("debug", O_WRONLY);
 	if (other->envrp)
 	{
 		while (other->envrp)
 		{
 			if (other->envrp->key)
 			{
-				dprintf (debug, "address other->envrp->key : %p\n", other->envrp->key);
-				dprintf (debug, "other->envrp->key : %s\n", other->envrp->key);
+				// dprintf (debug, "address other->envrp->key : %p\n", other->envrp->key);
+				// dprintf (debug, "other->envrp->key : %s\n", other->envrp->key);
 				free(other->envrp->key);
-				dprintf (debug, "other->envrp->key has been freed succesfully !\n");
+				// dprintf (debug, "other->envrp->key has been freed succesfully !\n");
 				other->envrp->key = NULL;
 			}
 			if (other->envrp->value)
 			{
-				dprintf (debug, "address other->envrp->value : %p\n", other->envrp->value);
-				dprintf (debug, "other->envrp->value : %s\n", other->envrp->value);
+				// dprintf (debug, "address other->envrp->value : %p\n", other->envrp->value);
+				// dprintf (debug, "other->envrp->value : %s\n", other->envrp->value);
 				free(other->envrp->value);
-				dprintf (debug, "other->envrp->value has been freed succecfully !\n");
+				// dprintf (debug, "other->envrp->value has been freed succecfully !\n");
 				other->envrp->value = NULL;
 			}
-			other->envrp = other->envrp->next;
+			// dprintf (debug, "address other->envrp : %p\n", other->envrp);
+			tmp = other->envrp;
+			other->envrp = tmp->next;
+			free(tmp);
+			tmp = NULL;
+			// dprintf (debug, "other->envrp has been freed succecfully !\n");
 		}
-		dprintf (debug, "address other->envrp : %p\n", other->envrp);
-		free(other->envrp);
-		dprintf (debug, "other->envrp->value has been freed succecfully !\n");
-		other->envrp = NULL;
 	}
 	return ;
 }
@@ -201,17 +203,17 @@ int free_all(t_other *other)
 	t_cmd	*tmp;
 
 	i = 0;
-	int debug = open ("debug", O_WRONLY);
+	// int debug = open ("debug", O_WRONLY);
 	// dprintf (debug, "tester : %s\n", other->paths[0]);
 	while (i < other->count_path && other->paths)
 	{
-		printf ("free(other->paths[i]);\n");
+		// printf ("free(other->paths[i]);\n");
 		if (other->paths[i] == NULL)
 			return (free(other->paths), other->paths = NULL, FAILED);
-		dprintf (debug, "paths[i] : %s\n", other->paths[i]);
-		dprintf (debug, "address paths[i] : %p\n", other->paths[i]);
+		// dprintf (debug, "paths[i] : %s\n", other->paths[i]);
+		// dprintf (debug, "address paths[i] : %p\n", other->paths[i]);
 		free(other->paths[i]);
-		dprintf (debug, "paths[i] has been freed succefully !\n");
+		// dprintf (debug, "paths[i] has been freed succefully !\n");
 		other->paths[i] = NULL;
 		i++;
 	}
@@ -219,51 +221,57 @@ int free_all(t_other *other)
 		return (FAILED);
 	else
 	{
-		printf ("free(other->paths);\n");
-		dprintf (debug, "address other->paths : %p\n", other->paths);
+		// printf ("free(other->paths);\n");
+		// dprintf (debug, "address other->paths : %p\n", other->paths);
 		free(other->paths);
-		dprintf (debug, "other->paths has been freed succecfully !\n");
+		// dprintf (debug, "other->paths has been freed succecfully !\n");
 		other->paths = NULL;
 	}
 	while (other->orig_cmd)
 	{
 		if (other->orig_cmd->path_cmd)
 		{
-			printf ("FREE other->orig_cmd->path_cmd\n");
-			dprintf (debug, "address orig_cmd->path_cmd : %p\n", other->orig_cmd->path_cmd);
-			dprintf (debug, "orig_cmd->path_cmd : %s\n", other->orig_cmd->path_cmd);
-			dprintf (debug, "ja hna !!1666968875457\n");
-			dprintf (debug, "other->orig_cmd->commands[0] : %s\n", other->orig_cmd->commands[0]);
+			// printf ("FREE other->orig_cmd->path_cmd\n");
+			// dprintf (debug, "address orig_cmd->path_cmd : %p\n", other->orig_cmd->path_cmd);
+			// dprintf (debug, "orig_cmd->path_cmd : %s\n", other->orig_cmd->path_cmd);
 			free(other->orig_cmd->path_cmd);
-			dprintf (debug, "orig_cmd->path_cmd has been freed succesfully !\n");
+			// dprintf (debug, "orig_cmd->path_cmd has been freed succesfully !\n");
 			other->orig_cmd->path_cmd = NULL;
 		}
 		i = 0;
 		// while (1);
 		while (other->orig_cmd->argument[i])
 		{
-			printf ("FREE other->orig_cmd->argument[i]\n");
-			dprintf (debug, "address orig_cmd->argument[i] : %p\n", other->orig_cmd->argument[i]);
-			dprintf (debug, "orig_cmd->argument[i] : %s\n", other->orig_cmd->argument[i]);
+			// printf ("FREE other->orig_cmd->argument[i]\n");
+			// dprintf (debug, "address orig_cmd->argument[i] : %p\n", other->orig_cmd->argument[i]);
+			// dprintf (debug, "orig_cmd->argument[i] : %s\n", other->orig_cmd->argument[i]);
 			free(other->orig_cmd->argument[i]);
-			dprintf (debug, "orig_cmd->argument[i] has been freed succesfully !\n");
+			// dprintf (debug, "orig_cmd->argument[i] has been freed succesfully !\n");
 			other->orig_cmd->argument[i] = NULL;
 			i ++;
 		}
 		if (other->orig_cmd->argument)
 		{
-			printf ("FREE other->orig_cmd->argument\n");
-			dprintf (debug, "address orig_cmd->argument : %p\n", other->orig_cmd->argument);
+			// printf ("FREE other->orig_cmd->argument\n");
+			// dprintf (debug, "address orig_cmd->argument : %p\n", other->orig_cmd->argument);
 			free(other->orig_cmd->argument);
-			dprintf (debug, "orig_cmd->argument has been freed succesfully !\n");
+			// dprintf (debug, "orig_cmd->argument has been freed succesfully !\n");
 			other->orig_cmd->argument = NULL;
 		}
-		printf ("FREE orig_cmd\n");
-		dprintf (debug, "address orig_cmd : %p\n", other->orig_cmd);
+		if (other->orig_cmd->commands)
+		{
+			// printf ("FREE command\n");
+			// dprintf (debug, "address commands : %p\n", other->orig_cmd->commands);
+			free(other->orig_cmd->commands);
+			// dprintf (debug, "orig_cmd->commands has been freed succesfully !\n");
+			other->orig_cmd->path_cmd = NULL;
+		}
+		// printf ("FREE orig_cmd\n");
+		// dprintf (debug, "address orig_cmd : %p\n", other->orig_cmd);
 		tmp = other->orig_cmd;
 		other->orig_cmd = other->orig_cmd->next;
 		free(tmp);
-		dprintf (debug, "orig_cmd has been freed succesfully !\n");
+		// dprintf (debug, "orig_cmd has been freed succesfully !\n");
 		tmp = NULL;
 	}
 	// while (1);
@@ -382,10 +390,10 @@ int builtin_cd(t_cmd *tmp, t_other *other)
 	{
 		if (tmp->commands[1][0] == '~' && !tmp->commands[1][1])
 		{
-			printf ("home : %s\n", home);
+			// printf ("home : %s\n", home);
 			if (home == NULL)
 				return (printf ("minishell: cd: HOME not set"), 1);
-			printf ("heere\n");
+			// printf ("heere\n");
 			if (chdir(home) == -1)
 				return (perror("minishell: "), 1);
 			return (0);
@@ -762,16 +770,17 @@ int	exec(t_cmd *tmp, t_other *other)
 {
 	int i = 0;
 	while (tmp->argument[i])
-		dprintf (other->debug, "QBL arg ==== : %s\n", tmp->argument[i++]);
+		// dprintf (other->debug, "QBL arg ==== : %s\n", tmp->argument[i++]);
 	if (tmp->bin == 1)
 	{
 		run_bin(tmp, other);
-		dprintf (other->debug, "==== \n");
+		// dprintf (other->debug, "==== \n");
 		return (0);
 	}
 	else if (tmp->path_cmd == NULL)
 	{
 		restore_fds(other);
+		// printf ("1............................\n");
 		free_all(other);
 		write (2, "Error: ", ft_strlen("Error: "));
 		write (2, tmp->commands[0], ft_strlen(tmp->commands[0]));
@@ -780,13 +789,14 @@ int	exec(t_cmd *tmp, t_other *other)
 	}
 	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
 	// while (1);
-	printf ("FULL PATH of tmp ==== : %s\n", tmp->path_cmd);
-	printf ("FULL PATH of other ==== : %s\n", other->orig_cmd->path_cmd);
-	printf ("cmd of tmp ==== : %s\n", tmp->commands[0]);
-	printf ("cmd of other ==== : %s\n", other->orig_cmd->commands[0]);
+	// printf ("FULL PATH of tmp ==== : %s\n", tmp->path_cmd);
+	// printf ("FULL PATH of other ==== : %s\n", other->orig_cmd->path_cmd);
+	// printf ("cmd of tmp ==== : %s\n", tmp->commands[0]);
+	// printf ("cmd of other ==== : %s\n", other->orig_cmd->commands[0]);
 	// while (1);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
+		// printf ("2............................\n");
 		free_all(other);
 		perror ("execve: ");
 		exit_status(1);
@@ -1061,7 +1071,10 @@ int	fill_argument(t_cmd *tmp, t_other *other)
 	ind.f = 0;
 	tmp->argument = malloc (sizeof(char *) * (tmp->ar + 1));
 	if (!tmp->argument)
+	{
+		// printf ("3............................\n");
 		return (printf("argument failed !\n"), free_all(other), ERROR);
+	}
 	ind.t = 0;
 	tmp->argument[0] = tmp->commands[0];
 	ind.i = 1;
@@ -1162,6 +1175,7 @@ int	pipping(t_cmd *tmp, int type)
 	}
 	if (ind.r == -1)
 	{
+		// printf ("4............................\n");
 		// free_all(other);
 		perror ("Error: pipe failed\n");
 		return (ERROR);
@@ -1218,12 +1232,14 @@ int	make_heredoc(t_cmd *tmp, t_other *other, char *limmiter)
 
 int	set_up(t_cmd *tmp)
 {
+	tmp->argument = NULL;
+	tmp->path_cmd = NULL;
+	tmp->limiter = NULL;
 	tmp->open1 = -3;
 	tmp->open2 = -3;
 	tmp->pipefd[WRITE] = -3;
 	tmp->pipefd[READ] = -3;
 	tmp->pipedoc[WRITE] = -3;
-	tmp->limiter = NULL;
 	tmp->pipedoc[READ] = -3;
 	tmp->is_limiter = 0;
 	tmp->ar = 1;
@@ -1363,8 +1379,8 @@ int work3(t_cmd *tmp, t_other *other)
 			handle_exit_status(other->exit_status);
 		}
 	}
-	printf ("ha huwa hna\n");
-	printf ("cmd with path : %s\n", other->orig_cmd->path_cmd);
+	// printf ("ha huwa hna\n");
+	// printf ("cmd with path : %s\n", other->orig_cmd->path_cmd);
 	// while (1);
 	return (SUCCESSFUL);
 }
@@ -1478,7 +1494,7 @@ int  work(t_cmd *cmd, t_other *other)
 			return (close_all_fds(cmd), 1);
 		}
 	}
-	return (close_all_fds(cmd), free_all(other), SUCCESSFUL);
+	return (SUCCESSFUL);
 }
 
 int	find_path(t_other *other, t_env *env)
@@ -1533,6 +1549,7 @@ void	fill_path(t_other *other, t_ind *ind)
 	other->paths[ind->c] = malloc (sizeof(char) * (ind->j - ind->i) + 1);
 	if (!other->paths[ind->c])
 	{
+		// printf ("6............................\n");
 		free_all(other);
 		exit_status(1);
 		perror ("malloc failed: \n");
@@ -1612,9 +1629,10 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	restore_fds(&other);
 	// while (1);
 	close_all_fds(cmd);
-	while (1);
-	printf ("CAME FROM HERE \n");
-	// free_all(&other);
-	while (1);
+	// printf ("kistna! \n");
+	// while (1);
+	// printf ("CAME FROM HERE \n");
+	free_all(&other);
+	free_env(&other);
 	return (0);
 }

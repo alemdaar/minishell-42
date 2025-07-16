@@ -74,6 +74,7 @@ int	main(int ac, char **av, char **ev)
 		if (!cmd)
 			continue ;
 		execution(cmd, env, ev);
-		cmdfree(cmd);
+		// cmdfree(cmd);
+		return (0);
 	}
 }
