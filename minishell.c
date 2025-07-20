@@ -46,6 +46,7 @@ static char	*rd_line(t_env *env)
 	rd_line = readline("minishell-$> ");
 	if (!rd_line)
 	{
+		printf ("ha hnaya \n");
 		env_leaks(env);
 		printf("\033[1A");
 		printf("\033[13C");
@@ -69,12 +70,14 @@ int	main(int ac, char **av, char **ev)
 	{
 		// rl_catch_signals = 0;
 		// set_signals_main();
+		printf ("begin of while \n");
+		// while (var);
 		buffer = rd_line(env);
 		cmd = assemble_command(buffer, env);
 		if (!cmd)
 			continue ;
 		execution(cmd, env, ev);
-		// cmdfree(cmd);
-		return (0);
+		printf ("end of while \n");
 	}
+	printf ("end of it \n");
 }

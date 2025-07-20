@@ -1,13 +1,17 @@
+# Compiler and flags
 CC = cc
-
 CFLAGS = -fsanitize=address -g -Wall -Wextra -Werror
 
-RFLG = -lreadline
+# Readline flags (add -lncurses for Linux)
+RFLG = -lreadline -lncurses
 
+# Output binary
 NAME = minishell
 
+# Your custom lib
 LIB = ./libft/libft.a
 
+# Source files (unchanged)
 SRC = 	minishell.c	\
 		./parsing/history/history.c					\
 		./parsing/asm_cmd.c							\
@@ -40,13 +44,14 @@ SRC = 	minishell.c	\
 		exec/gnl/get_next_line_utils.c				\
 		exec/linkedlist/linkedlist.c				\
 
-
-HDR = 		minishell.h 					\
-		 	./parsing/include/token.h		\
-		 	./parsing/include/syntax.h		\
+# Headers (unchanged)
+HDR = minishell.h \
+       ./parsing/include/token.h \
+       ./parsing/include/syntax.h
 
 OBJ = $(SRC:.c=.o)
 
+# Libft sources (unchanged)
 SRC_LIB = 	./libft/ft_strjoin.c 	\
 			./libft/ft_strdup.c 	\
 			./libft/ft_strlen.c 	\
@@ -58,14 +63,15 @@ SRC_LIB = 	./libft/ft_strjoin.c 	\
 			./libft/ft_isalnum.c	\
 			./libft/ft_strcmp.c		\
 
-OBJ_LIB = $(SRC:.c=.o)
-
+OBJ_LIB = $(SRC_LIB:.c=.o)
 HDR_LIB = ./libft/libft.h
 
+# Targets
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIB)
-	$(CC) $(CFLAGS) $(OBJ) $(LIB) -I/Users/oelhasso/homebrew/opt/readline -L/Users/oelhasso/homebrew/opt/readline -lreadline -o $@ $(RFLG)
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@ $(RFLG)
+
 %.o: %.c $(HDR)
 	$(CC) $(CFLAGS) -c $< -o $@
 

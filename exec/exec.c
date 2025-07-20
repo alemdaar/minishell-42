@@ -609,19 +609,20 @@ int find_unset(char *opt, t_other *other)
 					tempo2 = tempo2->next;
 				free(tenv->key);
 				free(tenv->value);
-				free(tenv);
 				tenv->key = NULL;
 				tenv->value = NULL;
+				free(tenv);
 				tempo2->next = NULL;
 			}
 			else if (c == 0)
 			{
+				other->envrp = other->envrp->next;
 				free(tenv->key);
 				free(tenv->value);
 				tenv->key = NULL;
 				tenv->value = NULL;
+				free(tenv);
 				tenv = NULL;
-				other->envrp = other->envrp->next;
 			}
 			else
 			{
@@ -1647,6 +1648,6 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	// while (1);
 	// printf ("CAME FROM HERE \n");
 	free_all(&other);
-	free_env(&other);
+	// free_env(&other);
 	return (0);
 }
