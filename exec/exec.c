@@ -1610,21 +1610,13 @@ void	edit_paths(t_other *other, t_env *env)
 	return ;
 }
 
-void protect_it(t_cmd *cmd, t_other *other)
+void save_fds(t_other *other)
 {
 
 	other->stdout_copy = dup(STDOUT_FILENO);
 	other->stdin_copy = dup(STDIN_FILENO);
 	other->stdin_flag = 0;
 	other->stdout_flag = 0;
-	while (cmd)
-	{
-		cmd->argument = NULL;
-		cmd->path_cmd = NULL;
-		cmd = cmd->next;
-	}
-	other->envr = NULL;
-	other->paths = NULL;
 }
 
 int execution(t_cmd *cmd, t_env *env, char **ev)
@@ -1638,10 +1630,10 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	other.envr = ev;
 	other.envrp = env;
 	other.orig_cmd = cmd;
+	save_fds(&other);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
 	work(cmd, &other);
-	restore_fds(&other);
 	// while (1);
 	close_all_fds(cmd);
 	// printf ("kistna! \n");
@@ -1649,5 +1641,6 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	// printf ("CAME FROM HERE \n");
 	free_all(&other);
 	// free_env(&other);
+	restore_fds(&other);
 	return (0);
 }
