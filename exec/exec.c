@@ -794,11 +794,11 @@ int	exec(t_cmd *tmp, t_other *other)
 	else if (tmp->path_cmd == NULL)
 	{
 		restore_fds(other);
-		// printf ("1............................\n");
-		free_all(other);
+		printf ("1............................\n");
 		write (2, "Error: ", ft_strlen("Error: "));
 		write (2, tmp->commands[0], ft_strlen(tmp->commands[0]));
 		write (2, " command not found\n", ft_strlen(" command not found\n"));
+		free_all(other);
 		return (127);
 	}
 	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);

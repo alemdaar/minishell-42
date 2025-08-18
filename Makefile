@@ -13,32 +13,32 @@ LIB = ./libft/libft.a
 
 # Source files (unchanged)
 SRC = 	minishell.c	\
-		./parsing/history/history.c					\
-		./parsing/asm_cmd.c							\
-		./parsing/tokens_core/list_tokens.c			\
-		./parsing/tokens_core/refactor_tokens.c		\
-		./parsing/tokens_core/unquotes.c			\
-		./parsing/tokens_core/utils0_tokens.c		\
-		./parsing/tokens_core/utils1_tokens.c		\
-		./parsing/tokens_core/utils3_tokens.c		\
-		./parsing/envp/env_expander.c				\
-		./parsing/envp/env_heredoc.c				\
-		./parsing/envp/env_list.c					\
-		./parsing/envp/env_split.c					\
-		./parsing/envp/exp_special.c				\
-		./parsing/envp/utils_env.c					\
-		./parsing/envp/utils1_env.c					\
-		./parsing/envp/env_leaks.c					\
-		./parsing/cmd/list_cmd.c					\
-		./parsing/cmd/utils_cmd.c					\
-		./parsing/cmd/nodes_cmd.c					\
-		./parsing/cmd/content_cmd.c					\
-		./parsing/syntax/scrap.c					\
-		./parsing/syntax/utils_scrap.c				\
-		./parsing/leaks/ffree.c						\
-		./parsing/leaks/free_cmd_list.c				\
-		./parsing/signal/signal.c					\
-		./parsing/error/error.c		\
+		parsing/history/history.c					\
+		parsing/asm_cmd.c							\
+		parsing/tokens_core/list_tokens.c			\
+		parsing/tokens_core/refactor_tokens.c		\
+		parsing/tokens_core/unquotes.c			\
+		parsing/tokens_core/utils0_tokens.c		\
+		parsing/tokens_core/utils1_tokens.c		\
+		parsing/tokens_core/utils3_tokens.c		\
+		parsing/envp/env_expander.c				\
+		parsing/envp/env_heredoc.c				\
+		parsing/envp/env_list.c					\
+		parsing/envp/env_split.c					\
+		parsing/envp/exp_special.c				\
+		parsing/envp/utils_env.c					\
+		parsing/envp/utils1_env.c					\
+		parsing/envp/env_leaks.c					\
+		parsing/cmd/list_cmd.c					\
+		parsing/cmd/utils_cmd.c					\
+		parsing/cmd/nodes_cmd.c					\
+		parsing/cmd/content_cmd.c					\
+		parsing/syntax/scrap.c					\
+		parsing/syntax/utils_scrap.c				\
+		parsing/leaks/ffree.c						\
+		parsing/leaks/free_cmd_list.c				\
+		parsing/signal/signal.c					\
+		parsing/error/error.c		\
 		exec/exec.c									\
 		exec/gnl/get_next_line.c					\
 		exec/gnl/get_next_line_utils.c				\
