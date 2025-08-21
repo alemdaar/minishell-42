@@ -469,20 +469,20 @@ int check_export(char *opt)
 {
 	int i;
 
-	i = 0;
 	if (!opt[0])
 	{
 		write (2, "minishell: export: '", 20);
 		write (2, "': not a valid identifier\n", 25);
 		return (0);
 	}
-    if (!ft_isalpha(opt[0]) && opt[0] != '_')
+    if (!ft_isalpha(opt[0]))
 	{
 		write (2, "minishell: export: '", 20);
 		write (2, opt, ft_strlen(opt));
 		write (2, "': not a valid identifier\n", 25);
 		return (1);
 	}
+	i = 1;
     while (opt[i] && opt[i] != '=')
     {
 		if (!ft_isalnum(opt[i]) && opt[i] != '_')
