@@ -468,18 +468,20 @@ int listenv(t_env *en)
 int check_export(char *opt)
 {
 	int i;
-
+	
 	if (!opt[0])
 	{
+		// write (2, "number 1\n", ft_strlen("number 1\n"));
 		write (2, "minishell: export: '", 20);
-		write (2, "': not a valid identifier\n", 25);
+		write (2, "': not a valid identifier\n", 26);
 		return (0);
 	}
     if (!ft_isalpha(opt[0]))
 	{
+		// write (2, "number 2\n", ft_strlen("number 2\n"));
 		write (2, "minishell: export: '", 20);
 		write (2, opt, ft_strlen(opt));
-		write (2, "': not a valid identifier\n", 25);
+		write (2, "': not a valid identifier\n", 26);
 		return (1);
 	}
 	i = 1;
@@ -487,9 +489,10 @@ int check_export(char *opt)
     {
 		if (!ft_isalnum(opt[i]) && opt[i] != '_')
 		{
+			// write (2, "number 3\n", ft_strlen("number 3\n"));
 			write (2, "minishell: export: '", 20);
 			write (2, opt, ft_strlen(opt));
-			write (2, "': not a valid identifier\n", 25);
+			write (2, "': not a valid identifier\n", 26);
 			return (1);
 		}
         i++;
@@ -559,9 +562,15 @@ int builtin_export(t_cmd *tmp, t_other *other)
 	{
 		r = check_export(tmp->commands[i]);
 		if (r == 2)
+		{
+			// printf ("equals 2\n");
 			return (exit_status(0), 0);
+		}
 		else if (r == 1)
+		{
+			// printf ("equals 1\n");
 			return (exit_status(1), 1);
+		}
 		r = init_export(tmp->commands[i], other);
 		if (r == -1)
 			return (1);
@@ -574,15 +583,32 @@ int check_unset(char *opt)
 {
 	int i;
 
-	i = 0;
-	if (!opt[0] || opt[0] == '-')
-		return (printf ("minishell: export: '%s': not a valid identifier\n", opt), 0);
-    if (!ft_isalpha(opt[0]) && opt[0] != '_')
-		return (printf ("minishell: export: '%s': not a valid identifier\n", opt), 1);
+	if (!opt[0])
+	{
+		// write (2, "number 1\n", ft_strlen("number 1\n"));
+		write (2, "minishell: export: '", 20);
+		write (2, "': not a valid identifier\n", 26);
+		return (0);
+	}
+    if (!ft_isalpha(opt[0]))
+	{
+		// write (2, "number 2\n", ft_strlen("number 2\n"));
+		write (2, "minishell: export: '", 20);
+		write (2, opt, ft_strlen(opt));
+		write (2, "': not a valid identifier\n", 26);
+		return (1);
+	}
+	i = 1;
     while (opt[i])
     {
-        if (!ft_isalnum(opt[i]) && opt[i] != '_')
-            return (printf ("minishell: export: '%s': not a valid identifier\n", opt), 1);
+       if (!ft_isalnum(opt[i]) && opt[i] != '_')
+		{
+			// write (2, "number 3\n", ft_strlen("number 3\n"));
+			write (2, "minishell: export: '", 20);
+			write (2, opt, ft_strlen(opt));
+			write (2, "': not a valid identifier\n", 26);
+			return (1);
+		}
         i++;
     }
     return (0);
@@ -756,13 +782,13 @@ int run_bin(t_cmd *tmp, t_other *other)
 	else if (is_equal(tmp->commands[0], "export"))
 	{
 		r = builtin_export(tmp, other);
-		exit_status(0);
+		exit_status(r);
 		return (r);
 	}
 	else if (is_equal(tmp->commands[0], "unset"))
 	{
 		r = builtin_unset(tmp, other);
-		exit_status(0);
+		exit_status(r);
 		return (r);
 	}
 	else if (is_equal(tmp->commands[0], "env"))
