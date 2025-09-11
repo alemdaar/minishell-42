@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/09 20:37:32 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/11 16:14:21 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -763,8 +763,8 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 	if (is_equal(tmp->commands[0], "echo"))
 	{
-		builtin_echo(tmp);
-		exit_status(0);
+		r = builtin_echo(tmp);
+		exit_status(r);
 		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "cd"))
@@ -808,14 +808,15 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 int	exec(t_cmd *tmp, t_other *other)
 {
+	int r = 0;
 	// int i = 0;
 	// while (tmp->argument[i])
 		// dprintf (other->debug, "QBL arg ==== : %s\n", tmp->argument[i++]);
 	if (tmp->bin == 1)
 	{
-		run_bin(tmp, other);
+		r = run_bin(tmp, other);
 		// dprintf (other->debug, "==== \n");
-		return (0);
+		return (r);
 	}
 	else if (tmp->path_cmd == NULL)
 	{
