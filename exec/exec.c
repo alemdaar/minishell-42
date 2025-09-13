@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/13 20:24:10 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/13 22:52:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,31 +361,6 @@ int builtin_echo(t_cmd *tmp)
     return (SUCCESSFUL);
 }
 
-int oldpwd_mission(t_env *ev, char *string, char *oldpwd)
-{
-	t_env	*ev_copy;
-	t_env	*prev;
-	int		i;
-
-	i = 0;
-	ev_copy = ev;
-	while (ev_copy)
-	{
-		while (string[i] && ev_copy->key[i] && string[i] == ev_copy->key[i])
-			i++;
-		if (string[i] == ev_copy->key[i] && !string[i] && !ev_copy->key[i])
-		{
-			ev_copy->value = oldpwd;
-			return (SUCCESSFUL);
-		}
-		prev = ev_copy;
-		ev_copy = ev_copy->next;
-	}
-	ev_copy = ft_lstnew(string, oldpwd);
-	ft_lstadd_back(&ev, ev_copy);
-	return (SUCCESSFUL);
-}
-
 int replace_pwd(int len, t_other *other, char *cwdp)
 {
 	int i;
@@ -445,371 +420,280 @@ int builtin_pwd(t_other *other)
 
 int listenv(t_env *en)
 {
-	while (en)
-	{
-		printf ("declare -x %s=\"%s\"\n", en->key, en->value);
-		en = en->next;
-	}
-	return (0);
-}
-
-int change_home(t_env *env, char *home_value, char *string)
-{
-	int		i;
-
-	i = 0;
-	while (env)
-	{
-		while (string[i] && env->key[i] && string[i] == env->key[i])
-			i++;
-		if (string[i] == env->key[i] && !string[i] && env->key[i] == '=')
-			env->value = home_value;
-		env = env->next;
-	}
-	return (0);
-}
-
-char	*bring_this(t_env *env, char *cmp)
-{
-	int		i;
-
-	i = 0;
-	while (env)
-	{
-		printf ("env key : %s\n", env->key);
-		printf ("env value : %s\n", env->value);
-		printf ("-+-+-+-+-+\n");
-		printf ("index : %d\n", i);
-		printf ("cmp[%c] && env->key[%c] && cmp[%c] == env->key[%c]\n", cmp[i], env->key[i], cmp[i], env->key[i]);
-		while (cmp[i] && env->key[i] && cmp[i] == env->key[i])
-		{
-			i++;
-			printf ("index : %d\n", i);
-			printf ("cmp[%c] && env->key[%c] && cmp[%c] == env->key[%c]\n", cmp[i], env->key[i], cmp[i], env->key[i]);
-		}
-		printf ("index : %d\n", i);
-		printf ("=====cmp[%c] && env->key[%c] && cmp[%c] == env->key[%c]\n", cmp[i], env->key[i], cmp[i], env->key[i]);
-		if (cmp[i] == env->key[i] && !cmp[i] && !env->key[i])
-		{
-			printf ("env value : %s\n", env->value);
-			return (env->value);
-		}
-		env = env->next;
-	}
-	return (NULL);
-}
-
-int	back_cd(char *home, t_env *env)
-{
-	int i = 0;
-	int j = 0;
-	while (home[i])
-	{
-		while (home[j] && home[j] != '/')
-			j++;
-		if (home[j] == '/')
-		{
-			i = j;
-			j++;			
-		}
-		else
-		{
-			while (i < j - 1)
-			{
-				home[j - 1] = 0;
-				j --;
-			}
-			change_home(env, home, "HOME");
-		}
-	}
-	return (0);
-}
-
-int builtin_cd(t_cmd *tmp, t_other *other)
-{
-	char	*home;
-	char	*string;
-	char	*oldhome;
-	t_env	*ev_copy;
-	int		i;
-
-	home = bring_this(other->envrp, "HOME");
-	oldhome = home;
-	printf ("\n\n\n\n\n\n\n.........................\n\n\n\n\n\n\n\n\n");
-	if ((!tmp->commands[1]) || (tmp->commands[1][0] == '~' && !tmp->commands[1][1]))
-	{
-		if (home == NULL)
-		{
-			write (2, "minishell: cd: HOME not set\n", 28);
-			return (1);
-		}
-		printf ("\n\n\n\n\n\n\n.........................\n\n\n\n\n\n\n\n\n");
-		printf ("home : %s\n", home);
-		printf ("\n\n\n\n\n\n\n.........................\n\n\n\n\n\n\n\n\n");
-		if (chdir(home) == -1)
-			return (perror("minishell: "), 1);
-		change_home(other->envrp, home, "HOME");
-	}
-	else if (tmp->commands[1] && tmp->commands[1][0])
-	{
-		if (is_equal(tmp->commands[1], ".."))
-			back_cd(home, other->envrp);
-		if (is_equal(tmp->commands[1], "-"))
-		{
-			home = bring_this(other->envrp, "OLDPWD");
-			if (home == NULL)
-			{
-				write(2, "minishell: cd: OLDPWD not set\n", 30);
-				return (1);
-			}
-			else
-				change_home(other->envrp, home, "HOME");
-		}
-		else
-		{
-			if (chdir(tmp->commands[1]) == -1)
-				return (perror("minishell: "), 1);
-		}
-	}
-	oldpwd_mission (other->envrp, "OLDPWD", oldhome);
-	ev_copy = other->envrp;
-	string = "HOME";
-	i = 0;
-	while (ev_copy)
-	{
-		while (string[i] && ev_copy->key[i] && string[i] == ev_copy->key[i])
-			i++;
-		if (string[i] == ev_copy->key[i] && !string[i] && !ev_copy->key[i])
-		{
-			ev_copy->value = home;
-			return (SUCCESSFUL);
-		}
-		ev_copy = ev_copy->next;
-	}
-	return (0);
-}
-
-int check_export(char *opt)
-{
-	int i;
-	
-	if (!opt[0])
-	{
-		// write (2, "number 1\n", ft_strlen("number 1\n"));
-		write (2, "minishell: export: '", 20);
-		write (2, "': not a valid identifier\n", 26);
-		return (0);
-	}
-    if (!ft_isalpha(opt[0]))
-	{
-		// write (2, "number 2\n", ft_strlen("number 2\n"));
-		write (2, "minishell: export: '", 20);
-		write (2, opt, ft_strlen(opt));
-		write (2, "': not a valid identifier\n", 26);
-		return (1);
-	}
-	i = 1;
-    while (opt[i] && opt[i] != '=')
+    while (en)
     {
-		if (!ft_isalnum(opt[i]) && opt[i] != '_')
-		{
-			// write (2, "number 3\n", ft_strlen("number 3\n"));
-			write (2, "minishell: export: '", 20);
-			write (2, opt, ft_strlen(opt));
-			write (2, "': not a valid identifier\n", 26);
-			return (1);
-		}
-        i++;
-    }
-    if (opt[i] && opt[i] == '=')
-    	return (0);
-    return (2);
-}
-
-int	init_export(char *opt, t_other *other)
-{
-	int i;
-	int j;
-	int t;
-	char *con1;
-	char *con2;
-	t_env *new;
-
-	i = 0;
-    while (opt[i] && opt[i] != '=')
-	{
-        i++;	
-	}
-	j = i + 1;
-    while (opt[j])
-	{
-        j++;
-	}
-	con2 = NULL;
-	con1 = malloc (i + 1);
-	if (!con1)
-		return (perror("malloc "), 1);
-	t = 0;
-	while (t < i)
-	{
-		con1[t] = opt[t];
-		t++;
-	}
-	if ((j - i) >= i)
-	{
-		con2 = malloc ((j - i) + 1);
-		if (!con2)
-			return (perror("malloc "), free(con1), 1);
-		t = 0;
-		while (opt[i + 1])
-		{
-			con2[t] = opt[i + 1];
-			i++;
-			t++;
-		}
-	}
-	new = ft_lstnew(con1, con2);
-	if (new == NULL)
-		return (perror("malloc "), free(con1), free(con2), 1);
-	ft_lstadd_back(&other->envrp, new);
-	return (0);
-}
-int builtin_export(t_cmd *tmp, t_other *other)
-{
-	int	r;
-	int	i;
-
-	i = 1;
-	if (!tmp->commands[1])
-		return (listenv(other->envrp), 0);
-	while (tmp->commands[i])
-	{
-		r = check_export(tmp->commands[i]);
-		if (r == 2)
-		{
-			// printf ("equals 2\n");
-			return (exit_status(0), 0);
-		}
-		else if (r == 1)
-		{
-			// printf ("equals 1\n");
-			return (exit_status(1), 1);
-		}
-		r = init_export(tmp->commands[i], other);
-		if (r == -1)
-			return (1);
-		i++;
-	}
-	return (SUCCESSFUL);
-}
-
-int check_unset(char *opt)
-{
-	int i;
-
-	if (!opt[0])
-	{
-		// write (2, "number 1\n", ft_strlen("number 1\n"));
-		write (2, "minishell: export: '", 20);
-		write (2, "': not a valid identifier\n", 26);
-		return (0);
-	}
-    if (!ft_isalpha(opt[0]))
-	{
-		// write (2, "number 2\n", ft_strlen("number 2\n"));
-		write (2, "minishell: export: '", 20);
-		write (2, opt, ft_strlen(opt));
-		write (2, "': not a valid identifier\n", 26);
-		return (1);
-	}
-	i = 1;
-    while (opt[i])
-    {
-       if (!ft_isalnum(opt[i]) && opt[i] != '_')
-		{
-			// write (2, "number 3\n", ft_strlen("number 3\n"));
-			write (2, "minishell: export: '", 20);
-			write (2, opt, ft_strlen(opt));
-			write (2, "': not a valid identifier\n", 26);
-			return (1);
-		}
-        i++;
+        if (en->value)
+            printf("declare -x %s=\"%s\"\n", en->key, en->value);
+        else
+            printf("declare -x %s\n", en->key);
+        en = en->next;
     }
     return (0);
 }
 
-int find_unset(char *opt, t_other *other)
+char *get_env_value(t_env *env, const char *key)
 {
-	int		r;
-	int		c;
-	t_env	*tenv;
-	t_env	*tempo2;
+    while (env)
+    {
+        if (ft_strcmp(env->key, key) == 0)
+            return env->value;
+        env = env->next;
+    }
+    return NULL;
+}
 
-	c = 0;
-	tenv = other->envrp;
-	while (tenv)
+int update_env(t_env *env, const char *key, const char *value)
+{
+    t_env *tmp = env;
+    while (tmp)
+    {
+        if (ft_strcmp(tmp->key, key) == 0)
+        {
+            free(tmp->value);
+            tmp->value = ft_strdup(value);
+            if (!tmp->value) return perror("malloc"), -1;
+            return SUCCESSFUL;
+        }
+        tmp = tmp->next;
+    }
+    t_env *new_node = malloc(sizeof(t_env));
+    if (!new_node) return perror("malloc"), -1;
+    new_node->key = ft_strdup(key);
+    new_node->value = ft_strdup(value);
+    new_node->next = NULL;
+    if (!new_node->key || !new_node->value) return perror("malloc"), -1;
+
+    tmp = env;
+    while (tmp->next) tmp = tmp->next;
+    tmp->next = new_node;
+    return SUCCESSFUL;
+}
+
+int builtin_cd(t_cmd *cmd, t_other *other)
+{
+    char *target;
+    char *oldpwd;
+    char cwd[PATH_MAX];
+    t_env *env = other->envrp;
+
+    if (!getcwd(cwd, sizeof(cwd))) return perror("getcwd"), 1;
+    oldpwd = ft_strdup(cwd);
+    if (!oldpwd) return perror("malloc"), 1;
+
+    if (!cmd->commands[1] || (cmd->commands[1][0] == '~' && !cmd->commands[1][1]))
+    {
+        target = get_env_value(env, "HOME");
+        if (!target)
+        {
+            fprintf(stderr, "minishell: cd: HOME not set\n");
+            free(oldpwd);
+            return 1;
+        }
+    }
+    else if (ft_strcmp(cmd->commands[1], "-") == 0)
+    {
+        target = get_env_value(env, "OLDPWD");
+        if (!target)
+        {
+            fprintf(stderr, "minishell: cd: OLDPWD not set\n");
+            free(oldpwd);
+            return 1;
+        }
+        printf("%s\n", target);
+    }
+    else
+        target = cmd->commands[1];
+
+    if (chdir(target) == -1)
+    {
+        perror("minishell: cd");
+        free(oldpwd);
+        return 1;
+    }
+
+    if (update_env(env, "OLDPWD", oldpwd) == -1) { free(oldpwd); return 1; }
+    free(oldpwd);
+
+    if (!getcwd(cwd, sizeof(cwd))) return perror("getcwd"), 1;
+    if (update_env(env, "PWD", cwd) == -1) return 1;
+
+    return 0;
+}
+
+int	check_export(char *opt)
+{
+	int	i;
+
+	if (!opt || !opt[0])
 	{
-		r = ft_strcmp(tenv->key, opt);
-		if (r == 0)
+		write(2, "minishell: export: '", 20);
+		write(2, opt ? opt : "", ft_strlen(opt ? opt : ""));
+		write(2, "': not a valid identifier\n", 26);
+		return (1);
+	}
+	if (!ft_isalpha(opt[0]) && opt[0] != '_')
+	{
+		write(2, "minishell: export: '", 20);
+		write(2, opt, ft_strlen(opt));
+		write(2, "': not a valid identifier\n", 26);
+		return (1);
+	}
+	i = 1;
+	while (opt[i] && opt[i] != '=')
+	{
+		if (!ft_isalnum(opt[i]) && opt[i] != '_')
 		{
-			if (tenv->next == NULL)
-			{
-				tempo2 = other->envrp;
-				while (tempo2->next->next)
-					tempo2 = tempo2->next;
-				free(tenv->key);
-				free(tenv->value);
-				tenv->key = NULL;
-				tenv->value = NULL;
-				free(tenv);
-				tempo2->next = NULL;
-			}
-			else if (c == 0)
-			{
-				other->envrp = other->envrp->next;
-				free(tenv->key);
-				free(tenv->value);
-				tenv->key = NULL;
-				tenv->value = NULL;
-				free(tenv);
-				tenv = NULL;
-			}
-			else
-			{
-				tempo2 = tenv->next;
-				free(tenv->key);
-				free(tenv->value);
-				tenv->key = NULL;
-				tenv->value = NULL;
-				tenv = other->envrp;
-				while (tenv->next->key)
-					tenv = tenv->next;
-				free(tenv->next);
-				tenv->next = tempo2;
-				tenv->next = tempo2;
-			}
-			return (0);
+			write(2, "minishell: export: '", 20);
+			write(2, opt, ft_strlen(opt));
+			write(2, "': not a valid identifier\n", 26);
+			return (1);
 		}
-		c = 1;
-		tenv = tenv->next;
+		i++;
 	}
 	return (0);
 }
 
-int builtin_unset(t_cmd *tmp, t_other *other)
+int init_export(char *opt, t_other *other)
+{
+    int i = 0;
+    while (opt[i] && opt[i] != '=')
+        i++;
+
+    char *key = ft_substr(opt, 0, i);
+    if (!key)
+        return (perror("malloc "), 1);
+
+    char *value = NULL;
+    if (opt[i] == '=')
+    {
+        value = ft_strdup(opt + i + 1);
+        if (!value)
+            return (perror("malloc "), free(key), 1);
+    }
+
+    t_env *cur = other->envrp;
+    while (cur)
+    {
+        if (ft_strcmp(cur->key, key) == 0)
+        {
+            if (opt[i] == '=')
+            {
+                free(cur->value);
+                cur->value = value;
+            }
+            free(key);
+            return (0);
+        }
+        cur = cur->next;
+    }
+
+    t_env *new = ft_lstnew(key, value);
+    if (!new)
+        return (perror("malloc "), free(key), free(value), 1);
+    ft_lstadd_back(&other->envrp, new);
+    return (0);
+}
+
+
+int	builtin_export(t_cmd *tmp, t_other *other)
+{
+	int	r;
+	int	i;
+	int	ret;
+
+	if (!tmp->commands[1])
+		return (listenv(other->envrp), 0);
+	ret = 0;
+	i = 1;
+	while (tmp->commands[i])
+	{
+		r = check_export(tmp->commands[i]);
+		if (r == 0)
+		{
+			if (init_export(tmp->commands[i], other) != 0)
+				ret = 1;
+		}
+		else
+			ret = 1;
+		i++;
+	}
+	exit_status(ret);
+	return (ret);
+}
+
+int	check_unset(char *opt)
 {
 	int i;
 
-	i = 1;
-	if (!tmp->commands[1])
-		return (0);
-	while (tmp->commands[i])
+	if (!opt || !opt[0])
 	{
-		check_unset(tmp->commands[i]);
-		find_unset(tmp->commands[i], other);
+		write(2, "minishell: unset: '", 19);
+		write(2, opt ? opt : "", ft_strlen(opt ? opt : ""));
+		write(2, "': not a valid identifier\n", 26);
+		return (1);
+	}
+	if (!ft_isalpha(opt[0]) && opt[0] != '_')
+	{
+		write(2, "minishell: unset: '", 19);
+		write(2, opt, ft_strlen(opt));
+		write(2, "': not a valid identifier\n", 26);
+		return (1);
+	}
+	i = 1;
+	while (opt[i])
+	{
+		if (!ft_isalnum(opt[i]) && opt[i] != '_')
+		{
+			write(2, "minishell: unset: '", 19);
+			write(2, opt, ft_strlen(opt));
+			write(2, "': not a valid identifier\n", 26);
+			return (1);
+		}
 		i++;
 	}
 	return (0);
+}
+
+void	remove_env_node(t_env **head, char *key)
+{
+	t_env *cur = *head;
+	t_env *prev = NULL;
+
+	while (cur)
+	{
+		if (ft_strcmp(cur->key, key) == 0)
+		{
+			if (prev)
+				prev->next = cur->next;
+			else
+				*head = cur->next;
+
+			free(cur->key);
+			free(cur->value);
+			free(cur);
+			return;
+		}
+		prev = cur;
+		cur = cur->next;
+	}
+}
+
+int	builtin_unset(t_cmd *tmp, t_other *other)
+{
+	int i;
+	int status = 0;
+
+	i = 1;
+	while (tmp->commands[i])
+	{
+		if (check_unset(tmp->commands[i]) == 0)
+			remove_env_node(&other->envrp, tmp->commands[i]);
+		else
+			status = 1;
+		i++;
+	}
+	exit_status(status);
+	return (status);
 }
 
 int builtin_env(t_cmd *tmp, t_other *other)
@@ -1769,6 +1653,16 @@ void save_fds(t_other *other)
 	other->stdout_flag = 0;
 }
 
+// void envrr(t_env *env)
+// {
+// 	while (env)
+// 	{
+// 		printf ("key : %s\n", env->key);
+// 		printf ("value : %s\n", env->value);
+// 		env = env->next;
+// 	}
+// }
+
 int execution(t_cmd *cmd, t_env *env, char **ev)
 {
 	t_other	other;
@@ -1776,6 +1670,7 @@ int execution(t_cmd *cmd, t_env *env, char **ev)
 	// tmp = env;
 
 	// test(cmd);
+	// envrr(env);
 	signal(SIGINT, SIG_IGN);
 	other.envr = ev;
 	other.envrp = env;
