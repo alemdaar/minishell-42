@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/11 16:14:21 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/13 20:24:10 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -358,49 +358,32 @@ int builtin_echo(t_cmd *tmp)
 	}
     if (newline)
         printf("\n");
-    return (0);
+    return (SUCCESSFUL);
 }
 
-char	*bring_this(t_env *env, char *cmp)
+int oldpwd_mission(t_env *ev, char *string, char *oldpwd)
 {
+	t_env	*ev_copy;
+	t_env	*prev;
 	int		i;
 
 	i = 0;
-	while (env)
+	ev_copy = ev;
+	while (ev_copy)
 	{
-		while (cmp[i] && env->key[i] && cmp[i] == env->key[i])
+		while (string[i] && ev_copy->key[i] && string[i] == ev_copy->key[i])
 			i++;
-		if (cmp[i] == env->key[i])
-			return (env->value);
-		env = env->next;
-	}
-	return (NULL);
-}
-
-int builtin_cd(t_cmd *tmp, t_other *other)
-{
-	char *home;
-
-	if (!tmp->commands[1] || !tmp->commands[1][0])
-		return (exit_status(0), 0);
-	home = bring_this(other->envrp, "HOME");
-	if (tmp->commands[1] && tmp->commands[1][0])
-	{
-		if (tmp->commands[1][0] == '~' && !tmp->commands[1][1])
+		if (string[i] == ev_copy->key[i] && !string[i] && !ev_copy->key[i])
 		{
-			if (home == NULL)
-			{
-				write (2, "minishell: cd: HOME not set\n", 28);
-				return (1);
-			}
-			if (chdir(home) == -1)
-				return (perror("minishell: "), 1);
-			return (0);
+			ev_copy->value = oldpwd;
+			return (SUCCESSFUL);
 		}
-		if (chdir(tmp->commands[1]) == -1)
-			return (perror("minishell: "), 1);
+		prev = ev_copy;
+		ev_copy = ev_copy->next;
 	}
-	return (0);
+	ev_copy = ft_lstnew(string, oldpwd);
+	ft_lstadd_back(&ev, ev_copy);
+	return (SUCCESSFUL);
 }
 
 int replace_pwd(int len, t_other *other, char *cwdp)
@@ -409,17 +392,22 @@ int replace_pwd(int len, t_other *other, char *cwdp)
 	t_env *en;
 	char *path;
 
-	path = "PATH";
+	path = "PWD";
 	i = 0;
 	en = other->envrp;
 	while (en)
 	{
 		while (path[i] && en->key[i] && path[i] == en->key[i])
 			i++;
-		if (path[i] == en->key[i])
+		if (path[i] == en->key[i] && !path[i] && !en->key[i])
 		{
-			free (en->value);
-			en->value = NULL;
+			if (en->value)
+			{
+				
+				free (en->value);
+				en->value = NULL;
+			}
+			
 			en->value = malloc (len + 1);
 			if (!en->value)
 				return (perror("malloc: ") ,-1);
@@ -461,6 +449,142 @@ int listenv(t_env *en)
 	{
 		printf ("declare -x %s=\"%s\"\n", en->key, en->value);
 		en = en->next;
+	}
+	return (0);
+}
+
+int change_home(t_env *env, char *home_value, char *string)
+{
+	int		i;
+
+	i = 0;
+	while (env)
+	{
+		while (string[i] && env->key[i] && string[i] == env->key[i])
+			i++;
+		if (string[i] == env->key[i] && !string[i] && env->key[i] == '=')
+			env->value = home_value;
+		env = env->next;
+	}
+	return (0);
+}
+
+char	*bring_this(t_env *env, char *cmp)
+{
+	int		i;
+
+	i = 0;
+	while (env)
+	{
+		printf ("env key : %s\n", env->key);
+		printf ("env value : %s\n", env->value);
+		printf ("-+-+-+-+-+\n");
+		printf ("index : %d\n", i);
+		printf ("cmp[%c] && env->key[%c] && cmp[%c] == env->key[%c]\n", cmp[i], env->key[i], cmp[i], env->key[i]);
+		while (cmp[i] && env->key[i] && cmp[i] == env->key[i])
+		{
+			i++;
+			printf ("index : %d\n", i);
+			printf ("cmp[%c] && env->key[%c] && cmp[%c] == env->key[%c]\n", cmp[i], env->key[i], cmp[i], env->key[i]);
+		}
+		printf ("index : %d\n", i);
+		printf ("=====cmp[%c] && env->key[%c] && cmp[%c] == env->key[%c]\n", cmp[i], env->key[i], cmp[i], env->key[i]);
+		if (cmp[i] == env->key[i] && !cmp[i] && !env->key[i])
+		{
+			printf ("env value : %s\n", env->value);
+			return (env->value);
+		}
+		env = env->next;
+	}
+	return (NULL);
+}
+
+int	back_cd(char *home, t_env *env)
+{
+	int i = 0;
+	int j = 0;
+	while (home[i])
+	{
+		while (home[j] && home[j] != '/')
+			j++;
+		if (home[j] == '/')
+		{
+			i = j;
+			j++;			
+		}
+		else
+		{
+			while (i < j - 1)
+			{
+				home[j - 1] = 0;
+				j --;
+			}
+			change_home(env, home, "HOME");
+		}
+	}
+	return (0);
+}
+
+int builtin_cd(t_cmd *tmp, t_other *other)
+{
+	char	*home;
+	char	*string;
+	char	*oldhome;
+	t_env	*ev_copy;
+	int		i;
+
+	home = bring_this(other->envrp, "HOME");
+	oldhome = home;
+	printf ("\n\n\n\n\n\n\n.........................\n\n\n\n\n\n\n\n\n");
+	if ((!tmp->commands[1]) || (tmp->commands[1][0] == '~' && !tmp->commands[1][1]))
+	{
+		if (home == NULL)
+		{
+			write (2, "minishell: cd: HOME not set\n", 28);
+			return (1);
+		}
+		printf ("\n\n\n\n\n\n\n.........................\n\n\n\n\n\n\n\n\n");
+		printf ("home : %s\n", home);
+		printf ("\n\n\n\n\n\n\n.........................\n\n\n\n\n\n\n\n\n");
+		if (chdir(home) == -1)
+			return (perror("minishell: "), 1);
+		change_home(other->envrp, home, "HOME");
+	}
+	else if (tmp->commands[1] && tmp->commands[1][0])
+	{
+		if (is_equal(tmp->commands[1], ".."))
+			back_cd(home, other->envrp);
+		if (is_equal(tmp->commands[1], "-"))
+		{
+			home = bring_this(other->envrp, "OLDPWD");
+			if (home == NULL)
+			{
+				write(2, "minishell: cd: OLDPWD not set\n", 30);
+				return (1);
+			}
+			else
+				change_home(other->envrp, home, "HOME");
+		}
+		else
+		{
+			if (chdir(tmp->commands[1]) == -1)
+				return (perror("minishell: "), 1);
+		}
+	}
+	oldpwd_mission (other->envrp, "OLDPWD", oldhome);
+	ev_copy = other->envrp;
+	string = "HOME";
+	i = 0;
+	while (ev_copy)
+	{
+		while (string[i] && ev_copy->key[i] && string[i] == ev_copy->key[i])
+			i++;
+		if (string[i] == ev_copy->key[i] && !string[i] && !ev_copy->key[i])
+		{
+			ev_copy->value = home;
+			return (SUCCESSFUL);
+		}
+		ev_copy = ev_copy->next;
 	}
 	return (0);
 }
@@ -763,21 +887,21 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 	if (is_equal(tmp->commands[0], "echo"))
 	{
-		r = builtin_echo(tmp);
-		exit_status(r);
+		builtin_echo(tmp);
+		exit_status(SUCCESSFUL);
 		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "cd"))
 	{
-		builtin_cd(tmp, other);
-		exit_status(0);
-		return (SUCCESSFUL);
+		r = builtin_cd(tmp, other);
+		exit_status(r);
+		return (r);
 	}
 	else if (is_equal(tmp->commands[0], "pwd") == 1)
 	{
-		r = builtin_pwd(other);
-		exit_status(0);
-		return (r);
+		builtin_pwd(other);
+		exit_status(SUCCESSFUL);
+		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "export"))
 	{
@@ -794,7 +918,7 @@ int run_bin(t_cmd *tmp, t_other *other)
 	else if (is_equal(tmp->commands[0], "env"))
 	{
 		builtin_env(tmp, other);
-		exit_status(0);
+		exit_status(SUCCESSFUL);
 		return (SUCCESSFUL);
 	}
 	else if (is_equal(tmp->commands[0], "exit"))
