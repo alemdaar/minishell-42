@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/13 22:52:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/14 22:34:21 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 // 		printf ("2---\n");
 // 	}
 // }
+
 void nothing(void *tmp);
 
 // void close_reds(t_cmd *tmp, int flag)
@@ -743,29 +744,61 @@ int	ft_atoi(const char *str)
 
 int builtin_exit(t_cmd *tmp)
 {
-	int i;
+    int i;
 
-	i = 0;
-	if (!tmp->commands[1])
-		return (exit_status (0), exit(1), 1);
-	while (tmp->commands[1][i])
+    printf("exit\n");
+
+    if (!tmp->commands[1])
+        exit(exit_status(-1));
+    i = 0;
+    if (!tmp->commands[1][0])
 	{
-		if (tmp->commands[1][i] > '9' || tmp->commands[1][i] < '0')
+		fprintf(stderr, "minishell: exit: %s: numeric argument required\n", tmp->commands[1]);
+		exit(255);
+	}
+    while (tmp->commands[1][i] == ' ')
+        i ++;
+    if (tmp->commands[1][i] == '+' || tmp->commands[1][i] == '-')
+        i ++;
+	if (!ft_isdigit(tmp->commands[1][i]))
+	{
+		fprintf(stderr, "minishell: exit: %s: numeric argument required\n", tmp->commands[1]);
+		exit(255);
+	}
+    while (tmp->commands[1][i])
+    {		
+		if (tmp->commands[1][i] == ' ')
 		{
-			printf ("minishell: exit: hello: numeric argument required\n");
-			return (exit_status (1), exit(1), 1);
+			while (tmp->commands[1][i] == ' ')
+				i++;
+			break;
 		}
-		i++;
-	}
-	if (tmp->commands[2])
+        if (!ft_isdigit(tmp->commands[1][i]) && tmp->commands[1][i])
+        {
+            fprintf(stderr, "minishell: exit: %s: numeric argument required\n", tmp->commands[1]);
+            exit(255);
+        }
+        i++;
+    }
+	while (tmp->commands[1][i] == ' ')
+		break;
+	if (tmp->commands[1][i] != 0)
 	{
-		printf ("minishell: exit: too many arguments\n");
-		return (exit_status (1), 1);
+		fprintf(stderr, "minishell: exit: %s: numeric argument required\n", tmp->commands[1]);
+		exit(255);
 	}
-	exit (ft_atoi(tmp->commands[1]));
+    if (tmp->commands[2])
+    {
+        fprintf(stderr, "minishell: exit: too many arguments\n");
+        exit_status(1);
+        return (1);
+    }
+
+    exit((unsigned char)ft_atoi(tmp->commands[1]));
 }
 
-int run_bin(t_cmd *tmp, t_other *other)
+
+int run_bin(t_cmd *tmp, t_other *other) 
 {
 	int	r;
 
@@ -843,6 +876,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	// printf ("cmd of other ==== : %s\n", other->orig_cmd->commands[0]);
 	// printf ("here\n");
 	// while (1);
+	// printf ("here it is : %s\n", tmp->commands[0]);
 	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
 	{
 		// printf ("2............................\n");

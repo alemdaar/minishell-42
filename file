@@ -1,1 +1,2 @@
-hello && cat file
+exit_code ->$? user ->$USER home -> $HOME
+exit_code ->$? user ->$USER home -> $HOME

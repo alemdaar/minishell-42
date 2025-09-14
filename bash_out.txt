@@ -1,0 +1,1 @@
+bash: line 0: exit: too many arguments

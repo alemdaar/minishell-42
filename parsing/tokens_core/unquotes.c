@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unquotes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/15 16:00:51 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/08 09:24:10 by mbarhoun         ###   ########.fr       */
+/*   Created: 2025/09/14 18:06:20 by oelhasso          #+#    #+#             */
+/*   Updated: 2025/09/14 18:33:32 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int	analyze_quotes(char *str)
 	r = 0;
 	quotes = 0;
 	all_quotes = 0;
-	while (str[r] && r < ft_strlen(str))
+	while (str[r] && r < (int)ft_strlen(str))
 	{
 		if (str[r] == '"' || str[r] == '\'')
 		{

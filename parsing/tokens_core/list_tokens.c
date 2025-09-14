@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/08 12:19:30 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/08 09:14:24 by mbarhoun         ###   ########.fr       */
+/*   Created: 2025/09/14 18:06:12 by oelhasso          #+#    #+#             */
+/*   Updated: 2025/09/14 18:33:13 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,14 +98,14 @@ t_token	*segment_input(char *tokens)
 	t_token	*head;
 
 	set_var_zero(&spl.i, &spl.r, &spl.f_quotes, &head);
-	while (tokens[spl.i] && spl.i < ft_strlen(tokens))
+	while (tokens[spl.i] && spl.i < (int)ft_strlen(tokens))
 	{
 		spl.i += skip_space(tokens + spl.i);
 		spl.i += symbols_token(&spl.new_token, tokens, spl.i, &head);
 		spl.i += skip_space(tokens + spl.i);
 		if (is_symbols(tokens[spl.i]))
 			continue ;
-		if (spl.i >= ft_strlen(tokens) || spl.i < 0)
+		if (spl.i >= (int)ft_strlen(tokens) || spl.i < 0)
 			break ;
 		if (tokens[spl.i] == '"' || tokens[spl.i] == '\'')
 			spl.f_quotes = 1;

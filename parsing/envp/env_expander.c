@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_expander.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbarhoun <mbarhoun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/20 11:04:33 by mbarhoun          #+#    #+#             */
-/*   Updated: 2025/07/08 09:19:45 by mbarhoun         ###   ########.fr       */
+/*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
+/*   Updated: 2025/09/14 18:40:31 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ char	*key_value(char **content, char *v_env, int pos, int len_key)
 	value = malloc(ft_strlen(*content) - len_key + ft_strlen(v_env) + 1);
 	if (!value)
 		return (eprintf(ERR_MEM), NULL);
-	while ((*content)[++r] && r < ft_strlen(*content))
+	while ((*content)[++r] && r < (int)ft_strlen(*content))
 	{
 		if (r == pos)
 		{

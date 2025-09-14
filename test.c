@@ -1,20 +1,22 @@
+#include <stdio.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <stdlib.h>
 
-// 1. Save original stdout
-int stdout_copy = dup(STDOUT_FILENO);
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <program> [args...]\n", argv[0]);
+        return 1;
+    }
 
-// 2. Redirect stdout to a file
-int fd = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-dup2(fd, STDOUT_FILENO);
-close(fd); // optional but recommended after dup2
+    // argv[1] is the program, argv[2..] are its arguments
+    char **cmd_args = &argv[1];
 
-// 3. Execute the built-in that writes to stdout
-printf("this goes to file\n");
+    // Execute the command
+    if (execve(cmd_args[0], cmd_args, NULL) == -1) {
+        perror("execve failed");
+        return 1;
+    }
 
-// 4. Restore original stdout
-dup2(stdout_copy, STDOUT_FILENO);
-close(stdout_copy);
-
-// 5. Now stdout goes back to terminal
-printf("this goes to terminal\n");
+    // This line is never reached if execve succeeds
+    return 0;
+}
