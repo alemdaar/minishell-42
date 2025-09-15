@@ -1,22 +1,44 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
-int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s <program> [args...]\n", argv[0]);
-        return 1;
+static void sigint_handler(int sig)
+{
+    (void)sig;
+    write(1, "\n", 1);          // go to new line
+    rl_replace_line("", 0);      // clear current input
+    rl_on_new_line();            // move cursor to new line
+    rl_redisplay();              // redraw prompt
+}
+
+static void sigquit_handler(int sig)
+{
+    (void)sig;
+    // Do nothing (ignore Ctrl+\)
+}
+
+int main(void)
+{
+    char *line;
+
+    // Set signal handlers
+    signal(SIGINT, sigint_handler);
+    signal(SIGQUIT, sigquit_handler);
+
+    while (1)
+    {
+        line = readline("minishell-$> ");
+        if (!line) // Ctrl+D
+        {
+            printf("exit\n");
+            break;
+        }
+        if (*line)
+            add_history(line);
+        free(line);
     }
-
-    // argv[1] is the program, argv[2..] are its arguments
-    char **cmd_args = &argv[1];
-
-    // Execute the command
-    if (execve(cmd_args[0], cmd_args, NULL) == -1) {
-        perror("execve failed");
-        return 1;
-    }
-
-    // This line is never reached if execve succeeds
     return 0;
 }

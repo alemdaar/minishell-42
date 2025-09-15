@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:07:16 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:51:33 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,22 +38,20 @@ void    handle_exit_status(int status)
         exit_status(WEXITSTATUS(status));
 }
 
-static char	*rd_line(t_env *env)
+static char	*read_line(t_env *env)
 {
-	char	*rd_line;
+	char	*read_line;
 
-	rd_line = NULL;
-	rd_line = readline("minishell-$> ");
-	if (!rd_line)
+	read_line = NULL;
+	read_line = readline("minishell-$> ");
+	if (!read_line)
 	{
-		env_leaks(env);
-		printf("\033[1A");
-		printf("\033[13C");
+		clean_env(env);
 		printf("exit\n");
 		exit(0);
 	}
-	history_input(rd_line);
-	return (rd_line);
+	history_input(read_line);
+	return (read_line);
 }
 
 int	main(int ac, char **av, char **ev)
@@ -70,7 +68,7 @@ int	main(int ac, char **av, char **ev)
 		// rl_catch_signals = 0;
 		// set_signals_main();
 		// while (var);
-		buffer = rd_line(env);
+		buffer = read_line(env);
 		cmd = assemble_command(buffer, env);
 		if (!cmd)
 			continue ;

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:07:24 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 22:44:38 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,5 @@ typedef struct s_cmd
 	t_cmd	*next;
 }	t_cmd;
 
-/*~~~~~~~~~~~~~~~~~~~~~~<minishell.c>~~~~~~~~~~~~~~~~~~~~~~*/
 int		exit_status(int value);
-
 #endif

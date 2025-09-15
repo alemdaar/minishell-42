@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:44 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:45 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	expand_meta(char **content, int pos, int r, bool f_quotes)
 		ival = exit_status(-1);
 		sval = ft_itoa(ival);
 		return (*content = key_value(content, sval, pos, 2), \
-				p1char(&sval), ft_strlen("0"));
+				free_string(&sval), ft_strlen("0"));
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:24 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:25 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	inflate_heredoc(char **content, int pos, t_env *env, bool f_quotes)
 	exp.key = cdup(exp.len_key, *content + (pos + 1));
 	exp.value = env_value(exp.key, env);
 	if (!exp.value && (*content)[pos + 1] == '\'' && f_quotes)
-		return (p1char(&exp.key), 1);
+		return (free_string(&exp.key), 1);
 	if (!exp.value)
 		*content = key_not_found(content, pos, exp.len_key);
 	else

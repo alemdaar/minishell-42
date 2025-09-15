@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:20 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:05:21 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 20:27:03 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void		set_var_exp(int *v1, int *v2, int *v3, int v4);
 char		*cdup(int size, char *content);
 bool		is_valid_key(char c);
 /*~~~~~~~~~~~~~~~~~~~~~~<env_leaks.c>~~~~~~~~~~~~~~~~~~~~~~*/
-void		env_leaks(t_env *env);
+void		clean_env(t_env *env);
 /*~~~~~~~~~~~~~~~~~~~~~~<list_cmd.c>~~~~~~~~~~~~~~~~~~~~~~*/
 t_cmd		*create_list_cmd(t_token *tokens);
 /*~~~~~~~~~~~~~~~~~~~~~~<utils_cmd.c>~~~~~~~~~~~~~~~~~~~~~~*/
@@ -164,7 +164,7 @@ void		is_vred(t_token *tokens);
 void		wr_syntax(t_type type);
 /*~~~~~~~~~~~~~~~~~~~~~~<leaks.c>~~~~~~~~~~~~~~~~~~~~~~*/
 void		first_free(t_token *tokens, char *input);
-void		p1char(char **ptr);
+void		free_string(char **ptr);
 void		p2char(char ***ptr);
 /*~~~~~~~~~~~~~~~~~~~~~~<leaks.c>~~~~~~~~~~~~~~~~~~~~~~*/
 void		cmdfree(t_cmd *cmd);

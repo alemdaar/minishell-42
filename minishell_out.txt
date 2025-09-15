@@ -1,3 +1,0 @@
-minishell: exit: too many arguments
-exit
-[1A[13Cexit

@@ -1,25 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_leaks.c                                        :+:      :+:    :+:   */
+/*   clean_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/14 18:04:28 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:29 by oelhasso         ###   ########.fr       */
+/*   Created: 2025/09/15 19:53:16 by oelhasso          #+#    #+#             */
+/*   Updated: 2025/09/15 19:54:13 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	env_leaks(t_env *env)
+void	clean_env(t_env *env)
 {
 	t_env	*tmp;
 
 	while (env)
 	{
-		p1char(&env->key);
-		p1char(&env->value);
+		if (env->key)
+		{
+			free(env->key);
+			env->key = NULL;	
+		}
+		if (env->value)
+		{
+			free(env->value);
+			env->value = NULL;	
+		}
 		tmp = env;
 		env = env->next;
 		free(tmp);

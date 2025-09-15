@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 22:34:21 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 20:41:52 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -525,18 +525,16 @@ int	check_export(char *opt)
 {
 	int	i;
 
+	// printf ("opt : %s\n", opt);
 	if (!opt || !opt[0])
 	{
-		write(2, "minishell: export: '", 20);
-		write(2, opt ? opt : "", ft_strlen(opt ? opt : ""));
-		write(2, "': not a valid identifier\n", 26);
+		fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", opt);
+		// while (1);
 		return (1);
 	}
 	if (!ft_isalpha(opt[0]) && opt[0] != '_')
 	{
-		write(2, "minishell: export: '", 20);
-		write(2, opt, ft_strlen(opt));
-		write(2, "': not a valid identifier\n", 26);
+		fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", opt);
 		return (1);
 	}
 	i = 1;
@@ -544,9 +542,7 @@ int	check_export(char *opt)
 	{
 		if (!ft_isalnum(opt[i]) && opt[i] != '_')
 		{
-			write(2, "minishell: export: '", 20);
-			write(2, opt, ft_strlen(opt));
-			write(2, "': not a valid identifier\n", 26);
+			fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", opt);
 			return (1);
 		}
 		i++;
@@ -849,42 +845,56 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 int	exec(t_cmd *tmp, t_other *other)
 {
+	struct stat st;
 	int r = 0;
-	// int i = 0;
-	// while (tmp->argument[i])
-		// dprintf (other->debug, "QBL arg ==== : %s\n", tmp->argument[i++]);
+	int var = ft_strlen(tmp->commands[0]);
+	if (var == 0)
+		exit(133);
 	if (tmp->bin == 1)
 	{
 		r = run_bin(tmp, other);
 		// dprintf (other->debug, "==== \n");
 		return (r);
 	}
-	else if (tmp->path_cmd == NULL)
+	if (ft_strchr(tmp->commands[0], '/') != -1) // command contains a /
+	{
+		// printf ("1\n");
+		if (stat(tmp->commands[0], &st) == -1)
+		{
+			fprintf(stderr, "minishell: %s: No such file or directory", tmp->commands[0]);
+			exit(127); // path not found
+		}
+		// printf ("2\n");
+		if (S_ISDIR(st.st_mode))
+		{
+			fprintf(stderr, "minishell: %s: is a directory\n", tmp->commands[0]);
+			exit(126);
+		}
+		// printf ("3\n");
+		if (access(tmp->commands[0], X_OK) == -1)
+		{
+			fprintf(stderr, "minishell: %s: Permission denied\n", tmp->commands[0]);
+			exit(126); // permission denied
+		}
+		printf ("4\n");
+		execve(tmp->commands[0], tmp->argument, other->envr);
+		perror("minishell");
+		exit(126); // execve failed
+	}
+	// printf ("5\n");
+	if (tmp->path_cmd == NULL) // command does not contain / and not found in $PATH
 	{
 		restore_fds(other);
-		write (2, "Error: ", ft_strlen("Error: "));
-		write (2, tmp->commands[0], ft_strlen(tmp->commands[0]));
-		write (2, " command not found\n", ft_strlen(" command not found\n"));
+		write(2, "minishell: ", 11);
+		write(2, tmp->commands[0], ft_strlen(tmp->commands[0]));
+		write(2, ": command not found\n", 20);
 		free_all(other);
 		return (127);
 	}
-	// dprintf (other->debug, "HAVE A LOOK ON THE ENV : %s\n", other->envr[0]);
-	// while (1);
-	// printf ("FULL PATH of tmp ==== : %s\n", tmp->path_cmd);
-	// printf ("FULL PATH of other ==== : %s\n", other->orig_cmd->path_cmd);
-	// printf ("cmd of tmp ==== : %s\n", tmp->commands[0]);
-	// printf ("cmd of other ==== : %s\n", other->orig_cmd->commands[0]);
-	// printf ("here\n");
-	// while (1);
-	// printf ("here it is : %s\n", tmp->commands[0]);
-	if (execve(tmp->path_cmd, tmp->argument, other->envr) == ERROR)
-	{
-		// printf ("2............................\n");
-		free_all(other);
-		perror ("execve: ");
-		exit_status(1);
-		exit(1);
-	}
+	printf ("6\n");
+	execve(tmp->path_cmd, tmp->argument, other->envr);
+	perror("minishell");
+	exit(126);
 	return (SUCCESSFUL);
 }
 
@@ -977,7 +987,7 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			if (tmp->open2 == -1)
 			{
-				return (perror("Error: "), -1);
+				return (fprintf(stderr, "minishell: %s: ", copy_red->file), perror(""), -1);
 			}
 			// printf ("open is : %d\n", tmp->open2);
 		}
@@ -997,7 +1007,7 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
 			if (tmp->open2 == -1)
 			{
-				return (perror("Error: "), -1);
+				return (fprintf(stderr, "minishell: %s: ", copy_red->file), perror(""), -1);
 			}
 			// printf ("open is : %d\n", tmp->open2);
 		}
@@ -1023,7 +1033,8 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 			// printf ("open is : %d\n", tmp->open1);
 			if (tmp->open1 == -1)
 			{
-				return (perror("Error: "), -1);
+				return (fprintf(stderr, "minishell: %s: ", copy_red->file), perror(""), -1);
+				return (perror("minishell: "), -1);
 			}
 			// while (1);
 			// printf ("open is : %d\n", tmp->open1);

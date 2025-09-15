@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/13 11:10:06 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:18:46 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <sys/wait.h>
-#include "../minishell.h"
+# include <errno.h>
+# include <sys/stat.h>
+# include "../minishell.h"
 
 // typedef struct s_cmd {
 // 	char			*command;

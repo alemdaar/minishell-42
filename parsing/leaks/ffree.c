@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:36 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:05:37 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	p2char(char ***ptr)
 	*ptr = NULL;
 }
 
-void	p1char(char **ptr)
+void	free_string(char **ptr)
 {
 	if (!*ptr || !ptr)
 		return ;
@@ -40,9 +40,9 @@ void	first_free(t_token *tokens, char *input)
 	while (tokens)
 	{
 		tmp = tokens;
-		p1char(&tokens->content);
+		free_string(&tokens->content);
 		tokens = tokens->next;
 		free(tmp);
 	}
-	p1char(&input);
+	free_string(&input);
 }

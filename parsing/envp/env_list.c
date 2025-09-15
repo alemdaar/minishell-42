@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:35 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:36 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:52:08 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ t_env	*construct_env(char **ev)
 	{
 		new = new_env(get_env_key(ev[r]), get_env_value(ev[r]));
 		if (!new)
-			return (env_leaks(env), eprintf(ERR_MEM), NULL);
+			return (clean_env(env), eprintf(ERR_MEM), NULL);
 		tmp->next = new;
 		tmp = new;
 	}

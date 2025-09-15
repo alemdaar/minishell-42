@@ -9,6 +9,7 @@
         "history.h": "c",
         "signal.h": "c",
         "stdlib.h": "c",
-        "minishell.h": "c"
+        "minishell.h": "c",
+        "header.h": "c"
     }
 }

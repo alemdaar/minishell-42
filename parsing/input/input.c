@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:27 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:05:28 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:52:21 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	glance_input(char *input, t_env *env)
 		exit(0);
 	if (!ft_strcmp(input, "exit"))
 	{
-		env_leaks(env);
+		clean_env(env);
 		printf("exit\n");
 		exit(0);
 	}

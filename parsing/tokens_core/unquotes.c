@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:06:20 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:33:32 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ char	*remove_quotes(char *str)
 	t_var.flag = 0;
 	t_var.new = malloc((skip_quotes_len(str) + analyze_quotes(str) + 1));
 	if (!t_var.new)
-		return (p1char(&str), eprintf(ERR_MEM), NULL);
+		return (free_string(&str), eprintf(ERR_MEM), NULL);
 	while (str[t_var.r])
 	{
 		if (!t_var.flag && (str[t_var.r] == '\'' || str[t_var.r] == '"'))
@@ -100,7 +100,7 @@ char	*remove_quotes(char *str)
 			t_var.flag = 0;
 		t_var.r++;
 	}
-	p1char(&str);
+	free_string(&str);
 	t_var.new[t_var.f] = '\0';
 	return (t_var.new);
 }

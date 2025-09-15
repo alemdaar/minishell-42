@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:06:39 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:06:40 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_cmd	*assemble_command(char *input, t_env *env)
 	env_space(&input, env);
 	tokens = segment_input(input);
 	if (!tokens)
-		return (p1char(&input), NULL);
+		return (free_string(&input), NULL);
 	if (!all_scrap(tokens))
 		return (first_free(tokens, input), exit_status(258), NULL);
 	refactor_tokens(&tokens, env);

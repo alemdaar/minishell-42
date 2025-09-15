@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:40 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:05:41 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	free_redirections(t_red *red)
 	while (red)
 	{
 		tmp = red;
-		p1char(&red->file);
+		free_string(&red->file);
 		red = red->next;
 		free(tmp);
 	}

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:40:31 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static int	expand_var(t_token **t, t_ambg amb, t_env *env, bool f_quotes)
 	exp.key = cdup(exp.len_key, (*t)->content + (amb.r + 1));
 	exp.value = env_value(exp.key, env);
 	if (!exp.value && (*t)->content[amb.r + 1] == '\'' && f_quotes)
-		return (p1char(&exp.key), 1);
+		return (free_string(&exp.key), 1);
 	if (!exp.value)
 	{
 		ambiguous_redirect(t, amb.ambiguous, exp.key);
