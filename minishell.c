@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 22:17:32 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:25:37 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,10 @@ int	main(int ac, char **av, char **ev)
 	(void)av;
 	env = handle_env(ev);
 	// set_signals_interactive();
+	rl_catch_signals = 0;
+	set_signals_main();
 	while (1)
 	{
-		rl_catch_signals = 0;
-		set_signals_main();
 		buffer = read_line(env);
 		cmd = parcing(buffer, env);
 		if (cmd)

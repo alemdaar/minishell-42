@@ -48,7 +48,6 @@ SRC = 	minishell.c	\
 
 HDR = minishell.h \
        ./parsing/include/token.h \
-       ./parsing/include/syntax.h
 
 OBJ = $(SRC:.c=.o)
 
