@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 17:09:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,16 @@ static int	expand_var(t_token **t, t_ambg amb, t_env *env, bool f_quotes)
 	t_exp	exp;
 
 	set_var_exp(&exp.len_key, &exp.len_value, &exp.r, amb.r);
+	exp.len_key = 0; 
+	exp.len_value = 0;
+	exp.r = amb.r + 1;
 	if (is_special((*t)->content[exp.r], f_quotes))
 		return (expand_meta(&(*t)->content, amb.r, exp.r, f_quotes));
 	while ((*t)->content[exp.r] && is_valid_key((*t)->content[exp.r]))
-		increment(&exp.r, &exp.len_key);
+	{
+		exp.r++;
+		exp.len_key++;
+	}
 	exp.key = cdup(exp.len_key, (*t)->content + (amb.r + 1));
 	exp.value = env_value(exp.key, env);
 	if (!exp.value && (*t)->content[amb.r + 1] == '\'' && f_quotes)
@@ -124,13 +130,13 @@ void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 	while ((*token)->content[amb.r])
 	{
 		if ((*token)->content[amb.r] == '"' && amb.d_quotes)
-			change_value(&amb.d_quotes, 0);
+			amb.d_quotes = 0;
 		else if ((*token)->content[amb.r] == '\'' && amb.s_quotes)
-			change_value(&amb.s_quotes, 0);
+			amb.s_quotes = 0;
 		else if ((*token)->content[amb.r] == '"' && !amb.s_quotes)
-			change_value(&amb.d_quotes, 1);
+			amb.d_quotes = 1;
 		else if ((*token)->content[amb.r] == '\'' && !amb.d_quotes)
-			change_value(&amb.s_quotes, 1);
+			amb.s_quotes = 1;
 		else if ((*token)->content[amb.r] == '$' && !amb.s_quotes && expander)
 		{
 			amb.r += expand_var(token, amb, env, amb.d_quotes);

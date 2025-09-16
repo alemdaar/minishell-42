@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:40 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:41 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 16:52:57 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 static bool	is_red(int r, char *content)
 {
-	if (r < 1)
+	if (r-- < 1)
 		return (0);
-	r--;
 	while (r > 0 && content[r])
 	{
-		if (is_space(content[r]))
-			r--;
+		if (content[r] == ' ')
+			r -= 1;
 		else
 			break ;
 	}
@@ -46,7 +45,10 @@ static int	expand_var1(char **content, int pos, t_env *env)
 
 	set_var_exp(&exp.len_key, &exp.len_value, &exp.r, pos);
 	while ((*content)[exp.r] && is_valid_key((*content)[exp.r]))
-		increment(&exp.r, &exp.len_key);
+	{
+		exp.r++;
+		exp.len_key++;
+	}
 	exp.key = cdup(exp.len_key, *content + (pos + 1));
 	exp.value = env_value(exp.key, env);
 	free(exp.key);

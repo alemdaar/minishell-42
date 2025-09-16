@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 20:41:52 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 18:21:55 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,6 @@ void close_all_fds(t_cmd *cmd)
 		}
 		cmd = cmd->next;
 	}
-	// printf ("DAZ MN HNAYA\n");
 }
 
 void free_env(t_other *other)
@@ -432,7 +431,7 @@ int listenv(t_env *en)
     return (0);
 }
 
-char *get_env_value(t_env *env, const char *key)
+char *extract_value(t_env *env, const char *key)
 {
     while (env)
     {
@@ -483,7 +482,7 @@ int builtin_cd(t_cmd *cmd, t_other *other)
 
     if (!cmd->commands[1] || (cmd->commands[1][0] == '~' && !cmd->commands[1][1]))
     {
-        target = get_env_value(env, "HOME");
+        target = extract_value(env, "HOME");
         if (!target)
         {
             fprintf(stderr, "minishell: cd: HOME not set\n");
@@ -493,7 +492,7 @@ int builtin_cd(t_cmd *cmd, t_other *other)
     }
     else if (ft_strcmp(cmd->commands[1], "-") == 0)
     {
-        target = get_env_value(env, "OLDPWD");
+        target = extract_value(env, "OLDPWD");
         if (!target)
         {
             fprintf(stderr, "minishell: cd: OLDPWD not set\n");
@@ -847,42 +846,39 @@ int	exec(t_cmd *tmp, t_other *other)
 {
 	struct stat st;
 	int r = 0;
-	int var = ft_strlen(tmp->commands[0]);
-	if (var == 0)
-		exit(133);
 	if (tmp->bin == 1)
 	{
 		r = run_bin(tmp, other);
-		// dprintf (other->debug, "==== \n");
+		
 		return (r);
 	}
-	if (ft_strchr(tmp->commands[0], '/') != -1) // command contains a /
+	if (ft_strchr(tmp->commands[0], '/') != -1)
 	{
-		// printf ("1\n");
+		
 		if (stat(tmp->commands[0], &st) == -1)
 		{
 			fprintf(stderr, "minishell: %s: No such file or directory", tmp->commands[0]);
-			exit(127); // path not found
+			exit(127);
 		}
-		// printf ("2\n");
+		
 		if (S_ISDIR(st.st_mode))
 		{
 			fprintf(stderr, "minishell: %s: is a directory\n", tmp->commands[0]);
 			exit(126);
 		}
-		// printf ("3\n");
+		
 		if (access(tmp->commands[0], X_OK) == -1)
 		{
 			fprintf(stderr, "minishell: %s: Permission denied\n", tmp->commands[0]);
-			exit(126); // permission denied
+			exit(126); 
 		}
 		printf ("4\n");
 		execve(tmp->commands[0], tmp->argument, other->envr);
 		perror("minishell");
-		exit(126); // execve failed
+		exit(126); 
 	}
-	// printf ("5\n");
-	if (tmp->path_cmd == NULL) // command does not contain / and not found in $PATH
+	
+	if (tmp->path_cmd == NULL) 
 	{
 		restore_fds(other);
 		write(2, "minishell: ", 11);

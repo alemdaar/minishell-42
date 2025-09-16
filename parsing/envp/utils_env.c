@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:49 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:50 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 16:50:01 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,9 @@ bool	is_valid_key(char c)
 
 void	set_var_exp(int *v1, int *v2, int *v3, int v4)
 {
-	*v1 = 0;
+	*v1 = 0; 
 	*v2 = 0;
 	*v3 = v4 + 1;
-}
-
-void	change_value(bool *quotes, int value)
-{
-	*quotes = value;
 }
 
 void	increment(int *v1, int *v2)

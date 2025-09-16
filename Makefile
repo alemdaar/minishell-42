@@ -1,19 +1,21 @@
-# Compiler and flags
 CC = cc
-CFLAGS = -fsanitize=address -g -Wall -Wextra -Werror
+READLINE_DIR = /Users/oelhasso/.brew/opt/readline
 
-# Readline flags (add -lncurses for Linux)
-RFLG = -lreadline -lncurses
+CFLAGS = -Wall -Wextra -Werror \
+         -I includes/ \
+         -I$(READLINE_DIR)/include \
+         -g -fsanitize=address
 
-# Output binary
+LDFLAGS = -L$(READLINE_DIR)/lib \
+          -lreadline -lhistory -lncurses
+
+
+
 NAME = minishell
 
-# Your custom lib
 LIB = ./libft/libft.a
 
-# Source files (unchanged)
 SRC = 	minishell.c	\
-		parsing/history/history.c					\
 		parsing/asm_cmd.c							\
 		parsing/tokens_core/list_tokens.c			\
 		parsing/tokens_core/refactor_tokens.c		\
@@ -44,14 +46,12 @@ SRC = 	minishell.c	\
 		exec/gnl/get_next_line_utils.c				\
 		exec/linkedlist/linkedlist.c				\
 
-# Headers (unchanged)
 HDR = minishell.h \
        ./parsing/include/token.h \
        ./parsing/include/syntax.h
 
 OBJ = $(SRC:.c=.o)
 
-# Libft sources (unchanged)
 SRC_LIB = 	./libft/ft_strjoin.c 	\
 			./libft/ft_strdup.c 	\
 			./libft/ft_strlen.c 	\
@@ -66,11 +66,10 @@ SRC_LIB = 	./libft/ft_strjoin.c 	\
 OBJ_LIB = $(SRC_LIB:.c=.o)
 HDR_LIB = ./libft/libft.h
 
-# Targets
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIB)
-	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@ $(RFLG)
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@ $(LDFLAGS)
 
 %.o: %.c $(HDR)
 	$(CC) $(CFLAGS) -c $< -o $@

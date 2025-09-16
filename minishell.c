@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 19:51:33 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:17:32 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,33 @@ static char	*read_line(t_env *env)
 	read_line = NULL;
 	read_line = readline("minishell-$> ");
 	if (!read_line)
-	{
-		clean_env(env);
-		printf("exit\n");
-		exit(0);
-	}
-	history_input(read_line);
+		return (clean_env(env), printf("exit\n"), exit(0), NULL);
+	if (read_line[0] == '\0')
+		return (read_line);
+	add_history(read_line);
 	return (read_line);
+}
+
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+	exit_status(130);
+}
+
+void	set_signals_interactive(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	set_signals_in_child(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 int	main(int ac, char **av, char **ev)
@@ -62,16 +82,15 @@ int	main(int ac, char **av, char **ev)
 
 	(void)ac;
 	(void)av;
-	env = construct_env(ev);
+	env = handle_env(ev);
+	// set_signals_interactive();
 	while (1)
 	{
-		// rl_catch_signals = 0;
-		// set_signals_main();
-		// while (var);
+		rl_catch_signals = 0;
+		set_signals_main();
 		buffer = read_line(env);
-		cmd = assemble_command(buffer, env);
-		if (!cmd)
-			continue ;
-		execution(cmd, env, ev);
+		cmd = parcing(buffer, env);
+		if (cmd)
+			execution(cmd, env, ev);
 	}
 }

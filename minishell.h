@@ -6,12 +6,16 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 22:44:38 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 18:24:30 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define ERR_QUOTE "Error Quotes\n"
+# define ERR_PIPE "minishell: syntax error near unexpected token `|'\n"
+# define ERR_RED "minishell: syntax error near unexpected token `newline'\n"
 
 # include <stdlib.h>
 # include <stdio.h>

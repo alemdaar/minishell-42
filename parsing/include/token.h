@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:20 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 20:27:03 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 16:50:12 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,8 @@ typedef struct s_amb
 	int		r;
 }	t_ambg;
 
-/*~~~~~~~~~~~~~~~~~~~~~~~<history.c>~~~~~~~~~~~~~~~~~~~~~~~*/
-void		history_input(char *input);
 /*~~~~~~~~~~~~~~~~~~~~~~~<token.c>~~~~~~~~~~~~~~~~~~~~~~~*/
-t_cmd		*assemble_command(char *input, t_env *env);
+t_cmd		*parcing(char *input, t_env *env);
 /*~~~~~~~~~~~~~~~~~~~~<list_tokens.c>~~~~~~~~~~~~~~~~~~~~~*/
 t_token		*segment_input(char *tokens);
 /*~~~~~~~~~~~~~~~~~~<refactor_tokens.c>~~~~~~~~~~~~~~~~~~~*/
@@ -115,7 +113,7 @@ t_token		*create_node(char *content);
 bool		has_env(char *content);
 bool		is_symbols(char c);
 bool		is_space(char c);
-bool		quotes_is_valid(char *tokens);
+bool		check_quotes(char *input);
 /*~~~~~~~~~~~~~~~~~~~~<utils3_tokens.c>~~~~~~~~~~~~~~~~~~*/
 void		cut_value_quotes(int *r, char *tokens, char c, bool flag);
 /*~~~~~~~~~~~~~~~~~~~~~<env_expander.c>~~~~~~~~~~~~~~~~~~~*/
@@ -126,7 +124,7 @@ char		*env_value(char *key, t_env *env);
 /*~~~~~~~~~~~~~~~~~~~~~<env_heredoc.c>~~~~~~~~~~~~~~~~~~~*/
 void		resolve_heredoc(t_env *env, char **input, int fd);
 /*~~~~~~~~~~~~~~~~~~~~~~<env_list.c>~~~~~~~~~~~~~~~~~~~~~~*/
-t_env		*construct_env(char **env);
+t_env		*handle_env(char **env);
 /*~~~~~~~~~~~~~~~~~~~~~~<env_split.c>~~~~~~~~~~~~~~~~~~~~~~*/
 void		env_space(char **input, t_env *env);
 /*~~~~~~~~~~~~~~~~~~~~~~<exp_special.c>~~~~~~~~~~~~~~~~~~~~~~*/
@@ -138,7 +136,6 @@ int			expand_meta(char **content, int pos, int r, bool f_quotes);
 void		set_new_content(t_token **token, t_exp *exp, t_ambg *amb);
 char		*new_value_quotes(char *str);
 /*~~~~~~~~~~~~~~~~~~~~~~<utils_env.c>~~~~~~~~~~~~~~~~~~~~~~*/
-void		change_value(bool *quotes, int value);
 void		increment(int *v1, int *v2);
 void		set_var_exp(int *v1, int *v2, int *v3, int v4);
 char		*cdup(int size, char *content);
@@ -163,7 +160,7 @@ bool		all_scrap(t_token *tokens);
 void		is_vred(t_token *tokens);
 void		wr_syntax(t_type type);
 /*~~~~~~~~~~~~~~~~~~~~~~<leaks.c>~~~~~~~~~~~~~~~~~~~~~~*/
-void		first_free(t_token *tokens, char *input);
+void		free_parcing(t_token *tokens, char *input);
 void		free_string(char **ptr);
 void		p2char(char ***ptr);
 /*~~~~~~~~~~~~~~~~~~~~~~<leaks.c>~~~~~~~~~~~~~~~~~~~~~~*/

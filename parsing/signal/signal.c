@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:45 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:05:46 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:17:08 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	sigint_handler(int sig)
 	(void)sig;
 	write(1, "\n", 1);
 	rl_on_new_line();
-	// rl_replace_line("", 0);
+	rl_replace_line("", 0);
 	rl_redisplay();
 	exit_status(1);
 }

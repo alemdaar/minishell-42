@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:35 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 19:52:08 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:36:23 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,25 +22,27 @@ static int	env_count(char **env)
 	return (r);
 }
 
-static char	*get_env_key(char *env)
+static char	*extract_key(char *env)
 {
 	char	*key;
-	int		r;
+	int		i;
+	int		j;
 
-	r = 0;
-	while (env[r] && env[r] != '=')
-		r++;
-	key = malloc(sizeof(char) * (r + 1));
+	i = 0;
+	j = 0;
+	while (env[i] && env[i] != '=')
+		i++;
+	key = malloc(i + 1);
 	if (!key)
-		return (eprintf(ERR_MEM), NULL);
-	r = 0;
-	while (*env && *env != '=')
-		key[r++] = *env++;
-	key[r] = '\0';
+		return (fprintf(stderr, "Allocation Faield\n"), NULL);
+	i = 0;
+	while (env[j] && env[j] != '=')
+		key[i++] = env[j++];
+	key[i] = '\0';
 	return (key);
 }
 
-static char	*get_env_value(char *env)
+static char	*extract_value(char *env)
 {
 	char	*value;
 	int		r;
@@ -53,9 +55,9 @@ static char	*get_env_value(char *env)
 	r++;
 	while (env[r + len])
 		len++;
-	value = malloc(sizeof(char) * (len + 1));
+	value = malloc(len + 1);
 	if (!value)
-		return (eprintf(ERR_MEM), NULL);
+		return (fprintf(stderr, "Allocation Faield\n"), NULL);
 	len = 0;
 	while (env[r])
 		value[len++] = env[r++];
@@ -63,40 +65,40 @@ static char	*get_env_value(char *env)
 	return (value);
 }
 
-static t_env	*new_env(char *key, char *value)
+static t_env	*create_nenv(char *key, char *value)
 {
 	t_env	*env;
 
 	env = malloc(sizeof(t_env));
 	if (!env)
-		return (eprintf(ERR_MEM), NULL);
+		return (fprintf(stderr, "Allocation Faield\n"), NULL);
 	env->key = key;
 	env->value = value;
 	env->next = NULL;
 	return (env);
 }
 
-t_env	*construct_env(char **ev)
+t_env	*handle_env(char **ev)
 {
 	t_env	*env;
 	t_env	*new;
 	t_env	*tmp;
 	int		r;
-	int		counter;
+	int		len;
 
 	if (!ev || !*ev)
 		return (NULL);
-	env = new_env(get_env_key(ev[0]), get_env_value(ev[0]));
+	env = create_nenv(extract_key(ev[0]), extract_value(ev[0]));
 	if (!env)
 		return (NULL);
 	tmp = env;
-	counter = env_count(ev);
+	len = env_count(ev);
 	r = 0;
-	while (++r < counter)
+	while (++r < len)
 	{
-		new = new_env(get_env_key(ev[r]), get_env_value(ev[r]));
+		new = create_nenv(extract_key(ev[r]), extract_value(ev[r]));
 		if (!new)
-			return (clean_env(env), eprintf(ERR_MEM), NULL);
+			return (clean_env(env), fprintf(stderr, "Allocation Faield\n"), NULL);
 		tmp->next = new;
 		tmp = new;
 	}

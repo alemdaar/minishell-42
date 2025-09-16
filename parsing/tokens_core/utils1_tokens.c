@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:06:27 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:06:28 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/16 12:23:29 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,22 @@ bool	is_space(char c)
 	return ((c >= 9 && c <= 13) || c == 32);
 }
 
-bool	quotes_is_valid(char *tokens)
+bool	check_quotes(char *input)
 {
 	int		r;
-	bool	s_quotes;
-	bool	d_quotes;
+	bool	sq;
+	bool	dq;
 
-	r = -1;
-	s_quotes = 0;
-	d_quotes = 0;
-	while (tokens[++r])
+	r = 0;
+	sq = 0;
+	dq = 0;
+	while (input[r])
 	{
-		if (tokens[r] == '\'' && !d_quotes)
-			s_quotes = !s_quotes;
-		if (tokens[r] == '"' && !s_quotes)
-			d_quotes = !d_quotes;
+		if (!dq && input[r] == '\'')
+			sq = !sq;
+		if (!sq && input[r] == '"')
+			dq = !dq;
+		r++;
 	}
-	return (!s_quotes && !d_quotes);
+	return (!sq && !dq);
 }
