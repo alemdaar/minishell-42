@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 17:47:18 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:27:32 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@
 // 	int				ar;
 // 	struct s_cmd	*next;
 // }	t_cmd;
+struct stat st;
 
 typedef struct s_other {
 	int debug;

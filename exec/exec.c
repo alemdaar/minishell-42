@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 18:21:55 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:31:01 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -844,7 +844,6 @@ int run_bin(t_cmd *tmp, t_other *other)
 
 int	exec(t_cmd *tmp, t_other *other)
 {
-	struct stat st;
 	int r = 0;
 	if (tmp->bin == 1)
 	{
@@ -852,6 +851,15 @@ int	exec(t_cmd *tmp, t_other *other)
 		
 		return (r);
 	}
+	if (!tmp->commands[0] || tmp->commands[0][0] == '\0')
+	{
+	    restore_fds(other);
+	    write(2, "minishell: ", 11);
+	    write(2, ": command not found\n", 20);
+	    free_all(other);
+	    return (127);
+	}
+
 	if (ft_strchr(tmp->commands[0], '/') != -1)
 	{
 		
@@ -872,7 +880,6 @@ int	exec(t_cmd *tmp, t_other *other)
 			fprintf(stderr, "minishell: %s: Permission denied\n", tmp->commands[0]);
 			exit(126); 
 		}
-		printf ("4\n");
 		execve(tmp->commands[0], tmp->argument, other->envr);
 		perror("minishell");
 		exit(126); 
@@ -887,7 +894,6 @@ int	exec(t_cmd *tmp, t_other *other)
 		free_all(other);
 		return (127);
 	}
-	printf ("6\n");
 	execve(tmp->path_cmd, tmp->argument, other->envr);
 	perror("minishell");
 	exit(126);

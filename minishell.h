@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 18:24:30 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/17 22:04:11 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 # include <stdbool.h>
 # include <signal.h>
 # include <readline/readline.h>
+extern int rl_catch_signals;
 # include <readline/history.h>
 # include "./parsing/include/token.h"
-# include "./parsing/include/syntax.h"
 # include "./libft/libft.h"
 # include <limits.h>
 
