@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:49:40 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 12:59:12 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/18 14:52:36 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,17 @@ int prepare_exec(t_cmd *cmd, t_other *other, t_ind ind)
 	}
 }
 
-int work3(t_cmd *tmp, t_other *other, t_ind ind)
+int work3(t_ind ind, t_other *other)
+{
+	while (ind.i--)
+	{
+		ind.r = wait(&other->exit_status);
+		if (ind.r == ind.c)
+			handle_exit_status(other->exit_status);
+	}
+}
+
+int work2(t_cmd *tmp, t_other *other, t_ind ind)
 {
 	ind.i = 0;
 	while (tmp)
@@ -88,13 +98,7 @@ int work3(t_cmd *tmp, t_other *other, t_ind ind)
 		ind.i++;
 		tmp = tmp->next;
 	}
-	tmp = other->orig_cmd;
-	while (ind.i--)
-	{
-		ind.r = wait(&other->exit_status);
-		if (ind.r == ind.c)
-			handle_exit_status(other->exit_status);
-	}
+	work3(ind, other);
 	return (SUCCESSFUL);
 }
 
@@ -119,7 +123,7 @@ int  work(t_cmd *cmd, t_other *other)
 	}
 	else
 	{
-		ind.r = work3(tmp, other, ind);
+		ind.r = work2(tmp, other, ind);
 		if (ind.r == 1)
 		{
 			restore_fds(other);

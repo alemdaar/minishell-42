@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/17 22:04:11 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/18 21:10:01 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 # define ERR_QUOTE "Error Quotes\n"
 # define ERR_PIPE "minishell: syntax error near unexpected token `|'\n"
 # define ERR_RED "minishell: syntax error near unexpected token `newline'\n"
+# define NO_DIR "No such file or directory\n"
+# define IS_DIR "is a directory\n"
+# define NO_PERM "Permission denied\n"
+# define EX_NA "numeric argument required\n"
+# define EX_TA "too many arguments\n"
+# define UN_NVI "not a valid identifier\n"
 
 # include <stdlib.h>
 # include <stdio.h>
