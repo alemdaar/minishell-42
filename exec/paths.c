@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:27:14 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 11:48:48 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:48:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int	find_path(t_other *other, t_env *env)
+static int	find_path(t_other *other, t_env *env)
 {
 	t_env	*tmp;
 
@@ -34,7 +34,7 @@ int	find_path(t_other *other, t_env *env)
 	return (SUCCESSFUL);
 }
 
-void	count_path(t_other *other)
+static void	count_path(t_other *other)
 {
 	t_ind	ind;
 
@@ -57,7 +57,7 @@ void	count_path(t_other *other)
 	return ;
 }
 
-void	fill_path(t_other *other, t_ind *ind)
+static void	fill_path(t_other *other, t_ind *ind)
 {
 	int	a;
 
@@ -75,14 +75,14 @@ void	fill_path(t_other *other, t_ind *ind)
 	return ;
 }
 
-void	edit_paths(t_other *other, t_env *env)
+int	edit_paths(t_other *other, t_env *env)
 {
 	t_ind	ind;
 
 	find_path(other, env);
 	count_path(other);
 	if (other->all_path == NULL)
-		return ;
+		return (0);
 	other->paths = malloc (sizeof(char *) * other->count_path);
 	if (!other->paths)
 		return (restore_fds(other), why_exit(ERR_MEM, 1), 1);
@@ -100,5 +100,5 @@ void	edit_paths(t_other *other, t_env *env)
 		ind.i = ind.j;
 		ind.c ++;
 	}
-	return ;
+	return (0);
 }

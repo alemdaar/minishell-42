@@ -1,35 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fille.c                                            :+:      :+:    :+:   */
+/*   file.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 12:18:28 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 12:38:19 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:43:06 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int file_pipe (t_cmd *tmp, int flag)
-{
-    if (flag == 0)
-    {
-    	tmp->open2 = tmp->pipefd[WRITE];
-    	close(tmp->pipefd[READ]);
-    }
-    else if (tmp->next == NULL)
-    	tmp->open1 = tmp->prev->pipefd[READ];
-    else
-    {
-    	tmp->open1 = tmp->prev->pipefd[READ];
-    	tmp->open2 = tmp->pipefd[WRITE];
-    	close(tmp->pipefd[READ]);
-    }
-}
-int heredoc_case(t_cmd *tmp, t_other *other)
+static void heredoc_case(t_cmd *tmp, t_other *other)
 {
     if (tmp->pipefd[READ] != -3  && other->a_pipe)
 	{
@@ -42,9 +26,10 @@ int heredoc_case(t_cmd *tmp, t_other *other)
 		tmp->open1 = -3;
 	}
 	tmp->open1 = tmp->pipedoc[READ];
+	return ;
 }
 
-int redout_case(t_cmd *tmp, t_other *other, t_red *copy_red)
+static int redout_case(t_cmd *tmp, t_other *other, t_red *copy_red)
 {
 	if (tmp->pipefd[WRITE] != -3 && other->a_pipe)
 	{
@@ -62,9 +47,10 @@ int redout_case(t_cmd *tmp, t_other *other, t_red *copy_red)
         fprintf(stderr, "minishell: %s: ", copy_red->file);
 		return (perror(""), -1);
     }
+	return (0);
 }
 
-int append_case(t_cmd *tmp, t_other *other, t_red *copy_red)
+static int append_case(t_cmd *tmp, t_other *other, t_red *copy_red)
 {
     if (tmp->pipefd[WRITE] != -3 && other->a_pipe)
     {
@@ -82,9 +68,10 @@ int append_case(t_cmd *tmp, t_other *other, t_red *copy_red)
     	fprintf(stderr, "minishell: %s: ", copy_red->file);
         return (perror(""), -1);
     }
+	return (0);
 }
 
-int redin_case(t_cmd *tmp ,t_other *other, t_red *copy_red)
+static int redin_case(t_cmd *tmp ,t_other *other, t_red *copy_red)
 {
     if (tmp->pipefd[READ] != -3 && other->a_pipe)
 	{
@@ -102,6 +89,7 @@ int redin_case(t_cmd *tmp ,t_other *other, t_red *copy_red)
         fprintf(stderr, "minishell: %s: ", copy_red->file);
 		return (perror(""), -1);
 	}
+	return (0);
 }
 
 int	check_file(t_cmd *tmp, t_other *other, int flag)

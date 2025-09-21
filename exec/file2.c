@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 12:39:47 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 12:39:48 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:43:23 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,5 @@ int file_pipe (t_cmd *tmp, int flag)
     	tmp->open2 = tmp->pipefd[WRITE];
     	close(tmp->pipefd[READ]);
     }
+    return (0);
 }

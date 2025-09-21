@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:07:34 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 21:19:38 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:13:48 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int	check_unset(char *opt)
+static int	check_unset(char *opt)
 {
 	int i;
 
@@ -31,7 +31,7 @@ int	check_unset(char *opt)
 	return (0);
 }
 
-void	remove_env_node(t_env **head, char *key)
+static void	remove_env_node(t_env **head, char *key)
 {
 	t_env *cur = *head;
 	t_env *prev = NULL;

@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 22:37:51 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 22:45:16 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 21:55:57 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-void replace_pwd2(t_env *en, int len)
+static void replace_pwd2(t_env *en, int len)
 {
     if (en->value)
 	{
@@ -24,7 +24,7 @@ void replace_pwd2(t_env *en, int len)
     return ;
 }
 
-int replace_pwd(int len, t_other *other, char *cwdp)
+static int replace_pwd(int len, t_other *other, char *cwdp)
 {
 	int i;
 	t_env *en;

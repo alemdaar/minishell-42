@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   exit_status.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 15:07:49 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 15:12:51 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:33:36 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./minishell.h"
-#include "exec/header.h"
+#include "../minishell.h"
+#include "./header.h"
 
 int	exit_status(int val)
 {

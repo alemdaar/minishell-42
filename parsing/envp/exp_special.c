@@ -6,11 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:44 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/15 19:55:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:10:36 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+#include "../../exec/header.h"
 
 static bool	is_expempty(char c)
 {

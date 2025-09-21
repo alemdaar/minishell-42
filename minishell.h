@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 21:10:01 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:21:44 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # define EX_NA "numeric argument required\n"
 # define EX_TA "too many arguments\n"
 # define UN_NVI "not a valid identifier\n"
+# define NO_HOME "minishell: cd: HOME not set\n"
+# define NO_OLDPWD "minishell: cd: OLDPWD not set\n"
 
 # include <stdlib.h>
 # include <stdio.h>
@@ -76,5 +78,5 @@ typedef struct s_cmd
 	t_cmd	*next;
 }	t_cmd;
 
-int		exit_status(int value);
+// int		exit_status(int value);
 #endif

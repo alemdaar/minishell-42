@@ -6,11 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:06:39 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 18:24:36 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:10:03 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include "../exec//header.h"
 
 t_cmd	*parcing(char *input, t_env *env)
 {

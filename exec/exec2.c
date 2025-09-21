@@ -6,14 +6,15 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 16:56:14 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 20:35:26 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:45:45 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
+#include "gnl/get_next_line.h"
 
-int close_parent(t_cmd *tmp, t_other *other, int i)
+static int close_parent(t_cmd *tmp, t_other *other, int i)
 {
 	if (i == 0 && other->a_pipe)
 		close_set(&tmp->pipefd[WRITE], -3);
@@ -36,7 +37,7 @@ int close_parent(t_cmd *tmp, t_other *other, int i)
 	return (0);
 }
 
-int check_directory(t_cmd *tmp, t_other *other)
+static void check_directory(t_cmd *tmp, t_other *other)
 {
     if (ft_strchr(tmp->commands[0], '/') != -1)
 	{
@@ -73,7 +74,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	    fprintf(stderr, "minishell: : command not found\n");
 	    return (free_all(other), 127);
 	}
-    r = check_directory(tmp, other);
+    check_directory(tmp, other);
 	if (tmp->path_cmd == NULL) 
 	{
         fprintf (stderr, "minishell: %s: command not found\n", tmp->commands[0]);

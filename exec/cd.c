@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:55:43 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 22:35:55 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:23:14 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-char *extract_value(t_env *env, const char *key)
+static char *extract_value(t_env *env, const char *key)
 {
     while (env)
     {
@@ -24,7 +24,7 @@ char *extract_value(t_env *env, const char *key)
     return NULL;
 }
 
-int update_env2(t_env *env, char *key, char *value)
+static int update_env2(t_env *env, char *key, char *value)
 {
     t_env   *tmp;
     t_env   *new_node;
@@ -44,7 +44,7 @@ int update_env2(t_env *env, char *key, char *value)
     return (0);
 }
 
-int update_env(t_env *env, const char *key, const char *value)
+static int update_env(t_env *env, char *key, char *value)
 {
     t_env   *tmp;
     int     r;
@@ -66,24 +66,23 @@ int update_env(t_env *env, const char *key, const char *value)
     return (r);
 }
 
-char ** builtin_cd2(t_cmd *cmd, char *target, t_env *env, char *oldpwd)
+static char    *builtin_cd2(t_cmd *cmd, t_env *env, char *oldpwd)
 {
+    char *target;
+
+    target = NULL;
     if (!cmd->commands[1] || (cmd->commands[1][0] == '~' && !cmd->commands[1][1]))
     {
         target = extract_value(env, "HOME");
         if (!target)
-        {
-            fprintf(stderr, "minishell: cd: HOME not set\n");
-            free(oldpwd);
-            return (NULL);
-        }
+            return (fprintf(stderr, NO_HOME), free(oldpwd), NULL);
     }
     else if (ft_strcmp(cmd->commands[1], "-") == 0)
     {
         target = extract_value(env, "OLDPWD");
         if (!target)
         {
-            fprintf(stderr, "minishell: cd: OLDPWD not set\n");
+            fprintf(stderr, NO_OLDPWD);
             free(oldpwd);
             return (NULL);
         }
@@ -107,12 +106,11 @@ int builtin_cd(t_cmd *cmd, t_other *other)
     oldpwd = ft_strdup(cwd);
     if (!oldpwd)
         return (perror("malloc"), 1);
-    target = builtin_cd2(cmd, target, env, oldpwd);
+    target = builtin_cd2(cmd, env, oldpwd);
+    if (target == NULL)
+        return (1);
     if (chdir(target) == -1)
-    {
-        perror("minishell: cd");
-        return (free(oldpwd), 1);
-    }
+        return (perror("minishell: cd"), free(oldpwd), 1);
     if (update_env(env, "OLDPWD", oldpwd) == -1) 
         return (free(oldpwd), 1);
     free(oldpwd);

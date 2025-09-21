@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:49:40 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 14:52:36 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:49:26 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int prepare_doc(t_cmd *cmd, t_other *other, t_ind ind)
+static int prepare_doc(t_cmd *cmd, t_other *other, t_ind ind)
 {
     if (ind.r > 0)
     {
@@ -30,9 +30,10 @@ int prepare_doc(t_cmd *cmd, t_other *other, t_ind ind)
         if (ind.c == FAILED)
             return (FAILED);
     }
+	return (0);
 }
 
-int prepare_exec(t_cmd *cmd, t_other *other, t_ind ind)
+static int prepare_exec(t_cmd *cmd, t_other *other, t_ind ind)
 {
 	while (cmd)
 	{
@@ -60,9 +61,10 @@ int prepare_exec(t_cmd *cmd, t_other *other, t_ind ind)
 		}
 		cmd = cmd->next;
 	}
+	return (0);
 }
 
-int work3(t_ind ind, t_other *other)
+static int work3(t_ind ind, t_other *other)
 {
 	while (ind.i--)
 	{
@@ -72,7 +74,7 @@ int work3(t_ind ind, t_other *other)
 	}
 }
 
-int work2(t_cmd *tmp, t_other *other, t_ind ind)
+static int work2(t_cmd *tmp, t_other *other, t_ind ind)
 {
 	ind.i = 0;
 	while (tmp)
@@ -91,15 +93,12 @@ int work2(t_cmd *tmp, t_other *other, t_ind ind)
 		ind.c = tmp->pid;
 		ind.r = execution2(tmp, other, ind.i);
 		if (ind.r == ERROR)
-		{
-			restore_fds(other);
-			return (0);
-		}
+			return (restore_fds(other), 0);
 		ind.i++;
 		tmp = tmp->next;
 	}
 	work3(ind, other);
-	return (SUCCESSFUL);
+	return (0);
 }
 
 int  work(t_cmd *cmd, t_other *other)

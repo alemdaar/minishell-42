@@ -4,7 +4,7 @@ SRCS =		ft_strlen.c		ft_strdup.c		\
 			ft_substr.c		ft_strncpy.c	\
 			ft_isalpha.c	ft_strcmp.c		\
 			ft_isdigit.c	ft_isalnum.c	\
-			ft_itoa.c 
+			ft_itoa.c
 
 OBJ = ${SRCS:.c=.o}
 

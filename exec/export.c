@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:19:56 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 22:37:20 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:40:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int listenv(t_env *en)
+static int  listenv(t_env *en)
 {
     while (en)
     {
@@ -26,7 +26,7 @@ int listenv(t_env *en)
     return (0);
 }
 
-int	check_export(char *opt)
+static int  check_export(char *opt)
 {
 	int	i;
 
@@ -53,7 +53,7 @@ int	check_export(char *opt)
 	return (0);
 }
 
-int init_export2(char *key, char *value, int *i, t_other *other)
+static int init_export2(char *key, char *value, t_other *other)
 {
     t_env   *new;
     t_env   *cur;
@@ -78,7 +78,7 @@ int init_export2(char *key, char *value, int *i, t_other *other)
     return (ft_lstadd_back(&other->envrp, new), 0);
 }
 
-int init_export(char *opt, t_other *other)
+static int  init_export(char *opt, t_other *other)
 {
     char    *key;
     char    *value;
@@ -98,7 +98,7 @@ int init_export(char *opt, t_other *other)
         if (!value)
             return (perror("malloc "), free(key), 1);
     }
-    r = init_export2(&key, &value, &i, other);
+    r = init_export2(key, value, other);
     return (r);
 }
 

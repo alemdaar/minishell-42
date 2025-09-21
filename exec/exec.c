@@ -6,13 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 11:24:55 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 20:39:57 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "header.h"
-#include "gnl/get_next_line.h"
 
 static int is_pipe(t_cmd *cmd, t_other	*other)
 {
@@ -31,7 +30,6 @@ static int is_pipe(t_cmd *cmd, t_other	*other)
 
 static void save_fds(t_other *other)
 {
-
 	other->stdout_copy = dup(STDOUT_FILENO);
 	other->stdin_copy = dup(STDIN_FILENO);
 	other->stdin_flag = 0;

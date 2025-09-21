@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 12:41:56 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 12:55:25 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/21 22:48:56 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	fill_argument(t_cmd *tmp, t_other *other)
 	return (SUCCESSFUL);
 }
 
-char	*mixem(t_cmd *cmd, t_other *other, int path_ind)
+static char	*mixem(t_cmd *cmd, t_other *other, int path_ind)
 {
 	char	*str;
 	int		i;
@@ -64,7 +64,7 @@ char	*mixem(t_cmd *cmd, t_other *other, int path_ind)
 	return (str);
 }
 
-int	check_access(t_cmd *cmd, t_other *other, int path_ind)
+static int	check_access(t_cmd *cmd, t_other *other, int path_ind)
 {
 	cmd->path_cmd = mixem(cmd, other, path_ind);
 	if (!cmd->path_cmd)
@@ -83,7 +83,7 @@ int	check_cmd(t_cmd *cmd, t_other *other)
 
 	ind.i = 0;
 	ind.c = FALSE;
-	if (is_builtin(cmd, other) == SUCCESSFUL)
+	if (is_builtin(cmd) == SUCCESSFUL)
 		return (cmd->bin = 1, 0);
 	if (other->all_path == NULL)
 		return (FAILED);

@@ -41,10 +41,31 @@ SRC = 	minishell.c	\
 		parsing/leaks/free_cmd_list.c				\
 		parsing/signal/signal.c					\
 		parsing/error/error.c		\
-		exec/exec.c									\
 		exec/gnl/get_next_line.c					\
 		exec/gnl/get_next_line_utils.c				\
 		exec/linkedlist/linkedlist.c				\
+		exec/bin.c									\
+		exec/cd.c									\
+		exec/child.c									\
+		exec/cmd.c									\
+		exec/echo.c									\
+		exec/env.c									\
+		exec/exec.c									\
+		exec/exec2.c									\
+		exec/exit_status.c									\
+		exec/exit.c									\
+		exec/export.c									\
+		exec/file.c									\
+		exec/file2.c									\
+		exec/free.c									\
+		exec/heredoc.c									\
+		exec/paths.c									\
+		exec/pwd.c									\
+		exec/tools.c									\
+		exec/tools2.c									\
+		exec/tools3.c									\
+		exec/unset.c									\
+		exec/work.c									\
 
 HDR = minishell.h \
        ./parsing/include/token.h \
