@@ -15,7 +15,7 @@ NAME = minishell
 
 LIB = ./libft/libft.a
 
-SRC = 	minishell.c	\
+SRC = 	minishell.c \
 		parsing/asm_cmd.c							\
 		parsing/tokens_core/list_tokens.c			\
 		parsing/tokens_core/refactor_tokens.c		\
@@ -66,6 +66,7 @@ SRC = 	minishell.c	\
 		exec/tools3.c									\
 		exec/unset.c									\
 		exec/work.c									\
+		exec/fds.c
 
 HDR = minishell.h \
        ./parsing/include/token.h \

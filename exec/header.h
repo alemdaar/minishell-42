@@ -36,6 +36,7 @@
 # include "../minishell.h"
 
 struct stat st;
+extern struct stat st;
 
 typedef struct s_other {
 	int debug;

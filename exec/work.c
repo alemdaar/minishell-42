@@ -72,6 +72,7 @@ static int work3(t_ind ind, t_other *other)
 		if (ind.r == ind.c)
 			handle_exit_status(other->exit_status);
 	}
+	return (0);
 }
 
 static int work2(t_cmd *tmp, t_other *other, t_ind ind)
@@ -107,7 +108,9 @@ int  work(t_cmd *cmd, t_other *other)
 	t_ind	ind;
 
     if (prepare_exec(cmd, other, ind) == 1)
+	{
         return (1);
+	}
 	tmp = cmd;
 	if (cmd->next == NULL && cmd->bin == 1)
 	{

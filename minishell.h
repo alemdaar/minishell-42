@@ -78,5 +78,4 @@ typedef struct s_cmd
 	t_cmd	*next;
 }	t_cmd;
 
-// int		exit_status(int value);
 #endif

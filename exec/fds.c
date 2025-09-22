@@ -48,15 +48,15 @@ void close_all_fds(t_cmd *cmd)
 		if (cmd->open1 != -3)
 			close_set(&cmd->open1, -3);
 		if (cmd->open2 != -3)
-			close_set(cmd->open2, -3);
+			close_set(&cmd->open2, -3);
 		if (cmd->pipefd[READ] != -3)
-			close_set(cmd->pipefd[READ]);
+			close_set(&cmd->pipefd[READ], -3);
 		if (cmd->pipefd[WRITE] != -3)
-			close_set(cmd->pipefd[WRITE]);
+			close_set(&cmd->pipefd[WRITE], -3);
 		if (cmd->pipedoc[READ] != -3)
-			close_set(cmd->pipedoc[READ], -3);
+			close_set(&cmd->pipedoc[READ], -3);
 		if (cmd->pipedoc[WRITE] != -3)
-			close_set(cmd->pipedoc[WRITE], -3);
+			close_set(&cmd->pipedoc[WRITE], -3);
 		cmd = cmd->next;
 	}
 }

@@ -53,9 +53,13 @@ static int	builtin_exit2(t_cmd *tmp, int *i)
     while (tmp->commands[1][*i] == ' ')
         *i +=1;
     if (tmp->commands[1][*i] == '+' || tmp->commands[1][*i] == '-')
+	{
         *i +=1;
+	}
 	if (!ft_isdigit(tmp->commands[1][*i]))
-        return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+	{
+		return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+	}
 	return (0);
 }
 
