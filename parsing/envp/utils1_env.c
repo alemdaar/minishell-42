@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:04:55 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 23:11:44 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	set_new_content(t_token **token, t_exp *exp, t_ambg *amb)
 		err_wrt(exp->key);
 		(*token)->content = key_not_found(&(*token)->content, amb->r, \
 							exp->len_key);
+		
 		return ;
 	}
 	(*token)->content = key_value(&(*token)->content, exp->value, \
