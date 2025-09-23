@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/17 22:46:36 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 22:53:33 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ char	*key_not_found(char **content, int pos_key, int len_key)
 	}
 	value[f] = '\0';
 	free(*content);
+	printf ("value : %s\n", value);
 	return (value);
 }
 
@@ -127,8 +128,10 @@ void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 	amb.s_quotes = 0;
 	amb.ambiguous = ambg;
 	amb.r = 0;
+	printf ("is : %c\n", (*token)->content[amb.r]);
 	while ((*token)->content[amb.r])
 	{
+		printf ("VALID\n");
 		if ((*token)->content[amb.r] == '"' && amb.d_quotes)
 			amb.d_quotes = 0;
 		else if ((*token)->content[amb.r] == '\'' && amb.s_quotes)

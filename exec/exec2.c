@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 16:56:14 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:45:45 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 21:52:05 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	exec(t_cmd *tmp, t_other *other)
 	if (!tmp->commands[0] || tmp->commands[0][0] == '\0')
 	{
 	    restore_fds(other);
-	    fprintf(stderr, "minishell: : command not found\n");
+	    fprintf (stderr, "minishell: : command not found\n");
 	    return (free_all(other), 127);
 	}
     check_directory(tmp, other);

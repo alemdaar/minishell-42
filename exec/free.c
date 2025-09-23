@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:43:41 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 21:54:02 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ static void free_all2(t_other *other, int *i)
 	while (other->orig_cmd->argument[*i])
 	{
 		free(other->orig_cmd->argument[*i]);
-		other->orig_cmd->argument[*i++] = NULL;
+		other->orig_cmd->argument[*i] = NULL;
+		*i +=1 ;
 	}
 	if (other->orig_cmd->argument)
 	{

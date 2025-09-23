@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 19:57:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 20:45:31 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 20:40:09 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ static int echo_nl(t_cmd *tmp, int ind)
 	return (ind);
 }
 
-static void builtin_echo2(t_cmd *tmp, int *c, int *j, int newline)
+static void builtin_echo2(t_cmd *tmp, int c, int j, int newline)
 {
-    while (tmp->commands[*j])
+    while (tmp->commands[j])
 	{
-		if (*c == 1)
+		if (c == 1)
 			printf (" ");
-		printf ("%s", tmp->commands[*j++]);
-		*c = 1;
+		printf ("%s", tmp->commands[j++]);
+		c = 1;
 	}
     if (newline)
         printf("\n");
@@ -67,7 +67,7 @@ int builtin_echo(t_cmd *tmp)
         		newline = 0;
 		}
     }
-    builtin_echo2(tmp, &c, &j, newline);
+    builtin_echo2(tmp, c, j, newline);
     return (SUCCESSFUL);
 }
 

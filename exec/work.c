@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:49:40 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:49:26 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 21:52:50 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int prepare_doc(t_cmd *cmd, t_other *other, t_ind ind)
 static int prepare_exec(t_cmd *cmd, t_other *other, t_ind ind)
 {
 	while (cmd)
-	{
+	{		
 		set_up(cmd);
 		ind.r = count_heredoc(cmd);
         if (prepare_doc(cmd, other, ind) == 1)
@@ -90,11 +90,14 @@ static int work2(t_cmd *tmp, t_other *other, t_ind ind)
 				return (close_all_fds(other->orig_cmd), 1);
 			}
 		}
+		// while (1);
 		tmp->pid = fork();
 		ind.c = tmp->pid;
 		ind.r = execution2(tmp, other, ind.i);
 		if (ind.r == ERROR)
+		{
 			return (restore_fds(other), 0);
+		}
 		ind.i++;
 		tmp = tmp->next;
 	}
@@ -107,10 +110,9 @@ int  work(t_cmd *cmd, t_other *other)
 	t_cmd	*tmp;
 	t_ind	ind;
 
+	ind.r = 0;
     if (prepare_exec(cmd, other, ind) == 1)
-	{
         return (1);
-	}
 	tmp = cmd;
 	if (cmd->next == NULL && cmd->bin == 1)
 	{
@@ -127,10 +129,7 @@ int  work(t_cmd *cmd, t_other *other)
 	{
 		ind.r = work2(tmp, other, ind);
 		if (ind.r == 1)
-		{
-			restore_fds(other);
-			return (close_all_fds(cmd), 1);
-		}
+			return (restore_fds(other), close_all_fds(cmd), 1);
 	}
 	return (SUCCESSFUL);
 }

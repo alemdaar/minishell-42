@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 12:18:28 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:43:06 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/23 21:51:27 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,11 +104,20 @@ int	check_file(t_cmd *tmp, t_other *other, int flag)
 		if (copy_red->red_type == HERDOOC)
 			heredoc_case(tmp, other);
 		else if (copy_red->red_type == REDIR_OUT)
-            redout_case(tmp ,other, copy_red);
+		{
+            if (redout_case(tmp ,other, copy_red) == -1)
+				return (ERROR);
+		}
 		else if (copy_red->red_type == APPEND)
-            append_case(tmp, other, copy_red);
+		{
+            if (append_case(tmp, other, copy_red) == -1)
+				return (ERROR);
+		}
 		else if (copy_red->red_type == REDIR_IN)
-            redin_case(tmp ,other, copy_red);
+		{
+        	if (redin_case(tmp ,other, copy_red) == -1)
+				return (-1);
+		}
 		copy_red = copy_red->next;
 	}
 	return (SUCCESSFUL);
