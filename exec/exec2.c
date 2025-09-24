@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 16:56:14 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/23 21:52:05 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:54:46 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static int close_parent(t_cmd *tmp, t_other *other, int i)
 		close_set(&tmp->pipedoc[WRITE], -3);
 	return (0);
 }
+struct stat st;
 
 static void check_directory(t_cmd *tmp, t_other *other)
 {
