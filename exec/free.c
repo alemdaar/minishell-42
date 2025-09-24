@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/23 21:54:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:31:01 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,35 +44,38 @@ static void free_all3(t_other *other)
 {
 	t_cmd	*tmp;
 
+	if (other->orig_cmd->commands)
+	{
+		free(other->orig_cmd->commands);
+		other->orig_cmd->path_cmd = NULL;
+	}
 	tmp = other->orig_cmd;
 	other->orig_cmd = other->orig_cmd->next;
 	free(tmp);
 	tmp = NULL;
 	return  ;
 }
-static void free_all2(t_other *other, int *i)
+static void free_all2(t_other *other, int i)
 {
 	if (other->orig_cmd->path_cmd)
 	{
 		free(other->orig_cmd->path_cmd);
 		other->orig_cmd->path_cmd = NULL;
 	}
-	*i = 0;
-	while (other->orig_cmd->argument[*i])
+	i = 0;
+	if (other->orig_cmd->argument)
 	{
-		free(other->orig_cmd->argument[*i]);
-		other->orig_cmd->argument[*i] = NULL;
-		*i +=1 ;
+		while (other->orig_cmd->argument[i])
+		{
+			free(other->orig_cmd->argument[i]);
+			other->orig_cmd->argument[i] = NULL;
+			i +=1 ;
+		}
 	}
 	if (other->orig_cmd->argument)
 	{
 		free(other->orig_cmd->argument);
 		other->orig_cmd->argument = NULL;
-	}
-	if (other->orig_cmd->commands)
-	{
-		free(other->orig_cmd->commands);
-		other->orig_cmd->path_cmd = NULL;
 	}
 	free_all3(other);
 	return ;
@@ -98,6 +101,6 @@ int free_all(t_other *other)
 		other->paths = NULL;
 	}
 	while (other->orig_cmd)
-		free_all2(other, &i);
+		free_all2(other, i);
 	return (0);
 }

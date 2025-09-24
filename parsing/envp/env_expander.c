@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/23 23:54:57 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:09:05 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,19 +109,24 @@ static int	expand_var(t_token **t, t_ambg amb, t_env *env, bool f_quotes)
 		(*t)->content = key_not_found(&(*t)->content, amb.r, exp.len_key);
 	}
 	else
+	{	
 		set_new_content(t, &exp, &amb);
+	}
 	free(exp.key);
 	if (exp.value)
 	{
 		exp.len_value = ft_strlen(exp.value);
 		free(exp.value);
 	}
+	if ((*t)->amb == 1)
+		return (-3);
 	return (exp.len_value);
 }
 
 void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 {
 	t_ambg	amb;
+	int		r;
 
 	amb.d_quotes = 0;
 	amb.s_quotes = 0;
@@ -139,7 +144,10 @@ void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 			amb.s_quotes = 1;
 		else if ((*token)->content[amb.r] == '$' && !amb.s_quotes && expander)
 		{
-			amb.r += expand_var(token, amb, env, amb.d_quotes);
+			r = expand_var(token, amb, env, amb.d_quotes);
+			if (r == -3)
+				return ;
+			amb.r += r;
 			continue ;
 		}
 		amb.r++;
