@@ -9,8 +9,6 @@ CFLAGS = -Wall -Wextra -Werror \
 LDFLAGS = -L$(READLINE_DIR)/lib \
           -lreadline -lhistory -lncurses
 
-
-
 NAME = minishell
 
 LIB = ./libft/libft.a

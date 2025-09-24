@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:49:05 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:52:51 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,9 @@
 # include "../minishell.h"
 
 struct stat st;
-extern struct stat st;
+// extern struct stat st;
 
 typedef struct s_other {
-	int debug;
 	int			count_path;
 	char		*all_path;
 	char		**paths;
