@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:06:16 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 18:06:17 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 20:38:55 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,12 @@ void	refactor_tokens(t_token **tokens, t_env *env)
 	ambg = 0;
 	while (token)
 	{
+		printf ("is env\n");
 		is_env(&token, env, expander, ambg);
+		printf ("has qut\n");
 		if (has_quotes(token->content))
 		{
+			printf ("in que\n");
 			if (!expander)
 				token->exp = 0;
 			token->content = remove_quotes(token->content);
@@ -57,5 +60,7 @@ void	refactor_tokens(t_token **tokens, t_env *env)
 		ambg = is_ambiguous(token);
 		token = token->next;
 	}
+	printf ("demote env\n");
 	demote_env_token(tokens);
+	printf ("demote env2\n");
 }

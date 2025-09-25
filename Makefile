@@ -40,30 +40,31 @@ SRC = 	minishell.c \
 		parsing/leaks/free_cmd_list.c				\
 		parsing/signal/signal.c					\
 		parsing/error/error.c		\
+		parsing/input/input.c		\
 		exec/gnl/get_next_line.c					\
 		exec/gnl/get_next_line_utils.c				\
 		exec/linkedlist/linkedlist.c				\
-		exec/bins/bin.c									\
-		exec/bins/cd.c									\
+		exec/builtins/bin.c									\
+		exec/builtins/cd.c									\
 		exec/child.c									\
 		exec/cmd.c									\
-		exec/bins/echo.c									\
-		exec/bins/env.c									\
+		exec/builtins/echo.c									\
+		exec/builtins/env.c									\
 		exec/exec.c									\
 		exec/exec2.c									\
 		exec/exit_status.c									\
-		exec/bins/exit.c									\
-		exec/bins/export.c									\
+		exec/builtins/exit.c									\
+		exec/builtins/export.c									\
 		exec/file.c									\
 		exec/file2.c									\
 		exec/free.c									\
 		exec/heredoc.c									\
 		exec/paths.c									\
-		exec/bins/pwd.c									\
+		exec/builtins/pwd.c									\
 		exec/tools.c									\
 		exec/tools2.c									\
 		exec/tools3.c									\
-		exec/bins/unset.c									\
+		exec/builtins/unset.c									\
 		exec/work.c									\
 		exec/fds.c
 

@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 13:39:18 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 20:36:25 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,18 @@ int	execution(t_cmd *cmd, t_env *env, char **ev)
 {
 	t_other	other;
 
+	// printf ("1\n");
 	signal(SIGINT, SIG_IGN);
 	other.envr = ev;
 	other.envrp = env;
 	other.orig_cmd = cmd;
 	save_fds(&other);
 	is_pipe(cmd, &other);
+	// printf ("2\n");
 	edit_paths(&other, env);
+	// printf ("3\n");
 	work(cmd, &other);
+	// printf ("4\n");
 	close_all_fds(cmd);
 	free_all(&other);
 	restore_fds(&other);

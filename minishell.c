@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 17:38:26 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 20:35:26 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,15 +101,18 @@ int	main(int ac, char **av, char **ev)
 	char	*buffer;
 	t_cmd	*cmd;
 	t_env	*env;
+	extern int rl_catch_signals;
 
 	(void)ac;
 	(void)av;
 	env = handle_env(ev);
 	while (1)
 	{
+		printf ("first\n");
 		rl_catch_signals = 0;
 		set_signals_main();
 		buffer = read_line(env);
+		printf ("parcing\n");
 		cmd = parcing(buffer, env);
 		if (cmd)
 			execution(cmd, env, ev);

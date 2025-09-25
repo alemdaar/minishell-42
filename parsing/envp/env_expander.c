@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 17:33:17 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 20:44:35 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,10 @@ void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 	int		r;
 
 	init_amb(&amb, ambg);
+	printf ("BEFORE loopn");
 	while ((*token)->content[amb.r])
 	{
+		printf ("loop\n");
 		if ((*token)->content[amb.r] == '"' && amb.d_quotes)
 			amb.d_quotes = 0;
 		else if ((*token)->content[amb.r] == '\'' && amb.s_quotes)
@@ -130,10 +132,14 @@ void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 			amb.s_quotes = 1;
 		else if ((*token)->content[amb.r] == '$' && !amb.s_quotes && expander)
 		{
+			printf ("dollar\n");
 			r = expand_var(token, amb, env, amb.d_quotes);
 			if (r == -3)
 				return ;
+			printf ("amb.r = %d\n", amb.r);
+			printf ("r = %d\n", r);
 			amb.r += r;
+			printf ("amb.r after = %d\n", amb.r);
 			continue ;
 		}
 		amb.r++;
