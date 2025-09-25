@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:35 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 11:36:23 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 17:54:53 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ t_env	*handle_env(char **ev)
 	{
 		new = create_nenv(extract_key(ev[r]), extract_value(ev[r]));
 		if (!new)
-			return (clean_env(env), fprintf(stderr, "Allocation Faield\n"), NULL);
+			return (clean_env(env), fprintf(stderr, "malloc: \n"), NULL);
 		tmp->next = new;
 		tmp = new;
 	}

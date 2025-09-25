@@ -6,16 +6,16 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/24 14:31:01 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:17:00 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "header.h"
 
-void free_env(t_other *other)
+void	free_env(t_other *other)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	if (other->envrp)
 	{
@@ -40,7 +40,7 @@ void free_env(t_other *other)
 	return ;
 }
 
-static void free_all3(t_other *other)
+static void	free_all3(t_other *other)
 {
 	t_cmd	*tmp;
 
@@ -53,9 +53,10 @@ static void free_all3(t_other *other)
 	other->orig_cmd = other->orig_cmd->next;
 	free(tmp);
 	tmp = NULL;
-	return  ;
+	return ;
 }
-static void free_all2(t_other *other, int i)
+
+static void	free_all2(t_other *other, int i)
 {
 	if (other->orig_cmd->path_cmd)
 	{
@@ -69,7 +70,7 @@ static void free_all2(t_other *other, int i)
 		{
 			free(other->orig_cmd->argument[i]);
 			other->orig_cmd->argument[i] = NULL;
-			i +=1 ;
+			i += 1 ;
 		}
 	}
 	if (other->orig_cmd->argument)
@@ -81,7 +82,7 @@ static void free_all2(t_other *other, int i)
 	return ;
 }
 
-int free_all(t_other *other)
+int	free_all(t_other *other)
 {
 	int		i;
 

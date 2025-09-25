@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 22:08:33 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/07/08 22:31:23 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 13:38:04 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	ft_lstadd_back(t_env **lst, t_env *new)
 	last_node = ft_lstlast(*lst);
 	last_node->next = new;
 }
+
 t_env	*ft_lstnew(char *content1, char *content2)
 {
 	t_env	*elem;

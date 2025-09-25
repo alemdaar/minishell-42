@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:53:07 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 20:13:17 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 12:59:23 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-#include "./header.h"
+#include "../../minishell.h"
+#include "../header.h"
 
-int run_bin(t_cmd *tmp, t_other *other)
+int	run_bin(t_cmd *tmp, t_other *other)
 {
 	int	r;
 

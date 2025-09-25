@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:05:20 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/16 16:50:12 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 17:53:57 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,5 +171,10 @@ void		set_signals_child(void);
 void		set_signals_heredoc(void);
 /*~~~~~~~~~~~~~~~~~~~~~~<error.c>~~~~~~~~~~~~~~~~~~~~~~*/
 void		eprintf(const char *str);
+
+void		incre(int *a, int *b);
+char		*no_exp_val(t_token **t, t_ambg amb, t_exp exp);
+void		valid_exp_key(t_exp *exp);
+void		init_amb(t_ambg *amb, bool ambg);
 
 #endif

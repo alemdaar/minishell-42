@@ -12,6 +12,7 @@
         "minishell.h": "c",
         "header.h": "c",
         "stdio.h": "c",
-        "readline.h": "c"
+        "readline.h": "c",
+        "strc.h": "c"
     }
 }

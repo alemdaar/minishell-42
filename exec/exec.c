@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/24 14:33:16 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 13:39:18 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "header.h"
 
-static int is_pipe(t_cmd *cmd, t_other	*other)
+static int	is_pipe(t_cmd *cmd, t_other	*other)
 {
 	other->count_proc = 0;
 	while (cmd)
@@ -25,10 +25,10 @@ static int is_pipe(t_cmd *cmd, t_other	*other)
 		other->a_pipe = 1;
 	else
 		other->a_pipe = 0;
-	return 0;
+	return (0);
 }
 
-static void save_fds(t_other *other)
+static void	save_fds(t_other *other)
 {
 	other->stdout_copy = dup(STDOUT_FILENO);
 	other->stdin_copy = dup(STDIN_FILENO);
@@ -36,7 +36,7 @@ static void save_fds(t_other *other)
 	other->stdout_flag = 0;
 }
 
-int execution(t_cmd *cmd, t_env *env, char **ev)
+int	execution(t_cmd *cmd, t_env *env, char **ev)
 {
 	t_other	other;
 

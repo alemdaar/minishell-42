@@ -29,6 +29,7 @@ SRC = 	minishell.c \
 		parsing/envp/utils_env.c					\
 		parsing/envp/utils1_env.c					\
 		parsing/envp/clean_env.c					\
+		parsing/envp/extra.c					\
 		parsing/cmd/list_cmd.c					\
 		parsing/cmd/utils_cmd.c					\
 		parsing/cmd/nodes_cmd.c					\
@@ -42,32 +43,33 @@ SRC = 	minishell.c \
 		exec/gnl/get_next_line.c					\
 		exec/gnl/get_next_line_utils.c				\
 		exec/linkedlist/linkedlist.c				\
-		exec/bin.c									\
-		exec/cd.c									\
+		exec/bins/bin.c									\
+		exec/bins/cd.c									\
 		exec/child.c									\
 		exec/cmd.c									\
-		exec/echo.c									\
-		exec/env.c									\
+		exec/bins/echo.c									\
+		exec/bins/env.c									\
 		exec/exec.c									\
 		exec/exec2.c									\
 		exec/exit_status.c									\
-		exec/exit.c									\
-		exec/export.c									\
+		exec/bins/exit.c									\
+		exec/bins/export.c									\
 		exec/file.c									\
 		exec/file2.c									\
 		exec/free.c									\
 		exec/heredoc.c									\
 		exec/paths.c									\
-		exec/pwd.c									\
+		exec/bins/pwd.c									\
 		exec/tools.c									\
 		exec/tools2.c									\
 		exec/tools3.c									\
-		exec/unset.c									\
+		exec/bins/unset.c									\
 		exec/work.c									\
 		exec/fds.c
 
 HDR = minishell.h \
        ./parsing/include/token.h \
+       ./exec/header.h \
 
 OBJ = $(SRC:.c=.o)
 

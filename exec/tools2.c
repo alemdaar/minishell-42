@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 21:58:21 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/23 20:10:54 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:41:54 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int count_heredoc(t_cmd *tmp)
+int	count_heredoc(t_cmd *tmp)
 {
 	t_red	*copy;
 
@@ -30,9 +30,11 @@ int count_heredoc(t_cmd *tmp)
 	return (tmp->count_doc);
 }
 
-void count_args(t_cmd *tmp)
+void	count_args(t_cmd *tmp)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	while (tmp->commands[i])
 		i++;
 	tmp->ar = i;
@@ -74,7 +76,7 @@ int	pipping(t_cmd *tmp, int type)
 	return (SUCCESSFUL);
 }
 
-void close_set(int *to_be_closed, int value)
+void	close_set(int *to_be_closed, int value)
 {
 	close(*to_be_closed);
 	*to_be_closed = value;

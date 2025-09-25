@@ -6,14 +6,14 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 20:33:28 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 20:33:54 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:07:16 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-int restore_fds(t_other *other)
+int	restore_fds(t_other *other)
 {
 	dup2(other->stdout_copy, STDOUT_FILENO);
 	close(other->stdout_copy);
@@ -24,7 +24,7 @@ int restore_fds(t_other *other)
 	return (0);
 }
 
-void close_fds(t_cmd *tmp)
+void	close_fds(t_cmd *tmp)
 {
 	if (tmp->open1 != -3)
 		close_set(&tmp->open1, -3);
@@ -41,7 +41,7 @@ void close_fds(t_cmd *tmp)
 	return ;
 }
 
-void close_all_fds(t_cmd *cmd)
+void	close_all_fds(t_cmd *cmd)
 {
 	while (cmd)
 	{

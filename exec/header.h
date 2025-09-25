@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/24 14:54:08 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:18:05 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,11 @@ int		builtin_echo(t_cmd *tmp);
 int		builtin_env(t_cmd *tmp, t_other *other);
 int		exec(t_cmd *tmp, t_other *other);
 int		execution2(t_cmd *tmp, t_other *other, int i);
-void    handle_exit_status(int status);
+void	handle_exit_status(int status);
 int		exit_status(int val);
 int		builtin_exit(t_cmd *tmp);
 int		builtin_export(t_cmd *tmp, t_other *other);
-int		file_pipe (t_cmd *tmp, int flag);
+int		file_pipe(t_cmd *tmp, int flag);
 int		check_file(t_cmd *tmp, t_other *other, int flag);
 void	free_env(t_other *other);
 int		free_all(t_other *other);
@@ -102,11 +102,9 @@ int		is_equal(char *command, char *b_in);
 size_t	mystrlen(char *str);
 void	why_exit(char *str, int flag);
 int		builtin_unset(t_cmd *tmp, t_other *other);
-int 	work(t_cmd *cmd, t_other *other);
+int		work(t_cmd *cmd, t_other *other);
 int		restore_fds(t_other *other);
 void	close_fds(t_cmd *tmp);
 void	close_all_fds(t_cmd *cmd);
-
-
 
 #endif

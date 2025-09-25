@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:27:14 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:48:02 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:22:03 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,10 @@ static void	count_path(t_other *other)
 {
 	t_ind	ind;
 
-	ind.i = 0;
 	other->count_path = 0;
+	if (other->all_path == NULL)
+		return ;
+	ind.i = 0;
 	if (other->all_path == NULL)
 		return ;
 	while (other->all_path[ind.i])
@@ -81,6 +83,7 @@ int	edit_paths(t_other *other, t_env *env)
 
 	find_path(other, env);
 	count_path(other);
+	other->paths = NULL;
 	if (other->all_path == NULL)
 		return (0);
 	other->paths = malloc (sizeof(char *) * other->count_path);

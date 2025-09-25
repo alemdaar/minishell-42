@@ -6,12 +6,13 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 15:45:29 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/18 15:47:24 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 17:33:36 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
+
 void	handle_sigint(int sig)
 {
 	(void)sig;

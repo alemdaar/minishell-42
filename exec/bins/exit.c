@@ -6,12 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 20:19:07 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:34:30 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 13:11:23 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-#include "./header.h"
+#include "../../minishell.h"
+#include "../header.h"
 
 static int	ft_atoi(const char *str)
 {
@@ -44,17 +44,17 @@ static int	ft_atoi(const char *str)
 
 static int	builtin_exit2(t_cmd *tmp, int *i)
 {
-    printf("exit\n");
-    if (!tmp->commands[1])
-        exit(exit_status(-1));
-    *i = 0;
-    if (!tmp->commands[1][0])
-        return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
-    while (tmp->commands[1][*i] == ' ')
-        *i +=1;
-    if (tmp->commands[1][*i] == '+' || tmp->commands[1][*i] == '-')
+	printf("exit\n");
+	if (!tmp->commands[1])
+		exit(exit_status(-1));
+	*i = 0;
+	if (!tmp->commands[1][0])
+		return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+	while (tmp->commands[1][*i] == ' ')
+		*i += 1;
+	if (tmp->commands[1][*i] == '+' || tmp->commands[1][*i] == '-')
 	{
-        *i +=1;
+		*i += 1;
 	}
 	if (!ft_isdigit(tmp->commands[1][*i]))
 	{
@@ -63,30 +63,28 @@ static int	builtin_exit2(t_cmd *tmp, int *i)
 	return (0);
 }
 
-int builtin_exit(t_cmd *tmp)
+int	builtin_exit(t_cmd *tmp)
 {
-    int i;
+	int	i;
 
-    builtin_exit2(tmp, &i);
-    while (tmp->commands[1][i])
-    {
+	builtin_exit2(tmp, &i);
+	while (tmp->commands[1][i])
+	{
 		if (tmp->commands[1][i] == ' ')
 		{
 			while (tmp->commands[1][i] == ' ')
 				i++;
-			break;
+			break ;
 		}
-        if (!ft_isdigit(tmp->commands[1][i]) && tmp->commands[1][i])
-            return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
-        i++;
-    }
+		if (!ft_isdigit(tmp->commands[1][i]) && tmp->commands[1][i])
+			return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+		i++;
+	}
 	while (tmp->commands[1][i] == ' ')
-		break;
+		break ;
 	if (tmp->commands[1][i] != 0)
-        return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
-    if (tmp->commands[2])
-        return (print_err("exit", tmp->commands[1], EX_TA), exit_status(1), 1);
-    exit((unsigned char)ft_atoi(tmp->commands[1]));
+		return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+	if (tmp->commands[2])
+		return (print_err("exit", tmp->commands[1], EX_TA), exit_status(1), 1);
+	exit((unsigned char)ft_atoi(tmp->commands[1]));
 }
-
-

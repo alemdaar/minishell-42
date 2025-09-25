@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/24 13:08:57 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 17:38:26 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,7 @@
 #include "exec/gnl/get_next_line.h"
 #include <string.h>
 
-void	ft_bzero(void *s, size_t n)
-{
-	char	*ptr;
-
-	if (n == 0)
-		return ;
-	ptr = s;
-	while (n)
-	{
-		*ptr++ = 0;
-		--n;
-	}
-}
-
-void	*ft_calloc(size_t count, size_t size)
+static void	*ft_calloc(size_t count, size_t size)
 {
 	void	*ptr;
 
@@ -38,11 +24,10 @@ void	*ft_calloc(size_t count, size_t size)
 	ptr = malloc(count * size);
 	if (!ptr)
 		return (NULL);
-	ft_bzero(ptr, count * size);
 	return (ptr);
 }
 
-static	int	to_find(const char c, const char *set)
+static int	to_find(const char c, const char *set)
 {
 	int	i;
 
@@ -56,7 +41,7 @@ static	int	to_find(const char c, const char *set)
 	return (0);
 }
 
-char	*ft_strtrim(char const *s1, char const *set)
+static char	*ft_strtrim(char const *s1, char const *set)
 {
 	char	*str;
 	size_t	last;
@@ -79,25 +64,25 @@ char	*ft_strtrim(char const *s1, char const *set)
 	i = 0;
 	while (first <= last)
 		str[i++] = s1[first++];
+	str[i] = 0;
 	return (str);
 }
 
 static char	*read_line(t_env *env)
 {
 	char	*read_line;
+	char	*line;
 
 	read_line = NULL;
-	
+	line = NULL;
 	if (isatty(fileno(stdin)))
 		read_line = readline("minishell-$> ");
 	else
 	{
-		char *line;
 		line = get_next_line(fileno(stdin));
 		read_line = ft_strtrim(line, "\n");
 		free(line);
 	}
-	// read_line = readline("minishell-$> ");
 	if (!read_line)
 	{
 		clean_env(env);
@@ -110,8 +95,6 @@ static char	*read_line(t_env *env)
 	add_history(read_line);
 	return (read_line);
 }
-
-
 
 int	main(int ac, char **av, char **ev)
 {

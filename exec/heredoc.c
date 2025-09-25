@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 18:22:21 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/21 22:47:29 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:21:44 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../minishell.h"
 #include "./gnl/get_next_line.h"
 
-static void make_heredoc3(char *line, t_cmd *tmp)
+static void	make_heredoc3(char *line, t_cmd *tmp)
 {
 	if (line)
 		free(line);
@@ -26,13 +26,13 @@ static void make_heredoc3(char *line, t_cmd *tmp)
 static char	*make_heredoc2(t_cmd *tmp, t_ind ind)
 {
 	char	*line;
-	
+
 	write (1, "> ", 2);
 	line = get_next_line(0);
 	if (line == NULL && ind.c == 0)
 	{
-        close_set(&tmp->pipedoc[READ], -3);
-        close_set(&tmp->pipedoc[WRITE], -3);
+		close_set(&tmp->pipedoc[READ], -3);
+		close_set(&tmp->pipedoc[WRITE], -3);
 		if (tmp->flag_exit == 0)
 			exit_status(1);
 		return (NULL);
@@ -56,13 +56,13 @@ static int	make_heredoc(t_cmd *tmp, t_other *other, char *limmiter)
 		ind.c = 1;
 		if (is_limiter(line, limmiter) == TRUE)
 		{
-    	    close_set(&tmp->pipedoc[WRITE], 3);
+			close_set(&tmp->pipedoc[WRITE], 3);
 			return (free(line), SUCCESSFUL);
 		}
 		if (tmp->count_doc == 0 && tmp->red->expand == 0)
-    		write (tmp->pipedoc[WRITE], line, mystrlen(line));
-    	if (tmp->count_doc == 0 && tmp->red->expand == 1)
-    		resolve_heredoc(other->envrp, &line, tmp->pipedoc[WRITE]);
+			write (tmp->pipedoc[WRITE], line, mystrlen(line));
+		if (tmp->count_doc == 0 && tmp->red->expand == 1)
+			resolve_heredoc(other->envrp, &line, tmp->pipedoc[WRITE]);
 	}
 	make_heredoc3(line, tmp);
 	return (SUCCESSFUL);
@@ -70,7 +70,7 @@ static int	make_heredoc(t_cmd *tmp, t_other *other, char *limmiter)
 
 static int	child_doc2(t_other *other, t_cmd *tmp)
 {
-	t_red *red_copy;
+	t_red	*red_copy;
 
 	set_signals_heredoc();
 	restore_fds(other);
@@ -87,9 +87,8 @@ static int	child_doc2(t_other *other, t_cmd *tmp)
 	exit (0);
 }
 
-int child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
+int	child_doc(t_cmd *tmp, t_other *other, t_ind *ind)
 {
-
 	if (ind->r == ERROR)
 	{
 		if (tmp->flag_exit == 0)

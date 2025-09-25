@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:19 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/24 12:09:05 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 17:33:17 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,29 +95,18 @@ static int	expand_var(t_token **t, t_ambg amb, t_env *env, bool f_quotes)
 	if (is_special((*t)->content[exp.r], f_quotes))
 		return (expand_meta(&(*t)->content, amb.r, exp.r, f_quotes));
 	while ((*t)->content[exp.r] && is_valid_key((*t)->content[exp.r]))
-	{
-		exp.r++;
-		exp.len_key++;
-	}
+		incre(&exp.r, &exp.len_key);
 	exp.key = cdup(exp.len_key, (*t)->content + (amb.r + 1));
 	exp.value = env_value(exp.key, env);
 	if (!exp.value && (*t)->content[amb.r + 1] == '\'' && f_quotes)
 		return (free_string(&exp.key), 1);
 	if (!exp.value)
-	{
-		ambiguous_redirect(t, amb.ambiguous, exp.key);
-		(*t)->content = key_not_found(&(*t)->content, amb.r, exp.len_key);
-	}
+		(*t)->content = no_exp_val(t, amb, exp);
 	else
-	{	
 		set_new_content(t, &exp, &amb);
-	}
 	free(exp.key);
 	if (exp.value)
-	{
-		exp.len_value = ft_strlen(exp.value);
-		free(exp.value);
-	}
+		valid_exp_key(&exp);
 	if ((*t)->amb == 1)
 		return (-3);
 	return (exp.len_value);
@@ -128,10 +117,7 @@ void	is_env(t_token **token, t_env *env, bool expander, bool ambg)
 	t_ambg	amb;
 	int		r;
 
-	amb.d_quotes = 0;
-	amb.s_quotes = 0;
-	amb.ambiguous = ambg;
-	amb.r = 0;
+	init_amb(&amb, ambg);
 	while ((*token)->content[amb.r])
 	{
 		if ((*token)->content[amb.r] == '"' && amb.d_quotes)
