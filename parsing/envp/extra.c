@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:54:03 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 20:42:38 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/25 21:36:37 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	incre(int *a, int *b)
 {
-	a ++;
-	b ++;
+	*a += 1;
+	*b += 1;
 	return ;
 }
 
@@ -34,11 +34,9 @@ void	valid_exp_key(t_exp *exp)
 
 void	init_amb(t_ambg *amb, bool ambg)
 {
-	printf ("INIT\n");
 	amb->d_quotes = 0;
 	amb->s_quotes = 0;
 	amb->ambiguous = ambg;
 	amb->r = 0;
-	printf ("INIT FINISHED\n");
 	return ;
 }
