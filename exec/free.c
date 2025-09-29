@@ -69,7 +69,11 @@ static void	free_all2(t_other *other)
 {
 	int	i;
 
-	
+	if (other->orig_cmd->commands)
+	{
+		free(other->orig_cmd->commands);
+		other->orig_cmd->commands = NULL;
+	}
 	if (other->orig_cmd->path_cmd)
 	{
 		free(other->orig_cmd->path_cmd);

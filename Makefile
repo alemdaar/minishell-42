@@ -4,8 +4,7 @@ READLINE_DIR = /Users/oelhasso/.brew/opt/readline
 CFLAGS = -Wall -Wextra -Werror \
          -I includes/ \
          -I$(READLINE_DIR)/include \
-         -g
-        #  -g -fsanitize=address
+         -g -fsanitize=address
 
 LDFLAGS = -L$(READLINE_DIR)/lib \
           -lreadline -lhistory -lncurses

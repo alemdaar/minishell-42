@@ -45,7 +45,6 @@ char	*ft_itoa(int n)
 	ma = (char *)malloc(sizeof(char) * (nlen + 1));
 	if (!ma)
 		return (NULL);
-	printf ("itoa : %p\n", ma);
 	if (n < 0)
 	{
 		ma[0] = '-';

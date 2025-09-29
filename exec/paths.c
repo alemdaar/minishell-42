@@ -71,7 +71,6 @@ static void	fill_path(t_other *other, t_ind *ind)
 		restore_fds(other);
 		why_exit(ERR_MEM, FAILED);
 	}
-	printf ("fill path : %p\n", other->paths[ind->c]);
 	while (ind->i < ind->j)
 		other->paths[ind->c][a++] = other->all_path[ind->i++];
 	other->paths[ind->c][a] = 0;
@@ -90,7 +89,6 @@ int	edit_paths(t_other *other, t_env *env)
 	other->paths = malloc (sizeof(char *) * other->count_path);
 	if (!other->paths)
 		return (restore_fds(other), why_exit(ERR_MEM, 1), 1);
-	printf ("edit path : %p\n", other->paths);
 	ind.i = 0;
 	ind.c = 0;
 	ind.j = ind.i;

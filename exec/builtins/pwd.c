@@ -21,7 +21,6 @@ static void	replace_pwd2(t_env *en, int len)
 		en->value = NULL;
 	}
 	en->value = malloc (len + 1);
-	printf ("replace pwd2 : %p\n", en->value);
 	return ;
 }
 

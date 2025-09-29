@@ -43,7 +43,6 @@ t_env	*ft_lstnew(char *content1, char *content2)
 	elem = malloc(sizeof(t_env));
 	if (!elem)
 		return (NULL);
-	printf ("lstnew : %p\n", elem);
 	elem->key = content1;
 	elem->value = content2;
 	elem->next = NULL;

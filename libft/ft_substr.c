@@ -29,7 +29,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	ma = (char *)malloc(sizeof(char) * (len + 1));
 	if (!ma)
 		return (NULL);
-	printf ("substr : %p\n", ma);
 	while (b < len)
 	{
 		ma[b] = s[start + b];

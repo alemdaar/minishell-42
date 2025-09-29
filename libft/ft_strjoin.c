@@ -31,7 +31,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ma = (char *)malloc(sizeof(char) * (mlen1 + mlen2 + 1));
 	if (!ma)
 		return (NULL);
-	printf ("strjoin : %p\n", ma);
 	ft_memcpy(ma, s1, mlen1);
 	ft_memcpy(ma + mlen1, s2, mlen2);
 	ma[mlen1 + mlen2] = '\0';

@@ -32,7 +32,6 @@ static int	update_env2(t_env *env, char *key, char *value)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (perror("malloc"), -1);
-	printf ("update env : %p\n", new_node);
 	new_node->key = ft_strdup(key);
 	new_node->value = ft_strdup(value);
 	new_node->next = NULL;

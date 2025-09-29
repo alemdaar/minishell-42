@@ -46,7 +46,7 @@ int	execution(t_cmd *cmd, t_env *env, char **ev)
 	other.orig_cmd = cmd;
 	// free_all(&other);
 	// free_env(&other);
-	return (0);
+	// return (0);
 	save_fds(&other);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);

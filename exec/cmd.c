@@ -21,7 +21,6 @@ int	fill_argument(t_cmd *tmp, t_other *other)
 	tmp->argument = malloc (sizeof(char *) * (tmp->ar + 1));
 	if (!tmp->argument)
 		return (printf("argument failed !\n"), free_all(other), ERROR);
-	printf ("fill argument : %p\n", tmp->argument);
 	ind.t = 0;
 	tmp->argument[0] = tmp->commands[0];
 	ind.i = 1;
@@ -50,7 +49,6 @@ static char	*mixem(t_cmd *cmd, t_other *other, int path_ind)
 		len = mystrlen(other->paths[path_ind]) + mystrlen(cmd->commands[0]);
 		str = malloc (len + 2);
 	}
-	printf ("mixem : %p\n", str);
 	i = 0;
 	j = 0;
 	if (path_ind != -1)

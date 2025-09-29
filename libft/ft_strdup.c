@@ -21,7 +21,6 @@ char	*ft_strdup(const char *s1)
 	ma = (char *)malloc(sizeof(char) * (ft_strlen(s1) + 1));
 	if (!ma)
 		return (NULL);
-	printf ("strdup : %p\n", ma);
 	while (s1[i])
 	{
 		ma[i] = s1[i];
