@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 15:17:00 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:12:20 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,15 @@ static void	free_all3(t_other *other)
 	{
 		free(other->orig_cmd->commands);
 		other->orig_cmd->path_cmd = NULL;
+	}
+	if (other->orig_cmd->red)
+	{
+		while (other->orig_cmd->red)
+		{
+			free(other->orig_cmd->red);
+			other->orig_cmd->red = NULL;
+			other->orig_cmd->red = other->orig_cmd->red->next;
+		}
 	}
 	tmp = other->orig_cmd;
 	other->orig_cmd = other->orig_cmd->next;
