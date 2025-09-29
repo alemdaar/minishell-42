@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 22:37:51 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 13:35:20 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:12:42 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void	replace_pwd2(t_env *en, int len)
 		en->value = NULL;
 	}
 	en->value = malloc (len + 1);
+	printf ("replace pwd2 : %p\n", en->value);
 	return ;
 }
 

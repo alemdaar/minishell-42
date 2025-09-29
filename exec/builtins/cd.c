@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:55:43 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 13:04:42 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:13:28 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static int	update_env2(t_env *env, char *key, char *value)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (perror("malloc"), -1);
+	printf ("update env : %p\n", new_node);
 	new_node->key = ft_strdup(key);
 	new_node->value = ft_strdup(value);
 	new_node->next = NULL;

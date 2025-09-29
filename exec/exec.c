@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 17:26:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 10:53:53 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:46:28 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,18 @@ int	execution(t_cmd *cmd, t_env *env, char **ev)
 	other.envr = ev;
 	other.envrp = env;
 	other.orig_cmd = cmd;
+	// free_all(&other);
+	// free_env(&other);
+	return (0);
 	save_fds(&other);
 	is_pipe(cmd, &other);
 	edit_paths(&other, env);
+	// while (1);
 	work(cmd, &other);
 	close_all_fds(cmd);
 	free_all(&other);
 	restore_fds(&other);
+	// free_env(&other);
+	// while (1);
 	return (0);
 }

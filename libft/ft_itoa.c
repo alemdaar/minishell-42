@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 19:26:07 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 19:26:08 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:10:44 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ char	*ft_itoa(int n)
 	ma = (char *)malloc(sizeof(char) * (nlen + 1));
 	if (!ma)
 		return (NULL);
+	printf ("itoa : %p\n", ma);
 	if (n < 0)
 	{
 		ma[0] = '-';

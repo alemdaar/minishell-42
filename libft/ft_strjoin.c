@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 19:26:30 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/14 19:26:31 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:18:01 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ma = (char *)malloc(sizeof(char) * (mlen1 + mlen2 + 1));
 	if (!ma)
 		return (NULL);
+	printf ("strjoin : %p\n", ma);
 	ft_memcpy(ma, s1, mlen1);
 	ft_memcpy(ma + mlen1, s2, mlen2);
 	ma[mlen1 + mlen2] = '\0';

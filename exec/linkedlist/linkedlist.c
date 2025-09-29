@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 22:08:33 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 13:38:04 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:11:04 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_env	*ft_lstnew(char *content1, char *content2)
 	elem = malloc(sizeof(t_env));
 	if (!elem)
 		return (NULL);
+	printf ("lstnew : %p\n", elem);
 	elem->key = content1;
 	elem->value = content2;
 	elem->next = NULL;

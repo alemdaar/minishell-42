@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 12:14:20 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:07:09 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,31 +43,33 @@ void	free_env(t_other *other)
 static void	free_all3(t_other *other)
 {
 	t_cmd	*tmp;
+	t_red	*red_copy;
+	t_red	*red_prev;
 
-	if (other->orig_cmd->commands)
-	{
-		free(other->orig_cmd->commands);
-		other->orig_cmd->path_cmd = NULL;
-	}
 	tmp = other->orig_cmd;
-	if (tmp->red)
+	red_copy = tmp->red;
+	if (red_copy)
 	{
-		while (tmp->red)
+		while (red_copy)
 		{
-			if (tmp->red->file)
+			if (red_copy->file)
 			{
-				free(tmp->red->file);
-				tmp->red->file = NULL;
+				free(red_copy->file);
+				red_copy->file = NULL;
 			}
-			tmp->red = tmp->red->next;
+			red_prev = red_copy;
+			red_copy = red_copy->next;
+			free(red_prev);
 		}
-		free(tmp->red);
 	}
 	return ;
 }
 
-static void	free_all2(t_other *other, int i)
+static void	free_all2(t_other *other)
 {
+	int	i;
+
+	
 	if (other->orig_cmd->path_cmd)
 	{
 		free(other->orig_cmd->path_cmd);
@@ -82,9 +84,6 @@ static void	free_all2(t_other *other, int i)
 			other->orig_cmd->argument[i] = NULL;
 			i += 1 ;
 		}
-	}
-	if (other->orig_cmd->argument)
-	{
 		free(other->orig_cmd->argument);
 		other->orig_cmd->argument = NULL;
 	}
@@ -92,33 +91,46 @@ static void	free_all2(t_other *other, int i)
 	return ;
 }
 
+int free_commands(t_other *other)
+{
+	t_cmd	*tmp;
+
+	while (other->orig_cmd)
+	{
+		tmp = other->orig_cmd;
+		free_all2(other);
+		other->orig_cmd = tmp->next;
+		free(tmp);
+	}
+	return (SUCCESSFUL);
+}
+
+
 int	free_all(t_other *other)
 {
 	int		i;
-	t_cmd	*tmp;
 
 	i = 0;
 	while (i < other->count_path && other->paths)
 	{
 		if (other->paths[i] == NULL)
-			return (free(other->paths), other->paths = NULL, FAILED);
+		{
+			free(other->paths);
+			return (other->paths = NULL, FAILED);
+		}
 		free(other->paths[i]);
-		other->paths[i++] = NULL;
+		other->paths[i] = NULL;
+		i++;
 	}
 	if (other->paths == NULL)
+	{
 		return (FAILED);
+	}
 	else
 	{
 		free(other->paths);
 		other->paths = NULL;
 	}
-	while (other->orig_cmd)
-	{
-		free_all2(other, i);
-		tmp = other->orig_cmd;
-		other->orig_cmd = other->orig_cmd->next;
-		free(tmp);
-		tmp = NULL;
-	}
+	free_commands(other);
 	return (0);
 }

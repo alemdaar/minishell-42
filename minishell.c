@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 12:00:31 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:47:32 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static void	*ft_calloc(size_t count, size_t size)
 	ptr = malloc(count * size);
 	if (!ptr)
 		return (NULL);
+	printf ("calloc : %p\n", ptr);
 	return (ptr);
 }
 
@@ -114,6 +115,6 @@ int	main(int ac, char **av, char **ev)
 		cmd = parcing(buffer, env);
 		if (cmd)
 			execution(cmd, env, ev);
-		while (1);
+		// while (1);
 	}
 }

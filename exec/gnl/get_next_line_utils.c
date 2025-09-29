@@ -6,11 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 20:58:04 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/06/29 18:16:29 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:17:15 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 size_t	gnl_strlen(char *str)
 {
@@ -73,6 +74,7 @@ char	*rtn_line(char *buffer, int p)
 	str = malloc (p + 2);
 	if (!str)
 		return (free_str(&buffer), NULL);
+	printf ("rtn line : %p\n", str);
 	while ((int)i <= p)
 	{
 		str[i] = buffer[i];
@@ -93,6 +95,7 @@ char	*ft_strdup_add(char *src, int add_bytes)
 	ptr = (char *) malloc(src_len + add_bytes + 1);
 	if (ptr == NULL)
 		return (NULL);
+	printf ("strdup add : %p\n", ptr);
 	while (i <= src_len + add_bytes)
 	{
 		ptr[i] = 0;
