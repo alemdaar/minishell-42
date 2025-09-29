@@ -6,12 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 19:25:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 17:17:38 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:13:24 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <stdio.h>
+
 char	*ft_strdup(const char *s1)
 {
 	char	*ma;

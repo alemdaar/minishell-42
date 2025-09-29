@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 17:47:32 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:13:08 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,5 @@ int	main(int ac, char **av, char **ev)
 		cmd = parcing(buffer, env);
 		if (cmd)
 			execution(cmd, env, ev);
-		// while (1);
 	}
 }

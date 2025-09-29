@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 17:07:09 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:15:59 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,7 @@ static void	free_all2(t_other *other)
 		while (other->orig_cmd->argument[i])
 		{
 			free(other->orig_cmd->argument[i]);
-			other->orig_cmd->argument[i] = NULL;
-			i += 1 ;
+			other->orig_cmd->argument[i++] = NULL;
 		}
 		free(other->orig_cmd->argument);
 		other->orig_cmd->argument = NULL;
@@ -95,7 +94,7 @@ static void	free_all2(t_other *other)
 	return ;
 }
 
-int free_commands(t_other *other)
+int	free_commands(t_other *other)
 {
 	t_cmd	*tmp;
 
@@ -108,7 +107,6 @@ int free_commands(t_other *other)
 	}
 	return (SUCCESSFUL);
 }
-
 
 int	free_all(t_other *other)
 {
