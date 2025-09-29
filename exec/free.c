@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:20:38 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 11:21:30 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/29 12:14:20 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,19 @@ static void	free_all3(t_other *other)
 		other->orig_cmd->path_cmd = NULL;
 	}
 	tmp = other->orig_cmd;
-	other->orig_cmd = other->orig_cmd->next;
-	free(tmp);
-	tmp = NULL;
+	if (tmp->red)
+	{
+		while (tmp->red)
+		{
+			if (tmp->red->file)
+			{
+				free(tmp->red->file);
+				tmp->red->file = NULL;
+			}
+			tmp->red = tmp->red->next;
+		}
+		free(tmp->red);
+	}
 	return ;
 }
 
@@ -85,6 +95,7 @@ static void	free_all2(t_other *other, int i)
 int	free_all(t_other *other)
 {
 	int		i;
+	t_cmd	*tmp;
 
 	i = 0;
 	while (i < other->count_path && other->paths)
@@ -102,6 +113,12 @@ int	free_all(t_other *other)
 		other->paths = NULL;
 	}
 	while (other->orig_cmd)
+	{
 		free_all2(other, i);
+		tmp = other->orig_cmd;
+		other->orig_cmd = other->orig_cmd->next;
+		free(tmp);
+		tmp = NULL;
+	}
 	return (0);
 }
