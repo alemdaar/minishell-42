@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:35 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 17:54:53 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/30 22:53:42 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static char	*extract_key(char *env)
 		i++;
 	key = malloc(i + 1);
 	if (!key)
-		return (fprintf(stderr, "Allocation Faield\n"), NULL);
+		return (print_err(NULL, NULL, "malloc failed", 1), NULL);
 	i = 0;
 	while (env[j] && env[j] != '=')
 		key[i++] = env[j++];

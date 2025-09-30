@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 20:27:29 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/30 21:51:38 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define UN_NVI "not a valid identifier\n"
 # define NO_HOME "minishell: cd: HOME not set\n"
 # define NO_OLDPWD "minishell: cd: OLDPWD not set\n"
+# define NO_CMD "command not found\n"
 
 # include <stdlib.h>
 # include <stdio.h>

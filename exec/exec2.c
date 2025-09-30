@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 16:56:14 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 15:28:38 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/30 22:41:29 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,17 @@ static void	check_directory(t_cmd *tmp, t_other *other)
 	{
 		if (stat(tmp->commands[0], &st) == -1)
 		{
-			print_err("", tmp->commands[0], NO_DIR);
+			print_err("", tmp->commands[0], NO_DIR, 1);
 			exit(127);
 		}
 		if (S_ISDIR(st.st_mode))
 		{
-			print_err("", tmp->commands[0], IS_DIR);
+			print_err("", tmp->commands[0], IS_DIR, 1);
 			exit(126);
 		}
 		if (access(tmp->commands[0], X_OK) == -1)
 		{
-			print_err("", tmp->commands[0], NO_PERM);
+			print_err("", tmp->commands[0], NO_PERM, 1);
 			exit(126); 
 		}
 		execve(tmp->commands[0], tmp->argument, other->envr);
@@ -73,13 +73,13 @@ int	exec(t_cmd *tmp, t_other *other)
 	if (!tmp->commands[0] || tmp->commands[0][0] == '\0')
 	{
 		restore_fds(other);
-		fprintf (stderr, "minishell: : command not found\n");
+		print_err (NULL, "", NO_CMD, 1);
 		return (free_all(other), 127);
 	}
 	check_directory(tmp, other);
 	if (tmp->path_cmd == NULL) 
 	{
-		fprintf (stderr, "minishell: %s: command not found\n", tmp->commands[0]);
+		print_err (NULL, tmp->commands[0], NO_CMD, 1);
 		restore_fds(other);
 		return (free_all(other), 127);
 	}

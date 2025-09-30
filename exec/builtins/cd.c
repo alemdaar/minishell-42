@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:55:43 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 17:13:28 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/30 22:52:24 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,14 +76,14 @@ static char	*builtin_cd2(t_cmd *cmd, t_env *env, char *oldpwd)
 	{
 		target = extract_value(env, "HOME");
 		if (!target)
-			return (fprintf(stderr, NO_HOME), free(oldpwd), NULL);
+			return (print_err(NULL, NULL, NO_HOME, 1), free(oldpwd), NULL);
 	}
 	else if (ft_strcmp(cmd->commands[1], "-") == 0)
 	{
 		target = extract_value(env, "OLDPWD");
 		if (!target)
 		{
-			fprintf(stderr, NO_OLDPWD);
+			print_err(NULL, NULL, NO_OLDPWD, 1);
 			free(oldpwd);
 			return (NULL);
 		}

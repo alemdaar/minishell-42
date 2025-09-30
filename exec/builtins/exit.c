@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 20:19:07 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 13:11:23 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/30 22:42:46 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	builtin_exit2(t_cmd *tmp, int *i)
 		exit(exit_status(-1));
 	*i = 0;
 	if (!tmp->commands[1][0])
-		return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+		return (print_err("exit", tmp->commands[1], EX_NA, 1), exit(255), 1);
 	while (tmp->commands[1][*i] == ' ')
 		*i += 1;
 	if (tmp->commands[1][*i] == '+' || tmp->commands[1][*i] == '-')
@@ -58,7 +58,7 @@ static int	builtin_exit2(t_cmd *tmp, int *i)
 	}
 	if (!ft_isdigit(tmp->commands[1][*i]))
 	{
-		return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+		return (print_err("exit", tmp->commands[1], EX_NA, 1), exit(255), 1);
 	}
 	return (0);
 }
@@ -77,14 +77,14 @@ int	builtin_exit(t_cmd *tmp)
 			break ;
 		}
 		if (!ft_isdigit(tmp->commands[1][i]) && tmp->commands[1][i])
-			return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+			return (print_err("exit", tmp->commands[1], EX_NA, 1), exit(255), 1);
 		i++;
 	}
 	while (tmp->commands[1][i] == ' ')
 		break ;
 	if (tmp->commands[1][i] != 0)
-		return (print_err("exit", tmp->commands[1], EX_NA), exit(255), 1);
+		return (print_err("exit", tmp->commands[1], EX_NA, 1), exit(255), 1);
 	if (tmp->commands[2])
-		return (print_err("exit", tmp->commands[1], EX_TA), exit_status(1), 1);
+		return (print_err("exit", tmp->commands[1], EX_TA, 1), exit_status(1), 1);
 	exit((unsigned char)ft_atoi(tmp->commands[1]));
 }

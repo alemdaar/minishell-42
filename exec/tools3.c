@@ -6,16 +6,31 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 21:59:10 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/25 15:42:50 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/09/30 22:46:50 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 #include "./header.h"
 
-void	print_err(char *cmnd, char *sub, char *msg)
+void	print_err(char *cmnd, char *sub, char *msg, int flag)
 {
-	fprintf (stderr, "minishell: %s: %s: %s", cmnd, sub, msg);
+	char *shell;
+
+	shell = "minishell: ";
+	write (2, "%s", ft_strlen(shell));
+	if (cmnd)
+		write (2, "%s", ft_strlen(cmnd));
+	if (cmnd)
+		write (2, ": ", ft_strlen(": "));
+	if (sub)
+		write (2, "%s", ft_strlen(sub));
+	if (sub)
+		write (2, ": ", ft_strlen(": "));
+	if (msg)
+		write (2, "%s", ft_strlen(msg));
+	if (flag)
+		write (2, "\n", ft_strlen("\n"));
 	return ;
 }
 
