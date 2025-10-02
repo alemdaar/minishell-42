@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:19:56 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 22:43:09 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 21:36:06 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ static int	check_export(char *opt)
 
 	if (!opt || !opt[0])
 	{
-		print_err("export", opt, UN_NVI, 1);
+		print_err("export", opt, UN_NVI);
 		return (1);
 	}
 	if (!ft_isalpha(opt[0]) && opt[0] != '_')
 	{
-		print_err("export", opt, UN_NVI, 1);
+		print_err("export", opt, UN_NVI);
 		return (1);
 	}
 	i = 1;
@@ -45,7 +45,7 @@ static int	check_export(char *opt)
 	{
 		if (!ft_isalnum(opt[i]) && opt[i] != '_')
 		{
-			print_err("export", opt, UN_NVI, 1);
+			print_err("export", opt, UN_NVI);
 			return (1);
 		}
 		i++;

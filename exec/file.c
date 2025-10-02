@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 12:18:28 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 22:50:57 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 22:26:10 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int	redout_case(t_cmd *tmp, t_other *other, t_red *copy_red)
 	tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (tmp->open2 == -1)
 	{
-		print_err (NULL, copy_red->file, NULL, 0);
+		print_err (NULL, copy_red->file, NULL);
 		return (perror(""), -1);
 	}
 	return (0);
@@ -65,7 +65,7 @@ static int	append_case(t_cmd *tmp, t_other *other, t_red *copy_red)
 	tmp->open2 = open (copy_red->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (tmp->open2 == -1)
 	{
-		print_err(NULL, copy_red->file, NULL, 0);
+		print_err(NULL, copy_red->file, NULL);
 		return (perror(""), -1);
 	}
 	return (0);
@@ -86,8 +86,7 @@ static int	redin_case(t_cmd *tmp, t_other *other, t_red *copy_red)
 	tmp->open1 = open (copy_red->file, O_RDONLY);
 	if (tmp->open1 == -1)
 	{
-		
-		print_err(NULL, copy_red->file, NULL, 0);
+		print_err(NULL, copy_red->file, NULL);
 		return (perror(""), -1);
 	}
 	return (0);

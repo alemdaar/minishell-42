@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:23 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 21:51:38 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 22:55:04 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,18 @@
 # define MINISHELL_H
 
 # define ERR_QUOTE "Error Quotes\n"
-# define ERR_PIPE "minishell: syntax error near unexpected token `|'\n"
-# define ERR_RED "minishell: syntax error near unexpected token `newline'\n"
+# define ERR_PIPE "syntax error near unexpected token `|'\n"
+# define ERR_RED "syntax error near unexpected token `newline'\n"
 # define NO_DIR "No such file or directory\n"
 # define IS_DIR "is a directory\n"
 # define NO_PERM "Permission denied\n"
 # define EX_NA "numeric argument required\n"
 # define EX_TA "too many arguments\n"
 # define UN_NVI "not a valid identifier\n"
-# define NO_HOME "minishell: cd: HOME not set\n"
-# define NO_OLDPWD "minishell: cd: OLDPWD not set\n"
+# define NO_HOME "cd: HOME not set\n"
+# define NO_OLDPWD "cd: OLDPWD not set\n"
 # define NO_CMD "command not found\n"
+# define NO_MLC "allocation failed\n"
 
 # include <stdlib.h>
 # include <stdio.h>

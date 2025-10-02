@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 16:56:54 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 22:41:39 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 21:23:59 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	count_args(t_cmd *tmp);
 int		set_up(t_cmd *tmp);
 int		pipping(t_cmd *tmp, int type);
 void	close_set(int *to_be_closed, int value);
-void	print_err(char *cmnd, char *sub, char *msg, int flag);
+void	print_err(char *cmnd, char *sub, char *msg);
 int		is_limiter(char *line, char *limiter);
 int		is_equal(char *command, char *b_in);
 size_t	mystrlen(char *str);

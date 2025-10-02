@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:06:39 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 22:53:01 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 21:36:43 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_cmd	*parcing(char *input, t_env *env)
 	{
 		exit_status(258);
 		free_parcing(tokens, input);
-		return (print_err(NULL, NULL, ERR_QUOTE, 1), NULL);
+		return (print_err(NULL, NULL, ERR_QUOTE), NULL);
 	}
 	env_space(&input, env);
 	tokens = segment_input(input);

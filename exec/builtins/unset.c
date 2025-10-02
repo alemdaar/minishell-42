@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 21:07:34 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 22:43:23 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 21:36:40 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ static int	check_unset(char *opt)
 	int	i;
 
 	if (!opt || !opt[0])
-		return (print_err("unset", opt, UN_NVI, 1), 1);
+		return (print_err("unset", opt, UN_NVI), 1);
 	if (!ft_isalpha(opt[0]) && opt[0] != '_')
-		return (print_err("unset", opt, UN_NVI, 1), 1);
+		return (print_err("unset", opt, UN_NVI), 1);
 	i = 1;
 	while (opt[i])
 	{
 		if (!ft_isalnum(opt[i]) && opt[i] != '_')
-			return (print_err("unset", opt, UN_NVI, 1), 1);
+			return (print_err("unset", opt, UN_NVI), 1);
 		i++;
 	}
 	return (0);

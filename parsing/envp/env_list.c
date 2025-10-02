@@ -6,11 +6,12 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:04:35 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/30 22:53:42 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/02 21:43:14 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+#include "../../exec/header.h"
 
 static int	env_count(char **env)
 {
@@ -34,7 +35,7 @@ static char	*extract_key(char *env)
 		i++;
 	key = malloc(i + 1);
 	if (!key)
-		return (print_err(NULL, NULL, "malloc failed", 1), NULL);
+		return (print_err(NULL, NULL, NO_MLC), NULL);
 	i = 0;
 	while (env[j] && env[j] != '=')
 		key[i++] = env[j++];
@@ -57,7 +58,7 @@ static char	*extract_value(char *env)
 		len++;
 	value = malloc(len + 1);
 	if (!value)
-		return (fprintf(stderr, "Allocation Faield\n"), NULL);
+		return (print_err(NULL, NULL, NO_MLC), NULL);
 	len = 0;
 	while (env[r])
 		value[len++] = env[r++];
@@ -71,7 +72,7 @@ static t_env	*create_nenv(char *key, char *value)
 
 	env = malloc(sizeof(t_env));
 	if (!env)
-		return (fprintf(stderr, "Allocation Faield\n"), NULL);
+		return (print_err(NULL, NULL, NO_MLC), NULL);
 	env->key = key;
 	env->value = value;
 	env->next = NULL;
@@ -98,7 +99,7 @@ t_env	*handle_env(char **ev)
 	{
 		new = create_nenv(extract_key(ev[r]), extract_value(ev[r]));
 		if (!new)
-			return (clean_env(env), fprintf(stderr, "malloc: \n"), NULL);
+			return (clean_env(env), print_err(NULL, NULL, NO_MLC), NULL);
 		tmp->next = new;
 		tmp = new;
 	}
