@@ -6,14 +6,13 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 18:07:15 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/09/29 18:13:08 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/04 21:30:23 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./minishell.h"
 #include "exec/header.h"
 #include "exec/gnl/get_next_line.h"
-#include <string.h>
 
 static void	*ft_calloc(size_t count, size_t size)
 {
