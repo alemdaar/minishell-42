@@ -6,7 +6,7 @@
 /*   By: oelhasso <oelhasso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 21:59:10 by oelhasso          #+#    #+#             */
-/*   Updated: 2025/10/02 22:54:48 by oelhasso         ###   ########.fr       */
+/*   Updated: 2025/10/04 10:57:25 by oelhasso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,9 @@
 
 void	print_err(char *cmnd, char *sub, char *msg)
 {
-	char *shell;
+	char	*shell;
 
 	shell = "minishell: ";
-
 	write (2, shell, ft_strlen(shell));
 	if (cmnd)
 		write (2, cmnd, ft_strlen(cmnd));
